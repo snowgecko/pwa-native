@@ -1,6 +1,6 @@
 ﻿/* Minimalistic IndexedDB Wrapper with Bullet Proof Transactions
    =============================================================
-
+testing
    By David Fahlander, david.fahlander@gmail.com
 
    Version 0.9.3 - March 26, 2014.
