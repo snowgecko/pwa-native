@@ -101,6 +101,32 @@ var store;
         })
     }
 
+//// Get the 'name' index from your 'friends' table.
+//var index = trans.objectStore("friends").index("name");
+
+	find(idb, sname, _svalue){
+		return new Promise(function(resolve) {
+			let tactn = idb.transaction(sname, "readonly")
+            let osc = tactn.objectStore(sname).openCursor()
+            var cont=[];
+			//new format = e => { }  rather than = function(e){}
+			osc.onsuccess = e => {
+				const cursor = e.target.result;
+				if (cursor) {
+	console.log(cursor.value.pagename + "|||" + _svalue);
+            		if (cursor.value.pagename === _svalue) {
+						cont.push(cursor.value)
+    	        	}
+	            	cursor.continue();
+        		}
+			}
+			tactn.oncomplete = function() {
+                idb.close()
+                resolve(cont)
+            }
+		});
+	}
+	
     read(sname, key) {
         var dname=this.dname
 	    return new Promise(function(resolve) {

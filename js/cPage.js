@@ -53,8 +53,8 @@ class Page {
 		var jsonQObjects, page_content;
 
 		if (_pageid != null){
-			console.log("_pageid != null");
-			console.log("_pageid=" + _pageid);
+			//console.log("_pageid != null");
+			//console.log("_pageid=" + _pageid);
 			//console.log("_menuid=" + _menuid);
 			//console.log("data[0]" + data[0]);
 			for (var key in data[0]) {

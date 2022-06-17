@@ -162,6 +162,7 @@ class Menu {
 		if (_source == "remote"){
 			//editViewUrl = "-edit";	
 			console.log("remote");
+			console.log("this.id" + this.id);
 			this.findSection(menu_cont, this.id, 0, arr); //setting the sectionid
 		}else{
 			console.log("IDB");
@@ -171,7 +172,7 @@ class Menu {
 		if (this.sectionname != null ){
 			titleTarget = document.getElementById('section_title');
 			titleTarget.innerHTML = this.sectionname;
-			_html_menu += "<li id=\"" + this.sectionid + "\" class=\"no-break\"><a href=\"./\">Home&nbsp;&nbsp;></a><a href=\"./pages" + editViewUrl + "?id=" + this.sectionid  + "\">&nbsp;&nbsp;Section Home</a></li>";	
+			_html_menu += "<li id=\"" + this.sectionid + "\" class=\"no-break\"><a href=\"./index.html\">Home&nbsp;&nbsp;></a><a href=\"./pages" + editViewUrl + "?id=" + this.sectionid  + "\">&nbsp;&nbsp;Section Home</a></li>";	
 		}else{
 			//No section ?The current URL does not match a record in the IndexedDB or the fetch
 		}
@@ -204,7 +205,7 @@ class Menu {
 			if (sCMenu[1] != 0 ) html_count_string = "<div class=\"right-align\">[" + sCMenu[1] + "]</div>";	
 			//aria-expanded=\"false\"  update to aria_expanded to true if arr[1]=page.id
 			_html_menu +=  "<li id='" + page.id + "' aria-expanded=\"" + bExpandedText + "\" " + current_page + ">"  
-			_html_menu +=  	"<a onclick=\"menuItem_click(event," + page.pageid + "," + page.parentid + "," + this.sectionid + ")\" href=''" + current_page + ">" + page.pagename + html_count_string + "</a>";
+			_html_menu +=  	"<a onclick=\"menuItem_click(event," + page.pageid + "," + page.parentid + "," + this.sectionid + ")\" href='pages.html?id=" +  page.id + "'" + current_page + ">" + page.pagename + html_count_string + "</a>";
 			_html_menu +=  		sCMenu[0];			
 			_html_menu +=  "</li>";
 			_count = _count + 1
@@ -243,7 +244,7 @@ class Menu {
 				//console.log("/////" + page.pagename + "|||" + sCMenu[0]+ "|||" + sCMenu[1] + "//////");
 				if (sCMenu[1] != 0 ) html_count_string = "<div class=\"right-align\">[" + sCMenu[1] + "]</div>";	
 				_html_menu = _html_menu + "<li id='" + page.id + "' aria-expanded=\"" + bExpandedText + "\" " + current_page + ">"  
-				_html_menu = _html_menu +	"<a onclick=\"menuItem_click(event," + page.pageid + "," + page.parentid + "," + this.sectionid + ")\" href='pages?id=" +  page.id + "'" + current_page + ">" + page.pagename + html_count_string + "</a>";
+				_html_menu = _html_menu +	"<a onclick=\"menuItem_click(event," + page.pageid + "," + page.parentid + "," + this.sectionid + ")\" href='pages.html?id=" +  page.id + "'" + current_page + ">" + page.pagename + html_count_string + "</a>";
 				_html_menu = _html_menu + sCMenu[0];			
 				_html_menu = _html_menu + "</li>";
 				_count = _count + 1
@@ -284,7 +285,7 @@ class Menu {
 		var html_menu = "";
 		for (var page of pages) 
 		{
-			html_menu = html_menu + "<li><a class=\"content\" href=\"?id=" + page.id + "\">" + page.pagename + "</li>"
+			html_menu = html_menu + "<li><a class=\"content\" href=\"pages.html?id=" + page.id + "\">" + page.pagename + "</li>"
 			//console.log(page.pagename); // John
  		 	//document.write(page.name + "<br />");
 		}

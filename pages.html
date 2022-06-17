@@ -2,6 +2,7 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width minimum-scale=1.0 maximum-scale=1.0 user-scalable=no" />
+
 		<title>Content Pages</title>
 		<link rel="shortcut icon" type="image/jpg" href="./favicon.ico"/>
 		<link rel="manifest" href="./manifest.json">
@@ -9,6 +10,7 @@
 		<link rel="apple-touch-icon" sizes="152x152" href="/images/icons/icon-152x152.png"/>
 		<link rel="apple-touch-icon" sizes="167x167" href="/images/icons/icon-152x152.png"/>
 		<link rel="apple-touch-icon" sizes="180x180" href="/images/icons/icon-192x192.png"/>
+	
 
 		<link type="text/css" rel="stylesheet" href="./css/style.css" />
 		<link type="text/css" rel="stylesheet" href="./css/pages.css" />
@@ -45,7 +47,7 @@ window.addEventListener('load', ()=>{
 				<div class="text"><a href="#menu" class="menulines"><span></span></a><div id="section_title">.....</div></div>
 				<!--//-->
 				<div id="mySidenav" class="sidenav">
-					<input type="search" name="searchbox" id="searchbox"/>
+					<input type="search" name="searchbox" id="searchbox" onKeyUp="edValueKeyPress()"/>
 					<div id="menu">
 				      <!--<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>-->
 				      	<ul> 
@@ -86,27 +88,32 @@ window.addEventListener('load', ()=>{
 	//*****global variables set in functions_shared.js
 	var cidb = new SimpleIDB();
 	var bIsLoggedIn = false; //set this if logged in and content in IndexedDB
-	var gDataSoure = getIDBMenuData;
-	var gPageDataSoure = getIDBPageData;
-	//var gDataSoure = getRemoteMenuData;
-	//var gPageDataSoure = getRemotePageData;
-	
+	//var gDataSource = getIDBMenuData;
+	//var gPageDataSource = getIDBPageData;
+	var gDataSource = getRemoteMenuData;
+	var gPageDataSource = getRemotePageData;
+	var listElem; 
 	//IF YOU WANT TO GET THE DATA FROM MONGO THEN PASS getRemoteMenuData into getUserInfo AND in UserLogOut below
 	
 	//callbackFunction - specific to menu data - called from IDB OR fetch (edit)
 	window.onload = function() {
 		document.getElementById("para_loader").style.display = "block";
 		//check in IndexedDB - see if the sectionid passed through to pages matches the user indexedDB db
-		getUserInfo(cidb, gDataSoure); //onload just checks the user indexedDB and Menu (to make sure the user should be able to see content)	
+		getUserInfo(cidb, gDataSource); //onload just checks the user indexedDB and Menu (to make sure the user should be able to see content)	
 			//--> from getUserInfo (async) 
 			//--> if No access then calls UserLogOut()
 			//--> 		on complete calls menu
 			//--> 			on complete calls pages
+		
+		
+		////*****onload needs to set active the current page... 
+		listElem = document.getElementById(url_id) //url_id from shared functions
+		expandorCollapseCurrent(listElem);
 
 		/*******event listeners*****/
 		document.getElementById("loginForm").onsubmit = function(e){
 			e.preventDefault();
-			handleLoginSubmit(gDataSoure); //handleSubmit() in functions_idb.js --> fills IndexedDB with content based on login
+			handleLoginSubmit(gDataSource); //handleSubmit() in functions_idb.js --> fills IndexedDB with content based on login
 		}
 		const contentItems = document.querySelectorAll(".content");
 		contentItems.forEach(function(cItems) {
@@ -114,14 +121,40 @@ window.addEventListener('load', ()=>{
 			addEvent(cItems);
 		});				
 		document.querySelector( 'a[href="#menu"]' )
-			.addEventListener( 'click', evnt => {
-				changeNavState();
-				evnt.preventDefault();
+			.addEventListener( 'click', e => {
+				//alert("in query selector hash menu")
+				e.preventDefault();
+				changeNavState(); //called from functions_shared.js
 				//drawer.open();
 				//document.querySelector( '.mm-ocd--open' ).style.max-width = "20em";
 		});
+		document.body.addEventListener("click", function(e) {
+			// e.target was the clicked element
+			//beasts.indexOf('bison')
+			e.preventDefault();
+			//e.target.getAttribute('class').indexOf("collapsible") == "-1")
+			//alert(e.target.nodeName); //the expand and collapse sections are also buttons?
+			if(e.target.id == "submitBtn"){
+				handleLoginSubmit(gDataSource);				
+			}else if(e.target && e.target.nodeName == "A") {
+				if (e.target.href.indexOf("#menu") == -1) resolveLink(e);
+				//changePage();
+			}else{
+				//console.log ("on click with no event listener attached");
+			}
+		});
+		//document.body.addEventListener
+		//document.getElementById("searchbox").addEventListener("keypress", edValueKeyPress);
+		
 		/*******event listeners*****/
 	};	
+
+function edValueKeyPress(){
+	var edValue = document.getElementById("searchbox");
+	var s = edValue.value;
+search(cidb, "fstore", s);   
+}
+
 
 //add in other features of being loggedIn
 function UserLoggedIn (){
@@ -137,45 +170,155 @@ function UserLogOut(){
 		//show login form. 				
 		document.getElementById("loginForm").onsubmit = function(e){
 			e.preventDefault();
-			handleLoginSubmit(gDataSoure);
+			handleLoginSubmit(gDataSource);
 		}
 	document.getElementById("para_loader").style.display = "none";
 }
+
+//********************************************************************//
+/* options: 
+1) link from Navigation
+2) link from Page 
+3) external link
+
+1) and 2) would end up expanding the navigation...
+to find if I have come from 1) I could navigate up the e.target tree.... 
+*/	
+function resolveLink(e){
+	//what target is in the link - issue with expanding navigation where -- contain current url, 
+	var loc_href = e.target.href 
+	//to get start of url to add on the new ID
+	var equalsLoc = loc_href.indexOf("?id=") + 4; //? + 3
+	var eTargetStart = loc_href.substring(0, equalsLoc); 
+	var eTargetID = loc_href.substring(equalsLoc, loc_href.length);
+	var bMenuLink = false;
+	var aLinks = new Array;
+	if (loc_href.indexOf("index.html") != -1) window.location = loc_href;
+	//var newurl_id = window.location.toString().split("?id=").pop();
+
+	//listElem needs expanding
+	var listElem = document.getElementById(eTargetID);	
+	//alert(eTargetID);
+	expandorCollapseCurrent(listElem);
+
+	//console.log(e.target.attributes); //href and class for menu e.targets...
+	if (e.target.attributes.length >1){
+		bMenuLink = true;
+	}
+	//**li id="10" aria-expanded="true"><a onclick="menuItem_click(event,10,8,4)" href="pages.html?id=10">General concepts 		
+	var parID, secID
+	try{
+		aLinks = navigateUpTree(listElem, aLinks, bMenuLink, 0); 
+		parID = aLinks[1]; 
+		secID = aLinks[aLinks.length-1]; 		
+		//alert(aLinks + "|||" + parID + " " + secID);
+		history.pushState('data to be passed', 'Page Title', loc_href);
+	}catch(e){
+		parID = 4;
+		secID = 4; 		
+	}
+	/*need to update so that pageid can be different*/
+	if (gPageDataSource == getRemotePageData){
+		getRemotePageData(eTargetID, eTargetID, parID, secID)
+	}else{
+		//***difference between pages.html and pages-edit.html
+		getIDBPageData(cidb, eTargetID, eTargetID, parID, secID); //getContent function in cPage class js file		
+	}
+
+	//e.preventDefault();
+	//getUserInfo(cidb, gDataSource); //onload just checks the user indexedDB and Menu (to make sure the user should be able to see content)
+	//if comes from an a link then 				
+
+}
+
+//push into array then return array
+function navigateUpTree(_testElem, _aLinks, _bMenuLink, _count){
+	//only expand if link comes NOT from menu 
+	//console.log(typeof _testElem.id); //string
+	if (_testElem == null){
+		return;
+	}else if (_testElem.hasAttribute("id")){
+		if (_testElem.id == "html_menu"){
+			_aLinks.push(_testElem.firstChild.id); //push SectionID
+		}else{
+			_aLinks.push(_testElem.id);			
+		}
+		if (_bMenuLink == false) expandMenuElement(_testElem)
+		//alert(_testElem.nodeName + "||" + _testElem.id + "||" + _count );
+	}
+	_count = _count + 1;	
+	if (_testElem.id != "html_menu") navigateUpTree(_testElem.parentElement, _aLinks, _bMenuLink, _count) 
+	return _aLinks;
+}
+
+function expandMenuElement(_eElem){
+	_eElem.setAttribute('aria-expanded', "true");
+}
+
+function expandorCollapseCurrent(listElem){
+	try{
+		//if the link comes from navigation then open and close need not include the parent... 	
+		document.querySelectorAll('li').forEach(b=> {
+			//console.log("b=" + b + " " + b.getAttribute('class'));
+			if(b.getAttribute('class')!="no-break"){
+				//console.log("in NOT no-break" + b.getAttribute('class'));
+				b.removeAttribute('class')
+			}
+		});		
+		if (listElem != null){
+			if (listElem.getAttribute('class')!="no-break"){
+				if (listElem.getAttribute('aria-expanded') == 'false' || listElem.getAttribute('aria-expanded') ==  null) {
+					listElem.setAttribute('aria-expanded', "true");
+				} else {
+					listElem.setAttribute('aria-expanded', "false");
+					listElem.removeAttribute("class");
+				}			
+			}		
+			//console.log(listElem.id);
+			//console.log(listElem.nodeName);
+			listElem.setAttribute("class", "active");				
+			//console.log(listElem.getAttribute("class"));
+		}
+	}catch(e){ console.log ("Custom error : " + e)}
+
+}
 //********************************************************************//
 function menuItem_click(evt, _pageid, _parentid, _sectionid){
-	evt.preventDefault();
+	/*evt.preventDefault();
 	var parElem = evt.target.parentElement;
 	////evt.target will not bring back correct because we are preventing Default. //so does not change until we pushState
 	//alert("parElem" + parElem.id); 
-	if (parElem.getAttribute('aria-expanded') == 'false' || parElem.getAttribute('aria-expanded') ==  null) {
-		parElem.setAttribute('aria-expanded', "true");
-	} else {
-		parElem.setAttribute('aria-expanded', "false");
-		parElem.removeAttribute("class");
-	}
-	//let result2 = url.toString().includes("pages-edit");
-	if (gEditView){
-		history.pushState('data to be passed', 'Page Title', "pages-edit?id=" + parElem.id);
-	}else{
-		history.pushState('data to be passed', 'Page Title', "pages?id=" + parElem.id);
-	}		
+	//if (parElem.getAttribute('aria-expanded') == 'false' || parElem.getAttribute('aria-expanded') ==  null) {
+	//	parElem.setAttribute('aria-expanded', "true");
+	//} else {
+	//	parElem.setAttribute('aria-expanded', "false");
+	//	parElem.removeAttribute("class");
+	//}
+	let result2 = url.toString().includes("pages-edit");
+	//if (gEditView){
+	//	history.pushState('data to be passed', 'Page Title', "pages-edit.html?id=" + parElem.id);
+	//}else{
+	//	history.pushState('data to be passed', 'Page Title', "pages.html?id=" + parElem.id);
+	//}		
 	//alert(evt.target); //full URL - but could check for everything after id= then getElementById .. then change colour. 
 	//pages?id=11 - which may work - because 
 	document.querySelectorAll('li').forEach(b=> {if(b.getAttribute('class')!="no-break") b.removeAttribute('class')});
 	
 	var newurl_id = window.location.toString().split("?id=").pop();
+	//alert(newurl_id); //previous id 
 	var newurl_idElem = document.getElementById(newurl_id);
 	//alert("window.location;" + window.location.toString());
 	//alert("newurl_id=" + newurl_id);
 	newurl_idElem.setAttribute("class", "active");
 	//if (evt.target == "testing") parElem.setAttribute("class", "active");
-	
-	if (gPageDataSoure == getRemotePageData){
+	//gPageDataSource - set above to indicate whether data is retrieved locally/remotely
+	if (gPageDataSource == getRemotePageData){
 		getRemotePageData(_pageid, newurl_id, _parentid, _sectionid)
 	}else{
 		//***difference between pages.html and pages-edit.html
 		getIDBPageData(cidb, newurl_id, _pageid, _parentid, _sectionid); //getContent function in cPage class js file		
 	}
+	*/
 	
 }
 </script>

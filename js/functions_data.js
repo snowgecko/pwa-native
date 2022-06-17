@@ -49,7 +49,17 @@ async function indexdb_fill(data){
 //addMarkers().then(() => doSomething());
 }
 
-//getUserInfo  //passes through cidb object - ie, IndexedDb (new SimpleIDB)
+/* getsUserInfo from local IndexedDB and sets LoggedIn and calls callbackFunction
+getUserInfo : passes through cidb object - ie, IndexedDb (new SimpleIDB)
+callbackFunction : either getRemoteMenuData or IDBMenuData
+--- passes url_id from functions_shared : url_id = urlParams.get('id');
+//change to https://www.loginradius.com/blog/engineering/callback-vs-promises-vs-async-await/
+//eg const getIDBMenuPromise = new Promise((resolve, reject) => {
+	//then call it using  getIDBMenuPromise
+	//						.then(getIDBPagePromise)
+	//						.then(success-result) ==>
+	//						.catch(fail)
+*/
 async function getUserInfo(cidb, callbackFunction){
 	var idbUser;
 	var username, sectionid, timestamp;
@@ -57,6 +67,7 @@ async function getUserInfo(cidb, callbackFunction){
 	var ONE_DAY = 24 * 60 * 60 * 1000; /* ms */
 	var ONE_HOUR = 60 * 60 * 1000; /* ms */
 	var ONE_MIN = 60 * 1000; /* ms */
+	//if it update the users table with the updated date/time if updated content then when 
 	var timestamp_now = Date.now();
 	
 	idbUser = await cidb.open("user", "fstore",  {
@@ -69,32 +80,34 @@ async function getUserInfo(cidb, callbackFunction){
 		sectionid = x["section"];	
 		timestamp = x["timestamp"];	
 	}    
-	console.log(cont);
-	//***TODO - I do need to set up so that it checks the last updated date of the content.  */
-	//((new Date) - myDate) < ONE_HOUR	
 	//if sectionid == null then just set Boolean and leave page as Login page and do no more 
-	if ((sectionid == null) || ((timestamp_now - timestamp) > T25DAYS)) {
+	if (sectionid == null) {
 		//console.log ("sectionid==null");
 		bIsLoggedIn = false;
-		UserLogOut();  //--> if user logged out then ultimately will be repopoulated from handleLoginSubmit() in shared functions.
+		UserLogOut();  //--> UserLogOut (pages.html) if user logged out then ultimately will be repopoulated from handleLoginSubmit() in shared functions.
 	}else{
 		//if sectionid == something - check that it matches the current pages sectionid
 		//console.log ("sectionid=", sectionid);
-		console.log("bLogginIn = true");	
+		//console.log("bLogginIn = true");	
 		bIsLoggedIn = true;	
-			//either getIDBMenuData or getMenuRemote[edit only]
-		callbackFunction(cidb, url_id, sectionid); //**calls different function based on edit or NOT edit */
-		
-		//getIDBMenuData(cidb, url_id, sectionid);			
+		//*** asynchronous function that gets Menu and Page data - either getIDBMenuData or getMenuRemote[edit only]**//////
+		callbackFunction(cidb, url_id, sectionid); //var x = await **calls different function based on edit or NOT edit */ //getIDBMenuData(cidb, url_id, sectionid);				
 		//***call function to display loggedIn user */
-		UserLoggedIn();
+		
+		UserLoggedIn(); //just hide the login box etc. (page.html)
 	}
-	//console.log("bIsLoggedIn", bIsLoggedIn);
-	//*******TO DO */
-	//**add in -- if online then check version No and update if necessary */
+	/** call remote User info here - timestamp */	
+	//if you use var x = await callbackFunction then operates more like a synchronous function... 
+	//does not get here first... 
+	//in fact doesn't seem to get here at all if await is used...'
+	console.log("actually get here before IDBMenuData and getIDBPageData getUserInfo at the end " + Date.now());
+
 }
-////getMenuData
-//cidb is IndexedDB object, _menuid is passed urlid (from querystring), _sectionid = sectionid from user[indexedDB]
+/* getIDBMenuData
+- cidb is IndexedDB object: 
+-- _menuid is passed urlid (from querystring checked in functions_shared.js)
+-- _sectionid = sectionid from user[indexedDB]
+*/
 async function getIDBMenuData(cidb, _menuid, _sectionid){
 	var idbMenu, menu_data;
 	var username, sectionid;
@@ -102,20 +115,17 @@ async function getIDBMenuData(cidb, _menuid, _sectionid){
 	idbMenu = await cidb.open("menu", "fstore",  {
             schema: { keyPath: "id", autoIncrement:false },
     })
-	var cont = await cidb.dump(idbMenu, "fstore");
-	
-	//console.log("in getIDBMenuData");
-	//console.log (cont);
-	
+	var menu_content = await cidb.dump(idbMenu, "fstore");
+		
 	///*** Menu constructor(id, sectionid) ****/
 	let menu = new Menu(url_id); 	
-	//cont [Menu content from indexedDB], url_id (parsed querystring), _sectionid = sectionid from UserDB
-	//check is done in filter_populateMenu for -edit
-	menu.filter_populateMenu(cont, url_id, _sectionid, "idb");	
-	 
+	menu.filter_populateMenu(menu_content, url_id, _sectionid, "idb");	
+	console.log("getIDBMenuData after new Menu and populateMenu=" + menu.id + " " + Date.now());
 	document.getElementById("section_title").innerHTML = menu.sectionname
+
 	///*** Page constructor(id, sectionid) ****/
-	getIDBPageData(cidb, url_id, menu.pageid, menu.parentid, menu.sectionid); //getContent function in cPage class js file
+	getIDBPageData(cidb, url_id, menu.pageid, menu.parentid, menu.sectionid); //var x = await //getContent function in cPage class js file
+	
 }
 //getPageData
 async function getIDBPageData(cidb, _menuid, _pageid, _parentid, _sectionid){
@@ -123,9 +133,9 @@ async function getIDBPageData(cidb, _menuid, _pageid, _parentid, _sectionid){
 	var username, sectionid;
 	var page_cont; 
 	
-	let page = new Page(_pageid); //set in  	
-	//console.log("_pageid)", _pageid);
-
+	let page = new Page(_pageid); //set in  
+	const parsed = parseInt(_pageid);
+	//console.log(parsed);
 	idbPage = await cidb.open("pages", "fstore",  {
             schema: { keyPath: "id", autoIncrement:false },
     })
@@ -133,9 +143,12 @@ async function getIDBPageData(cidb, _menuid, _pageid, _parentid, _sectionid){
 		console.log("no page match");  
 		page.printPageError();
 	}else{
-		page_cont = await cidb.read("fstore", _pageid)
+		
+		page_cont = await cidb.read("fstore", parsed)
 		page.JSONPageContent(page_cont, _pageid, _menuid, _parentid, _sectionid);	
 	}
+	console.log("getIDBPageData after new Page and JSONPageContent=" + page.pageid + " " + Date.now());
+
 	//var infos = await cidb.read("fstore", _pageid);
 	//var infos = await cidb.dump(idbPage, "fstore");
 //console.log(page_cont);
@@ -149,6 +162,16 @@ async function getIDBPageData(cidb, _menuid, _pageid, _parentid, _sectionid){
 	//primary_nav.sectionid
 	//console.log(username);
 }
+
+//on return or keypress then run this search() function
+async function search(cidb, _sstore , _searchterm){
+	idbMenu = await cidb.open("menu", "fstore",  {
+            schema: { keyPath: "id", autoIncrement:false },
+    })
+	var search_content = await cidb.find(idbMenu, "fstore", _searchterm);
+	console.log (search_content);
+}
+
 //delete All three databases.
 function deleteDatabases(_dbName){	
 	var req = indexedDB.deleteDatabase(_dbName);
