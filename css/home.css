@@ -1,0 +1,101 @@
+/*only on home page*/
+header{
+	width:100%;
+}
+.app {
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+header h1 {
+  margin: 50px 0px 20px -10px;
+  text-align: center;
+  padding: 1em;
+  background: black;
+background : #1a2238;
+  font-size: 40px;
+}
+header p {
+  font-size: 25px;
+  color: black;
+}
+
+.pads {
+  background:fff;
+  width: 90%;
+  box-shadow: 10px 10px 20px black;
+  margin-bottom: 150px;
+}
+.pads div div a{
+	text-decoration: none;
+	color: wheat;
+}
+.pad-top{
+  display: flex;
+}
+.pad-top div,
+.pad-bottom div{
+  margin:5px;
+text-align:center;
+}
+.pad-top div p,
+.pad-bottom div{
+		padding:1em;
+	vertical-align:middle;
+}
+
+.pad-bottom{
+  display: flex;
+}
+
+.pad-top > div {
+  height: 100px;
+  width: 100px;
+  flex: 1;
+}
+
+.pad-bottom > div {
+  height: 100px;
+  width: 100px;
+  flex: 1;
+}
+
+.pad1 {
+  background: #60d394;
+background: #a0aecd;
+background : #1a2238;
+}
+.pad2 {
+  background: #d36060;
+background: #9daaf2;
+background: #490b3d;
+}
+.pad3 {
+  background: #c060d3;
+background: #ff6a3d;
+}
+.pad4 {
+  background: #d3d160;
+background: #f4db7d;
+  background: #606bd3;
+}
+.pad5 {
+background: #bd1e51;
+}
+.pad6 {
+  background: #60c2d3;
+}
+
+@media (max-width: 480px){
+  header h1{
+    font-size: 35px;
+  }
+  header p{
+    font-size: 16px;
+  }
+  .pads{
+    margin-bottom: 100px;
+  }
+}

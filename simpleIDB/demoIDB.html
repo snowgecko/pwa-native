@@ -7,10 +7,8 @@
 <!-- https://cdnjs.com/libraries/FileSaver.js -->
 <!-- https://github.com/eligrey/FileSaver.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
- 
-<script>
-</script>
 <script type="text/javascript" src="SimpleIDB.js"></script>
+<script type="text/javascript" src="../js/functions_shared.js"></script>
 <style>
     body {
         margin:48px;
@@ -24,8 +22,7 @@
 		plugins: 'table code advtable lists fullscreen',
   		toolbar: 'undo redo | formatselect | bold italic | ' +
     'alignleft aligncenter alignright alignjustify | indent outdent | ' +
-    'table tableinsertdialog tablecellprops tableprops advtablerownumbering | fullscreen',
-  		content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+    'table tableinsertdialog tablecellprops tableprops advtablerownumbering | fullscreen'
     });
 //selector: 'textarea#default'
 
@@ -40,7 +37,7 @@
 <!--READ THE RECORD--> 
 <div id="storage"></div>
 <h2>Read</h2>
-<p>Enter the name of a fruit (apple, orange, strawberry, blueberry) to get the infos. </p>
+<p>Enter the name of a page to get the info. </p>
 <p>
 <form name="form1" method="post" action="">
   <input type="text"  id="searchval">
@@ -90,14 +87,89 @@
 
 <script>
 var cidb = new SimpleIDB()
+var idbMenu = null;
+var idbPages = null;
+
+//start it all off (see above function)
+window.onload= start("menu.js")
+
+//fname = fruits.js //json file 
+//why aren't we using .then'
+async function start(fname) {
+	/*
+	//OLD METHOD - parsed menu.js
+	//NEW METHOD - below - calling listPages from lamda...
+	var response = await fetch(fname)
+	var str = await response.text();
+	//console.log(str);
+	var data = JSON.parse(str)
+	*/
+	//if i make a change to the database it should update the version No - in which case the user should download a new version. 
+	//so 
+	
+	//open(dname, sname, options, _version) 	
+    idbMenu = await cidb.open("menu", "fstore",  {
+            schema: { keyPath: "id", autoIncrement:false },
+	        index: 
+	            [
+	                ["id", "id", { unique: true }],
+	                ["parentid", "parentid", { unique: false }] 
+	           ]     
+	          
+        })
+	//keyPath - which one do I want to use as key
+    idbPages = await cidb.open("pages", "fstore",  {
+            schema: { keyPath: "id", autoIncrement:false },
+	        index: 
+	            [
+	                ["id", "id", { unique: true }]
+	           ]     	          
+        })
+	//cidb.open - return succesful idb object - creates if needs to 
+	//console.log(data["menu"]);
+	//https://sm5a54kkhi.execute-api.eu-west-1.amazonaws.com/default/listPages?id=-1 => lists all pages 
+	//https://sm5a54kkhi.execute-api.eu-west-1.amazonaws.com/default/listPages?id=4 => lists just subpages to that ID
+	//https://sm5a54kkhi.execute-api.eu-west-1.amazonaws.com/default/listPages?content_id=4 => gets the page contents for content_id
+	
+	//pass through username and get (allowed) sectionID 
+	//pass through username - then get back Menu that User is allowed.  //will be passed through from login..
+	fetch("https://sm5a54kkhi.execute-api.eu-west-1.amazonaws.com/default/listPages?username=kate.wykes@gmail.com")
+		.then(response => response.json()) //NEW condensed
+		.then(data => {
+			
+			//menu.filter_populateMenu(data, _menuid) //prints out menu of section we are in --> see cMenu.js
+			//getContent(menu.pageid, _menuid, menu.parentid, menu.sectionid); //getContent function in cPage class js file
+		})
+
+	var data;
+	fetch("https://sm5a54kkhi.execute-api.eu-west-1.amazonaws.com/default/listPages?id=-1")
+		.then(response => response.json()) //NEW condensed
+		.then(data => {
+			console.log (data);
+			//menu.filter_populateMenu(data, _menuid) //prints out menu of section we are in --> see cMenu.js
+			//console.log("in getMenu then statement=" + _url_id)
+			//console.log ("_url_id" + _url_id);
+			//console.log ("menu.pageid" + menu.pageid);
+			//getContent(menu.pageid, _menuid, menu.parentid, menu.sectionid); //getContent function in cPage class js file
+			//primary_nav.sectionid
+
+			//doesn't seem to check if already filled'
+			cidb.fill(idbMenu, "fstore", data)
+			
+			//cidb CLASS that handles indexedDB
+			//currently just displays idbMenu
+    		displayAll(cidb, "storage")
+		})
+}
+
 
 async function displayAll(cidb, storage) {
-    var idb = await cidb.open("menu", "fstore", {keyPath: "name", autoIncrement:false})
-	var cont = await cidb.dump(idb, "fstore")
+    //var idbMenu = await cidb.open("menu", "fstore", {keyPath: "name", autoIncrement:false})
+	var cont = await cidb.dump(idbMenu, "fstore")
 	var storage = document.getElementById(storage)
 	storage.innerHTML=""
 	for(var x of cont) {
-        storage.innerHTML += "id= " + x["id"] + " parentid= " + x["parentid"] +  " pageid= " + x["pageid"] + " name= " + x["name"]  + "<br>"	    
+        storage.innerHTML += "id= " + x["id"] + " parentid= " + x["parentid"] +  " pageid= " + x["pageid"] + " name= " + x["pagename"]  + "<br>"	    
 	}    
 }
 function saveFile (){
@@ -108,27 +180,6 @@ function saveFile (){
 	//saveAs(myFile);
 }
 
-//fname = fruits.js //json file 
-//why aren't we using .then'
-async function start(fname) {
-	var response = await fetch(fname)
-	var str = await response.text();
-//console.log(str);
-	var data = JSON.parse(str)
-    var idb = await cidb.open("menu", "fstore",  {
-            schema: { keyPath: "name", autoIncrement:false },
-	        index: 
-	            [
-	                ["id", "id", { unique: true }],
-	                ["parentid", "parentid", { unique: false }] 
-	           ]     
-	          
-        })
-	await cidb.fill(idb, "fstore", data["menu"])
-    displayAll(cidb, "storage")
-}
-//start it all off (see above function)
-window.onload= start("menu.js")
 
 async function search() {
 	var key = document.getElementById("searchval").value

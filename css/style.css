@@ -1,6 +1,5 @@
 * {
   margin: 0;
-  padding: 0;
   box-sizing: border-box;
 }
 body {
@@ -14,122 +13,37 @@ body {
 /*standard content styling*/
 h1, h2, h3, h4, h5, h6 {
 	line-height: 1;
-	font-weight: bold;
 	margin: 20px 0 10px 0;
 }
-h1, h2, h3 {
-	font-size: 18px;
+h1{
+	font-weight: bold;
+	font-size: 1.2em;
 }
-h4, h5, h6 {
-	font-size: 16px;
+h2, h3, h4, h5, h6 {
+	font-size: 1.3em;
+    margin: 15px 0 10px 0;
 }
+.textsection1 h2, .textsection1 h3, .textsection1 h4{
+	color: #1a2238;	
+}
+.textsection2 h2, .textsection2 h3, .textsection2 h4{
+	color: #490b3d;	
+}
+.textsection3 h2, .textsection3 h3, .textsection3 h4{
+	color: #ff6a3d;	
+}
+.textsection4 h2, .textsection4 h3, .textsection4 h4{
+	color: #60c2d3;	
+}
+.textsection58 h2, .textsection58 h3, .textsection58 h4{
+	color: #1a2238;	
+}
+
 p {
-	margin: 0 0 10px 0;
+	margin: 1.5em 0 2em 0;
 }
 a, a:link, a:active, a:visited, a:hover {
 	color: inherit;
 	text-decoration: underline;
 }
 
-
-/*only on home page*/
-header{
-	width:100%;
-}
-.app {
-  min-height: 80vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-}
-header h1 {
-  margin: 50px 0px 20px -10px;
-  text-align: center;
-  padding: 1em;
-  background: black;
-background : #1a2238;
-  font-size: 40px;
-}
-header p {
-  font-size: 25px;
-  color: black;
-}
-
-.pads {
-  background:fff;
-  width: 90%;
-  box-shadow: 10px 10px 20px black;
-  margin-bottom: 150px;
-}
-.pads div div a{
-	text-decoration: none;
-	color: wheat;
-}
-.pad-top{
-  display: flex;
-}
-.pad-top div,
-.pad-bottom div{
-  margin:5px;
-text-align:center;
-}
-.pad-top div p,
-.pad-bottom div{
-		padding:1em;
-	vertical-align:middle;
-}
-
-.pad-bottom{
-  display: flex;
-}
-
-.pad-top > div {
-  height: 100px;
-  width: 100px;
-  flex: 1;
-}
-
-.pad-bottom > div {
-  height: 100px;
-  width: 100px;
-  flex: 1;
-}
-
-.pad1 {
-  background: #60d394;
-background: #a0aecd;
-background : #1a2238;
-}
-.pad2 {
-  background: #d36060;
-background: #9daaf2;
-background: #490b3d;
-}
-.pad3 {
-  background: #c060d3;
-background: #ff6a3d;
-}
-.pad4 {
-  background: #d3d160;
-background: #f4db7d;
-  background: #606bd3;
-}
-.pad5 {
-background: #bd1e51;
-}
-.pad6 {
-  background: #60c2d3;
-}
-
-@media (max-width: 480px){
-  header h1{
-    font-size: 35px;
-  }
-  header p{
-    font-size: 16px;
-  }
-  .pads{
-    margin-bottom: 100px;
-  }
-}

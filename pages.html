@@ -2,151 +2,325 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width minimum-scale=1.0 maximum-scale=1.0 user-scalable=no" />
+
 		<title>Content Pages</title>
 		<link rel="shortcut icon" type="image/jpg" href="./favicon.ico"/>
+		<link rel="manifest" href="./manifest.json">
+	  	<link rel="apple-touch-icon" href="/assets/icons/icon-192x192.png"/>
+		<link rel="apple-touch-icon" sizes="152x152" href="/images/icons/icon-152x152.png"/>
+		<link rel="apple-touch-icon" sizes="167x167" href="/images/icons/icon-152x152.png"/>
+		<link rel="apple-touch-icon" sizes="180x180" href="/images/icons/icon-192x192.png"/>
+	
 
 		<link type="text/css" rel="stylesheet" href="./css/style.css" />
-		<link type="text/css" rel="stylesheet" href="./css/mmenu-light.css" />
 		<link type="text/css" rel="stylesheet" href="./css/pages.css" />
-		
-		<link rel="manifest" href="./manifest.json">
-		<!--class declaration--> 
-  		<script src="./js/page.js" ></script>
+		<link type="text/css" rel="stylesheet" href="./css/menu.css" />		
 
-<!--include module for editor--> 
-	
+		<!--class declaration--> 
+  		<script src="./js/cPage.js" ></script>
+  		<script src="./js/cMenu.js" ></script>
+		<script type="text/javascript" src="./simpleIDB/SimpleIDB.js"></script>
+		<!--DOES NOT WORK FOR SUB_SUB NAVIGATION ?ARIA issue-->
+		<script src="./js/functions_data.js"></script>		
+		<script src="./js/functions_shared.js"></script>		
+		<!--include module for editor--> 
+<script>
+window.addEventListener('load', ()=>{
+    console.log("in window load");	
+	if ("serviceWorker" in navigator) {
+	    try {
+      		navigator.serviceWorker.register('./serviceWorker.js');
+      		console.log("Service Worker Registered");
+    	} catch (error) {
+      		console.log("Service Worker Registration Failed");
+		}
+    }else{
+	    console.log("Service Worker not supported?");
+	}
+});
+</script>
 	</head>
 	<body>
 		<div id="page">
 			<div class="header" id="header">
-				<a href="#menu"><span></span></a>Demo
-
-				<nav id="menu" class="mm">
-				<span>Search  <input type="search" name="searchbox"/></span>
-					<ul><!--https://snowgecko.github.io/pwa-native/pages?name=final-->
-						<li class="Selected"><a href="./">Home</a></li>
-						<li><span>About us</span>
-							<ul>
-								<li><a class="content" href="#about/history">History</a></li>
-								<li><span>The team</span>
-									<ul>
-										<li><a class="content" href="#about/team/management">Management</a></li>
-										<li><a class="content" href="#about/team/sales">Sales</a></li>
-										<li><a class="content" href="#about/team/development">Development</a></li>
-									</ul>
-								</li>
-								<li><a class="content" href="#about/address">Our address</a></li>
-							</ul>
-						</li>
-						<li><a class="content"href="#contact">Contact</a></li>
-					</ul>
-				</nav>
-
-				<div id="submenu"></div>
+				<!--//-->
+				<div class="text"><a href="#menu" class="menulines"><span></span></a><div id="section_title">.....</div></div>
+				<!--//-->
+				<div id="mySidenav" class="sidenav">
+					<input type="search" name="searchbox" id="searchbox" onKeyUp="edValueKeyPress()"/>
+					<div id="menu">
+				      <!--<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>-->
+				      	<ul> 
+							<!--onclick="javascript:toggleMenu(1)"-->
+							<div id="html_menu">
+								<!--*****WILL BE POPULATED DYNAMICALLY JS******-->
+							</div>
+							<li><a href="#">About</a></li>
+				      		<li><a href="#">Contact</a></li>
+						</ul>
+					</div>
+				</div>
 			</div>
-			<!--//end of header-->
-
-			<!--change content according to passed value-->
-			<div class="content main">
-				<h3>Title</h3><br />
+			<div class="headerimage"><img src="https://stackicm.s3.eu-west-1.amazonaws.com/criticalcare3.jpg"/></div>
+			<div class="content main" id="content_main">
+				<h3></h3><div id="para_loader"><p><div id="loading_text">loading ....</div><div class="lds-hourglass" id="loader"></div></p></div>
+				<!--content once the indexedDB is loaded-->
 				<p id="content">
-				<div class="element"></div>
-					Try to extend the cotnent across the page so that when you click on it - it closes the menu... blah blah 
-					Try to extend the cotnent across the page so that when you click on it - it closes the menu... blah blah 
-					Try to extend the cotnent across the page so that when you click on it - it closes the menu... blah blah 
-					Try to extend the cotnent across the page so that when you click on it - it closes the menu... blah blah 
+					<!--LOGIN START used on login page-->
+					<form method="post" id="loginForm">
+						<h3>Login</h3>
+		          		<label for="username">Email &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+		          		<input type="text" id="username" name="username" required><br/>
+		          		<label for="password">Password&nbsp;&nbsp;</label>
+		          		<input type="text" id="password" name="password" required><br/>&nbsp;<br/>
+	          			<button type="submit" id="submitBtn">Login</button>
+					</form>
+					<p id="passwordmessage"></p>
+					<!--LOGIN END used on login page-->
+					<!--used on content pages-->
+					<div class="element"></div>
+					<div id="questions"></div>
 				</p>
 			</div>
 		</div>
 
-		<script src="./js/mmenu-light.js"></script>
-		<script src="./js/mmenu-page.js"></script>		
-<!--include module for editor--> 
-
-<!--my custom scripting--> 
 <script>
-	// creating an object
-	var urlParams = new URLSearchParams(window.location.search);
-	//class declaration
-	let page1 = new Page(urlParams.get('name'));
-	//based on value then set background colors and menu
-	switch(page1.name) {
-	    case 'primary':  
-	        // body of case 1
-			page1.backgroundColor = "#1a2238"
-			//loadPrimary Navigation etc  json file
-	        break;
+	//*****global variables set in functions_shared.js
+	var cidb = new SimpleIDB();
+	var bIsLoggedIn = false; //set this if logged in and content in IndexedDB
+	//var gDataSource = getIDBMenuData;
+	//var gPageDataSource = getIDBPageData;
+	var gDataSource = getRemoteMenuData;
+	var gPageDataSource = getRemotePageData;
+	var listElem; 
+	//IF YOU WANT TO GET THE DATA FROM MONGO THEN PASS getRemoteMenuData into getUserInfo AND in UserLogOut below
 	
-	    case 'final':  
-	        // body of case 2
-			page1.backgroundColor = "#490b3d"
-	        break;
-	
-	    case 'ficm':
-	        // body of case N
-			page1.backgroundColor = "#ff6a3d"
-	        break;	
-    	default:
-        // body of default
+	//callbackFunction - specific to menu data - called from IDB OR fetch (edit)
+	window.onload = function() {
+		document.getElementById("para_loader").style.display = "block";
+		//check in IndexedDB - see if the sectionid passed through to pages matches the user indexedDB db
+		getUserInfo(cidb, gDataSource); //onload just checks the user indexedDB and Menu (to make sure the user should be able to see content)	
+			//--> from getUserInfo (async) 
+			//--> if No access then calls UserLogOut()
+			//--> 		on complete calls menu
+			//--> 			on complete calls pages
+		
+		
+		////*****onload needs to set active the current page... 
+		listElem = document.getElementById(url_id) //url_id from shared functions
+		expandorCollapseCurrent(listElem);
+
+		/*******event listeners*****/
+		document.getElementById("loginForm").onsubmit = function(e){
+			e.preventDefault();
+			handleLoginSubmit(gDataSource); //handleSubmit() in functions_idb.js --> fills IndexedDB with content based on login
+		}
+		const contentItems = document.querySelectorAll(".content");
+		contentItems.forEach(function(cItems) {
+			//alert(cItems);
+			addEvent(cItems);
+		});				
+		document.querySelector( 'a[href="#menu"]' )
+			.addEventListener( 'click', e => {
+				//alert("in query selector hash menu")
+				e.preventDefault();
+				changeNavState(); //called from functions_shared.js
+				//drawer.open();
+				//document.querySelector( '.mm-ocd--open' ).style.max-width = "20em";
+		});
+		document.body.addEventListener("click", function(e) {
+			// e.target was the clicked element
+			//beasts.indexOf('bison')
+			e.preventDefault();
+			//e.target.getAttribute('class').indexOf("collapsible") == "-1")
+			//alert(e.target.nodeName); //the expand and collapse sections are also buttons?
+			if(e.target.id == "submitBtn"){
+				handleLoginSubmit(gDataSource);				
+			}else if(e.target && e.target.nodeName == "A") {
+				if (e.target.href.indexOf("#menu") == -1) resolveLink(e);
+				//changePage();
+			}else{
+				//console.log ("on click with no event listener attached");
+			}
+		});
+		//document.body.addEventListener
+		//document.getElementById("searchbox").addEventListener("keypress", edValueKeyPress);
+		
+		/*******event listeners*****/
+	};	
+
+function edValueKeyPress(){
+	var edValue = document.getElementById("searchbox");
+	var s = edValue.value;
+search(cidb, "fstore", s);   
+}
+
+
+//add in other features of being loggedIn
+function UserLoggedIn (){
+	document.getElementById("loginForm").style.display = "none";	
+	document.getElementById("para_loader").style.display = "none";
+}
+//add in other features of being loggedIn
+function UserLogOut(){
+	document.getElementById("loginForm").style.display = "block";	
+		deleteDatabases("user"); //delete before recreating
+		deleteDatabases("menu"); //delete before recreating
+		deleteDatabases("pages"); //delete before recreating
+		//show login form. 				
+		document.getElementById("loginForm").onsubmit = function(e){
+			e.preventDefault();
+			handleLoginSubmit(gDataSource);
+		}
+	document.getElementById("para_loader").style.display = "none";
+}
+
+//********************************************************************//
+/* options: 
+1) link from Navigation
+2) link from Page 
+3) external link
+
+1) and 2) would end up expanding the navigation...
+to find if I have come from 1) I could navigate up the e.target tree.... 
+*/	
+function resolveLink(e){
+	//what target is in the link - issue with expanding navigation where -- contain current url, 
+	var loc_href = e.target.href 
+	//to get start of url to add on the new ID
+	var equalsLoc = loc_href.indexOf("?id=") + 4; //? + 3
+	var eTargetStart = loc_href.substring(0, equalsLoc); 
+	var eTargetID = loc_href.substring(equalsLoc, loc_href.length);
+	var bMenuLink = false;
+	var aLinks = new Array;
+	if (loc_href.indexOf("index.html") != -1) window.location = loc_href;
+	//var newurl_id = window.location.toString().split("?id=").pop();
+
+	//listElem needs expanding
+	var listElem = document.getElementById(eTargetID);	
+	//alert(eTargetID);
+	expandorCollapseCurrent(listElem);
+
+	//console.log(e.target.attributes); //href and class for menu e.targets...
+	if (e.target.attributes.length >1){
+		bMenuLink = true;
+	}
+	//**li id="10" aria-expanded="true"><a onclick="menuItem_click(event,10,8,4)" href="pages.html?id=10">General concepts 		
+	var parID, secID
+	try{
+		aLinks = navigateUpTree(listElem, aLinks, bMenuLink, 0); 
+		parID = aLinks[1]; 
+		secID = aLinks[aLinks.length-1]; 		
+		//alert(aLinks + "|||" + parID + " " + secID);
+		history.pushState('data to be passed', 'Page Title', loc_href);
+	}catch(e){
+		parID = 4;
+		secID = 4; 		
+	}
+	/*need to update so that pageid can be different*/
+	if (gPageDataSource == getRemotePageData){
+		getRemotePageData(eTargetID, eTargetID, parID, secID)
+	}else{
+		//***difference between pages.html and pages-edit.html
+		getIDBPageData(cidb, eTargetID, eTargetID, parID, secID); //getContent function in cPage class js file		
 	}
 
-//TESTING
-//console.log(page1.name); // John
-//console.log(page1.bgcolor); // John
-document.getElementById("header").style.backgroundColor = page1.bgcolor; 
-
-/*
-another form of syntax for fetching data.... 
-*/
-//fetch is alraedy an async function/process so just needs to be called and returned with .then.
-fetch("./assets/testdata.json")
-.then(response => response.json()) //NEW condensed.
-//.then (function (response){  //OLD
-//	return response.json();
-//})
-.then(function(data){
-//console.log("in then function()data"); // John
-	populateMenu(data);	
-})
-
-//populate();
-async function populate() {
-  const requestURL = './assets/testdata.json';
-  const request = new Request(requestURL);
-  const response = await fetch(request);
-  const menuData = await response.json();
-  //populateMenu(menuData);
-
-  const requestPageURL = './assets/testpagedata.json';
-  const requestPage = new Request(requestPageURL);
-  const responsePage = await fetch(requestPage);
-  const pageData = await responsePage.json();
-  populatePage(pageData);
-}
-
-//I do not need to do this with the menu as I can populate it from the indexedDB
-//so I just need to call cidb.fill?
-function populateMenu(obj) {
-  	const submenu = document.getElementById('submenu');
-	//console.log(obj['pageName']); // eg Physiology - root 
- menuString = "";
-        Object.entries(obj).forEach(([key, value]) => {
-			menuString += key + " " ;			 
-            //console.log(key);
-			menuString += value + "<br/>";
-          //  console.log(value);
-        });
-        //console.log('-------------------');
-  submenu.textContent = menuString;
-  console.log(menuString);
-}
-function populatePage(obj){
-	const myPara = document.getElementById("content");
-	myPara.textContent = `Hometown: ${obj['homeTown']} // Formed: ${obj['formed']}`;
-  	//header.appendChild(myPara);
+	//e.preventDefault();
+	//getUserInfo(cidb, gDataSource); //onload just checks the user indexedDB and Menu (to make sure the user should be able to see content)
+	//if comes from an a link then 				
 
 }
 
+//push into array then return array
+function navigateUpTree(_testElem, _aLinks, _bMenuLink, _count){
+	//only expand if link comes NOT from menu 
+	//console.log(typeof _testElem.id); //string
+	if (_testElem == null){
+		return;
+	}else if (_testElem.hasAttribute("id")){
+		if (_testElem.id == "html_menu"){
+			_aLinks.push(_testElem.firstChild.id); //push SectionID
+		}else{
+			_aLinks.push(_testElem.id);			
+		}
+		if (_bMenuLink == false) expandMenuElement(_testElem)
+		//alert(_testElem.nodeName + "||" + _testElem.id + "||" + _count );
+	}
+	_count = _count + 1;	
+	if (_testElem.id != "html_menu") navigateUpTree(_testElem.parentElement, _aLinks, _bMenuLink, _count) 
+	return _aLinks;
+}
+
+function expandMenuElement(_eElem){
+	_eElem.setAttribute('aria-expanded', "true");
+}
+
+function expandorCollapseCurrent(listElem){
+	try{
+		//if the link comes from navigation then open and close need not include the parent... 	
+		document.querySelectorAll('li').forEach(b=> {
+			//console.log("b=" + b + " " + b.getAttribute('class'));
+			if(b.getAttribute('class')!="no-break"){
+				//console.log("in NOT no-break" + b.getAttribute('class'));
+				b.removeAttribute('class')
+			}
+		});		
+		if (listElem != null){
+			if (listElem.getAttribute('class')!="no-break"){
+				if (listElem.getAttribute('aria-expanded') == 'false' || listElem.getAttribute('aria-expanded') ==  null) {
+					listElem.setAttribute('aria-expanded', "true");
+				} else {
+					listElem.setAttribute('aria-expanded', "false");
+					listElem.removeAttribute("class");
+				}			
+			}		
+			//console.log(listElem.id);
+			//console.log(listElem.nodeName);
+			listElem.setAttribute("class", "active");				
+			//console.log(listElem.getAttribute("class"));
+		}
+	}catch(e){ console.log ("Custom error : " + e)}
+
+}
+//********************************************************************//
+function menuItem_click(evt, _pageid, _parentid, _sectionid){
+	/*evt.preventDefault();
+	var parElem = evt.target.parentElement;
+	////evt.target will not bring back correct because we are preventing Default. //so does not change until we pushState
+	//alert("parElem" + parElem.id); 
+	//if (parElem.getAttribute('aria-expanded') == 'false' || parElem.getAttribute('aria-expanded') ==  null) {
+	//	parElem.setAttribute('aria-expanded', "true");
+	//} else {
+	//	parElem.setAttribute('aria-expanded', "false");
+	//	parElem.removeAttribute("class");
+	//}
+	let result2 = url.toString().includes("pages-edit");
+	//if (gEditView){
+	//	history.pushState('data to be passed', 'Page Title', "pages-edit.html?id=" + parElem.id);
+	//}else{
+	//	history.pushState('data to be passed', 'Page Title', "pages.html?id=" + parElem.id);
+	//}		
+	//alert(evt.target); //full URL - but could check for everything after id= then getElementById .. then change colour. 
+	//pages?id=11 - which may work - because 
+	document.querySelectorAll('li').forEach(b=> {if(b.getAttribute('class')!="no-break") b.removeAttribute('class')});
+	
+	var newurl_id = window.location.toString().split("?id=").pop();
+	//alert(newurl_id); //previous id 
+	var newurl_idElem = document.getElementById(newurl_id);
+	//alert("window.location;" + window.location.toString());
+	//alert("newurl_id=" + newurl_id);
+	newurl_idElem.setAttribute("class", "active");
+	//if (evt.target == "testing") parElem.setAttribute("class", "active");
+	//gPageDataSource - set above to indicate whether data is retrieved locally/remotely
+	if (gPageDataSource == getRemotePageData){
+		getRemotePageData(_pageid, newurl_id, _parentid, _sectionid)
+	}else{
+		//***difference between pages.html and pages-edit.html
+		getIDBPageData(cidb, newurl_id, _pageid, _parentid, _sectionid); //getContent function in cPage class js file		
+	}
+	*/
+	
+}
 </script>
 
 </body>

@@ -8,28 +8,201 @@
 
 <link rel="shortcut icon" type="image/jpg" href="./favicon.ico"/>
 
-  <link href="https://fonts.googleapis.com/css?family=Lexend+Exa&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./css/style.css">
-  <link rel="manifest" href="./manifest.json">
+		<link type="text/css" rel="stylesheet" href="./css/style.css" />
+		<link type="text/css" rel="stylesheet" href="./css/pages.css" />
+		<link type="text/css" rel="stylesheet" href="./css/menu.css" />
+		
+		<link rel="manifest" href="./manifest.json">
+		<!--class declaration--> 
+  		<script src="./js/cPage.js" ></script>
+  		<script src="./js/cMenu.js" ></script>
+		<!--DOES NOT WORK FOR SUB_SUB NAVIGATION ?ARIA issue-->
+		<script type="text/javascript" src="./simpleIDB/SimpleIDB.js"></script>
+		<script src="./js/functions_shared.js"></script>		
+		<!--include module for editor--> 
   
-  <script src="./js/page.js"></script>
-<script>
-window.addEventListener('load', ()=>{
-    console.log("in window load");	
-	if ("serviceWorker" in navigator) {
-	    try {
-      		navigator.serviceWorker.register('./serviceWorker.js');
-      		console.log("Service Worker Registered");
-    	} catch (error) {
-      		console.log("Service Worker Registration Failed");
+	<script>
+	window.addEventListener('load', ()=>{
+	    console.log("in window load");	
+		if ("serviceWorker" in navigator) {
+		    try {
+	      		navigator.serviceWorker.register('./serviceWorker.js');
+	      		console.log("Service Worker Registered");
+	    	} catch (error) {
+	      		console.log("Service Worker Registration Failed");
+			}
+	    }else{
+		    console.log("Service Worker not supported?");
 		}
-    }else{
-	    console.log("Service Worker not supported?");
-	}
-});
+	});
+	</script>
+
+<title>Stack</title>
+
+<head>
+<script>
+///Example code I'm not necessarily going to use. '
+//zlFetch - change back to fetch?
+//Global variables
+var idbUser = null;
+var idbMenu = null;
+var idbPages = null;
+var cidb = new SimpleIDB()
+
+async function basiclogin (email, password) {
+  const response = await zlFetch.post(loginEndpoint, {
+    auth: {
+      username: email,
+      password: password
+    },
+    body: { /*...*/ }
+  })
+}
+async function fromWhere (){
+	fetch("https://httpbin.org/basic-auth/user/passwd", {
+	  headers: new Headers({
+	    "Authorization": `Basic ${base64.encode(`${login}:${password}`)}`
+	  }),
+	}).then(response => {
+	  if (!response.ok) throw new Error(response.status);
+	  return response.json();
+	})
+}
+//////
+
+window.onload = function() {
+	document.getElementById("para_loader").style.display = "none";
+//reset just in case
+	deleteDatabases("user"); //delete before recreating
+	deleteDatabases("menu"); //delete before recreating
+	deleteDatabases("pages"); //delete before recreating
+
+	document.getElementById("loginForm").onsubmit = function(e){
+		e.preventDefault();
+		handleSubmit();
+	};	
+	//document.getElementById("submitBtn").addEventListener("submit", handleSubmit());
+}
+
+//attach event onsubmit
+
+async function handleSubmit () {
+	//...pass through username and password... 
+	//[sectionid, menupages, contentpages]
+	//[0] array used for information
+	var username = document.getElementById("username").value;
+	var password = document.getElementById("password").value;
+	document.getElementById("para_loader").style.display = "block";
+
+	fetch("https://sm5a54kkhi.execute-api.eu-west-1.amazonaws.com/default/listPages?username=" + username + "&password=" + password)
+		.then(response => response.json()) //NEW condensed
+		.then(data => { 
+			//if no section returned then data[0] = null otherwise section_id is data[0]
+			//if password incorrect then data[1] == "password incorrect" //data[1] contains empty array [] 
+			//try{
+			let array_length = data[1].length; 
+			if (array_length > 1){ //ie, if menupages array length contains more than 1 record.
+				indexdb_fill(data).then(() => { 
+					console.log(data);
+					if (data[0][0].section != NaN) window.location = "pages.html?id=" + data[0][0].section;
+				});
+			}else if(array_length == 1){ //if contains 1 record that record will be a "password incorrect" record
+				document.getElementById("passwordmessage").innerHTML = data[1][array_length-1];		
+				document.getElementById("loginForm").onsubmit = function(e){
+					e.preventDefault();
+					handleSubmit();
+				};
+			}	
+			//}catch(e){
+			//	document.getElementById("content_main").innerHTML += e
+			//}
+			document.getElementById("para_loader").style.display = "none";
+		}); 
+	//...don't think I need JWT at present'
+  	// Extract the JWT from the response
+  	//const { jwt_token } = await response.json()
+  	// Do something the token in the login method
+  	//await login({ jwt_token })
+}
+
+function deleteDatabases(_dbName){	
+	var req = indexedDB.deleteDatabase(_dbName);
+	req.onsuccess = function () {
+	    console.log("Deleted database successfully");
+	};
+	req.onerror = function () {
+	    console.log("Couldn't delete database");
+	};
+	req.onblocked = function () {
+	    console.log("Couldn't delete database due to the operation being blocked");
+	};
+}
+
+async function indexdb_fill(data){
+	
+	idbUser = await cidb.open("user", "fstore",  {
+            schema: { keyPath: "username", autoIncrement:false },
+	        index: 
+	            [
+	                ["username", "username", { unique: true }],
+	           ]     
+	          
+        })
+	idbMenu = await cidb.open("menu", "fstore",  {
+            schema: { keyPath: "id", autoIncrement:false },
+	        index: 
+	            [
+	                ["id", "id", { unique: true }],
+	                ["parentid", "parentid", { unique: false }] 
+	           ]     
+	          
+        })
+	//keyPath - which one do I want to use as key
+    idbPages = await cidb.open("pages", "fstore",  {
+            schema: { keyPath: "id", autoIncrement:false },
+	        index: 
+	            [
+	                ["id", "id", { unique: false }]
+	           ]     	          
+        })
+
+		//doesn't seem to check if already filled'
+		//console.log (data[0]);			
+		//console.log (data[0][0]);			
+
+		//console.log (data[1]);			
+		//console.log (data[1][0]);			
+
+		//console.log (data[2]);	
+						
+		//console.log(data[0][0].section);
+    	//displayAll(cidb, "storage")
+//addMarkers().then(() => doSomething());
+}
 </script>
-	<title>Stack</title>
-	
-	
-	
 </head>
+
+<body>
+	<div id="page">
+			<div class="header" id="header">
+				<!--//-->
+				<div class="text"><a href="#menu" class="menulines"><span></span></a><div id="section_title">FRCA Primary</div></div>
+				<!--//-->
+			</div>
+			<div class="headerimage"><img src="https://stackicm.s3.eu-west-1.amazonaws.com/criticalcare3.jpg"/></div>
+			<div class="content main" id="content_main">
+				<h3></h3><div id="para_loader"><p><div id="loading_text">loading ....</div><div class="lds-hourglass" id="loader"></div></p></div>
+				<form method="post" id="loginForm">
+	          		<label for="username">Email &nbsp;&nbsp;</label>
+	          		<input type="text" id="username" name="username" required><br/>
+	          		<label for="password">Password&nbsp;&nbsp;</label>
+	          		<input type="text" id="password" name="password" required><br/>
+          			<button type="submit" id="submitBtn">Login</button>
+				</form>
+				<p id="passwordmessage"></p>
+
+	</div>
+</div>
+		
+</body>
+</html>

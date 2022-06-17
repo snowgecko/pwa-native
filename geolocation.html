@@ -1,0 +1,122 @@
+<!---LOGIN PAGE--> 
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="theme-color" content="white" />
+
+<link rel="shortcut icon" type="image/jpg" href="./favicon.ico"/>
+
+  <link href="https://fonts.googleapis.com/css?family=Lexend+Exa&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/style.css">
+  <link rel="manifest" href="./manifest.json">
+  
+<script>
+window.addEventListener('load', ()=>{
+    console.log("in window load");	
+	if ("serviceWorker" in navigator) {
+	    try {
+      		navigator.serviceWorker.register('./serviceWorker.js');
+      		console.log("Service Worker Registered");
+    	} catch (error) {
+      		console.log("Service Worker Registration Failed");
+		}
+    }else{
+	    console.log("Service Worker not supported?");
+	}
+});
+</script>
+
+<script>
+fetch('https://mdn.github.io/learning-area/javascript/oojs/json/superheroes.json')
+  .then(response => response.json())
+  .then(data => console.log(data));
+/*
+var url = 'https://www.googleapis.com/geolocation/v1/geolocate?key=YOUR_KEY';
+var data = {some: json};
+  fetch(url, {
+    body: JSON.stringify(data),
+    headers: {
+      'dataType': 'json',
+      'content-type': 'application/json'
+    },
+    method: 'POST',
+    redirect: 'follow'
+  })
+  .then(response => {
+    if (response.status === 200) {
+      console.log(response.text());
+  } else {
+   throw new Error('Something went wrong on api server!');
+  }
+})
+.catch(error => {
+  console.error(error);
+});
+
+*/
+</script>
+
+<title>Stack</title>
+
+<div class="container">
+	<button id="show" class="btn">Show my location</button>
+	<div id="message">testing</div>
+</div>	
+	
+<script>
+    // check if the Geolocation API is supported
+    const message = document.querySelector("#message");
+
+    if (!navigator.geolocation) {
+        message.textContent = "Your browser doesn't support Geolocation";
+        message.classList.add('error');
+    }else{
+        message.textContent = "Your browser does support Geolocation";
+	}
+// handle click event
+    const btn = document.querySelector('#show');
+    btn.addEventListener('click', function () {
+        // get the current position
+        navigator.geolocation.getCurrentPosition(onSuccess, onError);
+    });
+// handle success case
+    function onSuccess(position) {
+        const {
+            latitude,
+            longitude
+        } = position.coords;
+
+        message.classList.add('success');
+        message.textContent = `Your location: (${latitude},${longitude})`;
+    }
+
+    // handle error case
+    function onError() {
+        message.classList.add('error');
+        message.textContent = `Failed to get your location!`;
+    }
+</script>
+<script src="geolocation.js"/>
+
+<!--https://data.mongodb-api.com/app/data-dvhsb/endpoint/data/beta-->
+<!--API key
+w9G1wfJxlt1fBSvHbh3FbrldksjqVeRWMtcw6HqAXVuuYVg4eH3CZa0xO2kFCmhG
+-->
+<!--
+curl --location --request POST 'https://data.mongodb-api.com/app/data-dvhsb/endpoint/data/beta/action/findOne' \
+--header 'Content-Type: application/json' \
+--header 'Access-Control-Request-Headers: *' \
+--header 'api-key: w9G1wfJxlt1fBSvHbh3FbrldksjqVeRWMtcw6HqAXVuuYVg4eH3CZa0xO2kFCmhG' \
+--data-raw '{
+    "collection":"<COLLECTION_NAME>",
+    "database":"stack",
+    "dataSource":"Cluster-stack",
+    "projection": {"_id": 1}
+}'
+-->
+	
+	
+</head>
+

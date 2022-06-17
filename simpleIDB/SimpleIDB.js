@@ -7,13 +7,24 @@
 */
 
 class SimpleIDB {
-    open(dname, sname, options) {
+	//open 
+/*
+onupgradeneeded is called when you change the db version : from no database to first version, first version to second version ...
+onsuccess is called each time you make a new request : even if the database schemas has not been changed.
+*/
+    open(dname, sname, options, _version) {
         this.dname=dname
         var sflag=("schema" in options)
         this.sflag=sflag
 	    return new Promise(function(resolve) {
-    	    var r = indexedDB.open(dname)
+    	    var r = null; 
+			if (_version){
+				r = indexedDB.open(dname, _version);				
+			}else{
+				r = indexedDB.open(dname);								
+			}
 		    r.onupgradeneeded = function(e) {
+			console.log("opened new indexedDB");
 		        var idb = r.result
 		        var store
 		        if(sflag)
@@ -43,14 +54,25 @@ class SimpleIDB {
 	    })
     }
 
+/*
+var store;
+  try {
+    store = request.transaction.objectStore('yourStore');
+  }
+  catch(e) {
+    store = db.createObjectStore('yourStore');
+}
+*/ 
     fill(idb, sname, arr) {
         let sflag=this.sflag
         return new Promise(function(resolve) {
 	        let tactn = idb.transaction(sname, "readwrite")
             var store = tactn.objectStore(sname)
 	        for(var obj of arr) {
-	            if(sflag)
+	            if(sflag){
+					if (idb.name == "user") obj.timestamp = Date.now();
    	       	        store.put(obj)
+				}
    	       	    else {
    	       	        let key = Object.keys(obj)[0]
    	       	        store.put(obj[key], key)
@@ -79,6 +101,32 @@ class SimpleIDB {
         })
     }
 
+//// Get the 'name' index from your 'friends' table.
+//var index = trans.objectStore("friends").index("name");
+
+	find(idb, sname, _svalue){
+		return new Promise(function(resolve) {
+			let tactn = idb.transaction(sname, "readonly")
+            let osc = tactn.objectStore(sname).openCursor()
+            var cont=[];
+			//new format = e => { }  rather than = function(e){}
+			osc.onsuccess = e => {
+				const cursor = e.target.result;
+				if (cursor) {
+	console.log(cursor.value.pagename + "|||" + _svalue);
+            		if (cursor.value.pagename === _svalue) {
+						cont.push(cursor.value)
+    	        	}
+	            	cursor.continue();
+        		}
+			}
+			tactn.oncomplete = function() {
+                idb.close()
+                resolve(cont)
+            }
+		});
+	}
+	
     read(sname, key) {
         var dname=this.dname
 	    return new Promise(function(resolve) {

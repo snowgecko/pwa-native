@@ -1,46 +1,68 @@
+/*if you take this away then the four lines for the drop-down call reduce in width */
 *{
 	 box-sizing: content-box;
 }
-body {
-	font-size: 14px;
+
+body, td {
+	font-size: 0.9em;
 	line-height: 22px;
 	color: #666;
-	position: relative;
+	/*position: relative;*/
 	-webkit-text-size-adjust: none;
 }
-.header nav {
-	display: none;
+html, body {
+  height: 100%;
 }
-.mainContent{
-	padding-left:2em;
+#page{
+	height:100%;	
 }
 .content {
-	padding: 10px 50px 50px 50px;
+	padding: 2em;
+    padding-left: 1em;
+	padding-top: 0.5em;
+	line-height: 170%;
 	text-align: left;
+	height:100%;
 }
-.main {
+.content table td {
+	padding: 0 0.5em 0 0.5em;
 }
-#page,#header{
-}
-.header,
+.content table td li{
+	padding: 0px;
+} 
+#header,
 .footer {
 	text-align: center;
 }
-.header,
+.alignright {
+	float:right;
+	text-align: right;
+}
+[aria-expanded="false"] ul{
+  display:none;
+}
+[aria-expanded="true"] ul{
+  display:block;
+}
+#header,
 .footer {
-	background: #4bb5ef;
-	font-size: 16px;
-	font-weight: bold;
-	color: #fff;
+	background: #fff;
 	line-height: 50px;
-
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 	width: 100%;
 	height: 50px;
 	padding: 0 50px;
+	position:fixed;
+	top:0px;
+	z-index:99;
 }
-.header.fixed {
+#header div.text{
+	font-size: 16px;
+	font-weight: bold;
+	color: #fff;
+}
+#header.fixed {
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -50,7 +72,8 @@ body {
 	bottom: 0;
 	left: 0;
 }
-.header a {
+/*just need this for the white lines box*/
+#header a.menulines {
 	display: block;
 	width: 28px;
 	height: 18px;
@@ -60,46 +83,181 @@ body {
 	top: 0;
 	left: 0;
 }
-.header a:before,
-.header a:after {
+
+#header a:before,
+#header a:after {
 	content: '';
 	display: block;
 	background: #fff;
 	height: 2px;
 }
-.header a span {
+#header a span {
 	background: #fff;
 	display: block;
 	height: 2px;
 	margin: 6px 0;
 }
+/*collapsable*/
+.collapsible {
+	color: white;
+	cursor: pointer;
+	padding: 10px 0px 10px 10px;
+	margin-top:5px;
+	width: 100%;
+	border: none;
+	text-align: left;
+	outline: none;
+	font-size: 15px;
+}
+.section1{
+	background-color: #1a2238;	
+}
+.section2{
+	background-color: #490b3d;	
+}
+.section3{
+	background-color: #ff6a3d;	
+}
+.section4{
+	background-color: #60c2d3;	
+}
+.section58{
+	background-color: #bd1e51;	
+}
+.col_content {
+padding: 0px 0px 0px 10px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+  background-color: #f1f1f1;
+width:100%;
+line-height: 160%;
+}
+.col_content p:first-child {
+    margin-top: 10px;
+}
+.col_content ol:first-child, .col_content ul:first-child {
+    margin-top: 10px;
+}
+.col_content:first-child {
+    margin-top: 10px;
+}
 
-#page{
+.content p, .content table{
+	margin-bottom:0.8em;
+	margin-top:0.5em;
+	width:99% !important;
 }
-#menu{
-	background-color:white;
+.content ol , .content ul {
+    display: block;
+    list-style-type: decimal;
+    margin-block-start: 0.25em;
+    margin-block-end: 0.5em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    padding-inline-start: 40px;
 }
-#menu span input{
-	border: solid grey 3px;
-}
-#menu, .mm-ocd__content, .mm-ocd--open{
-	width:20em;
-}
-.mm-ocd--open{
-	background: rgb(0 0 0 / 0%);
 
+.form_addcontent input.small {
+	margin:5px;
+	width: 4em;
 }
-.mmc-ocd{
-	transition-property: bottom, fff;
+.form_addcontent input.hidden {
+	visibility: hidden;
+	display: none;
 }
-.mm-ocd__content{
+.form_addcontent input.med {
+	margin:5px;
+	width: 20em;
 }
-.mm-ocd--open{
-	/*appears to go around multiple and wider than the menu*/
+.form_addcontent input.wide {
+	width:100%;
 }
-.mm-ocd__backdrop{
-	/*appears to go around multiple and wider than the menu*/
+.form_addcontent textarea.wide {
+	width:100%;
+	height:200px;
 }
-.mm-spn{
-	/*appears to go around multiple elements*/
+#questions{
+	padding:5px;
+}
+#questions p{
+	padding:20px 0 0 0;
+	font-weight:bold;
+}
+#questions p input{
+	width: 70%;
+}
+.loader {
+  border: 16px solid #f3f3f3; /* Light grey */
+  border-top: 16px solid #3498db; /* Blue */
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 2s linear infinite;
+display: inline block;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+#loading_text{
+	display:inline-block;
+}
+.lds-hourglass {
+  display: inline-block;
+  width: 100px;
+  height: 40px;
+}
+.lds-hourglass:after {
+  content: " ";
+  display: block;
+  border-radius: 50%;
+  width: 0;
+  height: 0;
+  margin-left: 20px;
+  box-sizing: border-box;
+  border: 26px solid #00FDFF;
+  border-color: #00FDFF transparent #00FDFF transparent;
+  animation: lds-hourglass 1.2s infinite;
+}
+@keyframes lds-hourglass {
+  0% {
+    transform: rotate(0);
+    animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+  }
+  50% {
+    transform: rotate(900deg);
+    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+  }
+  100% {
+    transform: rotate(1800deg);
+  }
+}
+.headerimage{
+	width: 100%;
+	height: 250px;
+	overflow: hidden;
+	display: block;
+}
+.headerimage img{
+	margin-left: 10%;
+	margin-top: -5%;
+  transform: translateX(-10%);
+}
+#loginForm{
+	display:none;
+}
+#form1{
+	display:none;
+}
+#para_loader{
+	display:none;
+}
+.disable-form {
+   /* Make form elements appear disabled against grey background */
+   background-color: gray;
+   opacity:0.5; 
+   /* Prevent user interaction with form while disabled */
+   pointer-events:none;
 }
