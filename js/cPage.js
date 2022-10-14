@@ -65,6 +65,7 @@ class Page {
 					this.pageid = arr;
 				}else if(key == "name"){
 					this.name = arr;
+					_pagecontent += "<h2>" + this.name + "</h2>"
 				}else if(key == "content"){
 					this.content = arr;
 				}else if(key == "questions"){

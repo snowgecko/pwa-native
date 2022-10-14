@@ -63,7 +63,7 @@ window.addEventListener('load', ()=>{
 			</div>
 			<div class="headerimage"><img src="https://stackicm.s3.eu-west-1.amazonaws.com/criticalcare3.jpg"/></div>
 			<div class="content main" id="content_main">
-				<h3></h3><div id="para_loader"><p><div id="loading_text">loading ....</div><div class="lds-hourglass" id="loader"></div></p></div>
+				<h3><!--does not appear after load--></h3><div id="para_loader"><p><div id="loading_text">loading ....</div><div class="lds-hourglass" id="loader"></div></p></div>
 				<!--content once the indexedDB is loaded-->
 				<p id="content">
 					<!--LOGIN START used on login page-->
@@ -83,7 +83,6 @@ window.addEventListener('load', ()=>{
 				</p>
 			</div>
 		</div>
-
 <script>
 	//*****global variables set in functions_shared.js
 	var cidb = new SimpleIDB();
