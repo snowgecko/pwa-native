@@ -11,6 +11,7 @@ class SimpleIDB {
 /*
 onupgradeneeded is called when you change the db version : from no database to first version, first version to second version ...
 onsuccess is called each time you make a new request : even if the database schemas has not been changed.
+var idb = await cidb.open("basename", "storename", { schema: s, index: i })
 */
     open(dname, sname, options, _version) {
         this.dname=dname

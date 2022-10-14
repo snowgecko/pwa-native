@@ -217,9 +217,10 @@ function resolveLink(e){
 		parID = 4;
 		secID = 4; 		
 	}
+	//****PROBLEM***** parsing "" instead of pageOrder
 	/*need to update so that pageid can be different*/
 	if (gPageDataSource == getRemotePageData){
-		getRemotePageData(eTargetID, eTargetID, parID, secID)
+		getRemotePageData(eTargetID, eTargetID, parID, "" , secID)
 	}else{
 		//***difference between pages.html and pages-edit.html
 		getIDBPageData(cidb, eTargetID, eTargetID, parID, secID); //getContent function in cPage class js file		
@@ -283,7 +284,7 @@ function expandorCollapseCurrent(listElem){
 
 }
 //********************************************************************//
-function menuItem_click(evt, _pageid, _parentid, _sectionid){
+function menuItem_click(evt, _pageid, _parentid, _pageorder, _sectionid){
 	/*evt.preventDefault();
 	var parElem = evt.target.parentElement;
 	////evt.target will not bring back correct because we are preventing Default. //so does not change until we pushState

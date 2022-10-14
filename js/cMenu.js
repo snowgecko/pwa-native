@@ -21,6 +21,13 @@ class Menu {
 		//if ((this._sectionid == null)|| (typeof this._sectionid == 'undefined')) this._sectionid = 0;
 		return this._parentid;
 	}
+	set pageorder(x){
+		this._pageorder = x;
+	}
+	get pageorder(){
+		//if ((this._sectionid == null)|| (typeof this._sectionid == 'undefined')) this._sectionid = 0;
+		return this._pageorder;
+	}
 	set sectionid(x){
 		this._sectionid = x;
 	}
@@ -71,7 +78,7 @@ class Menu {
 		        break;
 	    	default:
 		        // body of case default
-				this._bgcolor = "#fff"
+				this._bgcolor = "#bd1e51"
 		}		
 		document.getElementById("header").style.backgroundColor = this._bgcolor; 
 
@@ -97,7 +104,7 @@ class Menu {
 				this.sectionid = section_obj["sectionid"];
 				this.sectionname = section_obj["pagename"];
 				this.color = this.sectionid;	
-			if ((menu_obj["parentid"] == 0) || (_count == 5)){
+			if ((menu_obj["parentid"] == 0) || (_count == 10)){
 								
 			}else{
 				
@@ -154,7 +161,8 @@ class Menu {
 		var _count = 0;
 		var html_count_string = ""
 		var titleTarget = "", editViewUrl = "";
-		
+	
+		//console.log("menu_cont" + menu_cont); //object array	
 		//this.id is set in the setters and getters above when Menu class is instantiated.
 		//-----------finds SECTION details -------------------------///
 		//iterates up the tree to find the sectionID - can use to get an Array - starting with the sectionID and each [] node down.
@@ -193,9 +201,14 @@ class Menu {
 			
 			//console.log("page.id=" + page.id + " this.id=" + this.id);
 			//need to know if the page.id is a sub-or sub-sub page.etc. 
-			if(page.id == this.id) current_page = " class=\"active\" "; //can I open the parent page by using current class?
+			if(page.id == this.id) {
+				this.pageorder = page.pageorder;
+				current_page = " class=\"active\" "; //can I open the parent page by using current class?
+			}
 			//if (arr[1]==page.id) console.log ("arr[1]=page.id") //8,8 and 8,9
+//Object.keys(page).forEach(prop => console.log(prop))
 //console.log ("page.id=" + page.id) //8,8 and 8,9
+//console.log ("page.pageorder=" + page.pageorder) //8,8 and 8,9
 //console.log ("this.id" , this.id) //8,8 and 8,9	
 //console.log ("current_page=" + current_page) //8,8 and 8,9
 			if (arr[1]==page.id) bExpandedText = "true";
@@ -205,7 +218,7 @@ class Menu {
 			if (sCMenu[1] != 0 ) html_count_string = "<div class=\"right-align\">[" + sCMenu[1] + "]</div>";	
 			//aria-expanded=\"false\"  update to aria_expanded to true if arr[1]=page.id
 			_html_menu +=  "<li id='" + page.id + "' aria-expanded=\"" + bExpandedText + "\" " + current_page + ">"  
-			_html_menu +=  	"<a onclick=\"menuItem_click(event," + page.pageid + "," + page.parentid + "," + this.sectionid + ")\" href='pages.html?id=" +  page.id + "'" + current_page + ">" + page.pagename + html_count_string + "</a>";
+			_html_menu +=  	"<a onclick=\"menuItem_click(event," + page.pageid + "," + page.parentid + "," + page.pageorder + "," + this.sectionid + ")\" href='pages.html?id=" +  page.id + "'" + current_page + ">" + page.pagename + html_count_string + "</a>";
 			_html_menu +=  		sCMenu[0];			
 			_html_menu +=  "</li>";
 			_count = _count + 1
@@ -235,23 +248,27 @@ class Menu {
 				bExpandedText = "false";
 
 				//console.log("page.id=" + page.id + " this.id=" + this.id);
-				if(page.id == this.id) current_page = " class=\"active\" ";
+				if(page.id == this.id){
+					this.pageorder = page.pageorder;
+					current_page = " class=\"active\" ";
+				} 
 				if (_arr[2]==page.id) bExpandedText = "true";
 				//console.log("current_page=", current_page);
-
+//Object.keys(page).forEach(prop => console.log(prop))
+//console.log ("page.id=" + page.id) //8,8 and 8,9
+//console.log ("page.pageorder=" + page.pageorder) //8,8 and 8,9
 				//call populateSubPages to get substring and count 
 				sCMenu = this.populateSubPages(pages, page.id, "", 0, _arr); //passing through the whole pages data returned by json.fetch
 				//console.log("/////" + page.pagename + "|||" + sCMenu[0]+ "|||" + sCMenu[1] + "//////");
 				if (sCMenu[1] != 0 ) html_count_string = "<div class=\"right-align\">[" + sCMenu[1] + "]</div>";	
 				_html_menu = _html_menu + "<li id='" + page.id + "' aria-expanded=\"" + bExpandedText + "\" " + current_page + ">"  
-				_html_menu = _html_menu +	"<a onclick=\"menuItem_click(event," + page.pageid + "," + page.parentid + "," + this.sectionid + ")\" href='pages.html?id=" +  page.id + "'" + current_page + ">" + page.pagename + html_count_string + "</a>";
+				_html_menu = _html_menu +	"<a onclick=\"menuItem_click(event," + page.pageid + "," + page.parentid + "," + page.pageorder +"," + this.sectionid + ")\" href='pages.html?id=" +  page.id + "'" + current_page + ">" + page.pagename + html_count_string + "</a>";
 				_html_menu = _html_menu + sCMenu[0];			
 				_html_menu = _html_menu + "</li>";
 				_count = _count + 1
 				//[shared finish]
 	   		}
 		}	
-
 		_html_menu = _html_menu + "</ul>";
 		return [_html_menu, _count];				
 	}

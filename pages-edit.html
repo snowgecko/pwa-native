@@ -75,6 +75,7 @@
 						SID<input type="text"  id="editable_sectionid" class="small">
 						ParentID <input type="text"  id="editable_parentid" class="small">
 						PageID <input type="text"  id="editable_pageid" class="small">
+						PageOrder <input type="text"  id="editable_pageorder" class="small">
 						Page Name: <input type="text"  id="editable_name" class="med">
 						<input type="button" value="Add SubPage" onClick="addSubPgae()" class="alignright">
 						<br/>
@@ -106,12 +107,14 @@
 	var cidb = new SimpleIDB();
 	var bIsLoggedIn = false; //set this if logged in and content in IndexedDB
 
+	var gDataSource = getRemoteMenuData;
+	var gPageDataSource = getRemotePageData;
 
 	//callbackFunction - specific to menu data - called from IDB OR fetch (edit)
 	window.onload = function() {
 		document.getElementById("para_loader").style.display = "block";
 		//check in IndexedDB - to see if this user has rights to edit 
-		getUserInfo(cidb, getRemoteMenuData); //onload just checks the user indexedDB and Menu (to make sure the user should be able to see content)	
+		getUserInfo(cidb, gDataSource); //onload just checks the user indexedDB and Menu (to make sure the user should be able to see content)	
 		
 		//try {
 		//	getRemoteMenuData(url_id);	//function in cMenu.js		
@@ -188,7 +191,7 @@ function UserLoggedIn (){
 	document.getElementById("form1").style.display = "block";	
 }
 
-function menuItem_click(evt, _pageid, _parentid, _sectionid){
+function menuItem_click(evt, _pageid, _parentid, _pageorder, _sectionid){
 	evt.preventDefault();
 	var parElem = evt.target.parentElement;
 	////evt.target will not bring back correct because we are preventing Default. //so does not change until we pushState
@@ -211,7 +214,7 @@ function menuItem_click(evt, _pageid, _parentid, _sectionid){
 	newurl_idElem.setAttribute("class", "active");
 	//if (evt.target == "testing") parElem.setAttribute("class", "active");
 	
-	getRemotePageData(_pageid, parElem.id, _parentid, _sectionid)	
+	getRemotePageData(_pageid, parElem.id, _parentid, _pageorder, _sectionid)	
 }
 </script>
 

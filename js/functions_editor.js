@@ -24,6 +24,7 @@ async function savePage(){
 		parentid: document.getElementById("editable_parentid").value, 
 		sectionid: document.getElementById("editable_sectionid").value, 
 		pageid: document.getElementById("editable_pageid").value, 
+		pageorder: document.getElementById("editable_pageorder").value, 
 		"pagename": document.getElementById("editable_name").value, 
 		"content": tinyMCE.get('editable_content').getContent(), 
 		"questions" : "[" + writeSubArray() + "]"
@@ -47,6 +48,7 @@ function addSubPgae(){
 	var _menuid = "-1";
 	var _parentid = document.getElementById("editable_id").value;
 	var _sectionid =  document.getElementById("editable_sectionid").value;
+	var _pageorder =  1;
 	//create new blank (effectively) page object
 	let page = new Page("-1");  		
 
@@ -55,7 +57,7 @@ function addSubPgae(){
 	const obj = JSON.parse(jsonData);
 	console.log(obj.content);
 	//page.pageContentEdit(pagedata, _pageid, _menuid, _parentid, _sectionid);
-	page.pageContentEdit(obj, "-1", "-1", _parentid, _sectionid);
+	page.pageContentEdit(obj, "-1", "-1", _parentid, _pageorder, _sectionid);
 }
 
 /*add Questions dynamically*/
@@ -129,6 +131,7 @@ function download() {
 	jsonData  +=  	JSON.stringify("id") + ":" + JSON.stringify(document.getElementById("editable_id").value) + ","
 	jsonData  +=  	JSON.stringify("parentid") + ":" + JSON.stringify(document.getElementById("editable_parentid").value) + ","
 	jsonData  +=  	JSON.stringify("pageid") + ":" + JSON.stringify(document.getElementById("editable_pageid").value) + ","
+	jsonData  +=  	JSON.stringify("pageorder") + ":" + JSON.stringify(document.getElementById("editable_pageorder").value) + ","
 	jsonData  +=  	JSON.stringify("pagename") + ":" + JSON.stringify(document.getElementById("editable_name").value) + ","
 	jsonData  +=  	JSON.stringify("content") + ":" + JSON.stringify(tinyMCE.get('editable_content').getContent()) + ","
 	jsonData  += "\"questions\": [";

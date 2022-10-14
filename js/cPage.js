@@ -48,7 +48,7 @@ class Page {
 	  }
 	}
 	//page.pageContentEdit(pagedata, _pageid, _url_id, _parentid, _sectionid);
-	pageContent(data, _pageid, _menuid, _parentid, _sectionid){
+	pageContent(data, _pageid, _menuid, _parentid, _pageorder, _sectionid){
 		var _pagecontent = "";
 		var jsonQObjects, page_content;
 
@@ -98,7 +98,7 @@ class Page {
 		}
 	}
 	//page.pageContentEdit(pagedata, _pageid, _url_id, _parentid, _sectionid);
-	JSONPageContent(page_cont, _pageid, _menuid, _parentid, _sectionid){
+	JSONPageContent(page_cont, _pageid, _menuid, _parentid, _pagecontent, _sectionid){
 		var _pagecontent = "", _qpagecontent = "";
 		var jsonQObjects, page_content;
 //console.log(page_cont);
@@ -136,7 +136,7 @@ class Page {
 			pagecontent_Target.innerHTML = "No page match";			
 	}
 	//page.pageContentEdit(pagedata, _pageid, _url_id, _parentid, _sectionid);
-	pageContentEdit(data, _pageid, _menuid, _parentid, _sectionid){
+	pageContentEdit(data, _pageid, _menuid, _parentid, _pageorder, _sectionid){
 		if (_pageid != null){
 			//console.log("_pageid != null");
 			console.log("_pageid=" + _pageid);
@@ -152,6 +152,9 @@ class Page {
 
 			var page_editable_parentid = document.getElementById('editable_parentid');
 			page_editable_parentid.value = _parentid;
+
+			var page_editable_pageorder = document.getElementById('editable_pageorder');
+			page_editable_pageorder.value = _pageorder;
 
 			var page_editable_sectionid = document.getElementById('editable_sectionid');
 			page_editable_sectionid.value = _sectionid;

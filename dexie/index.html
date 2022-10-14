@@ -1,121 +1,84 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <title>Extended indexedDB queries using Dexie.js</title>
-    <script>
-        if (!(window.indexedDB || window.window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB))
-            // Pull down the polyfill if needed (Safari + older opera browser)
-            document.write('<script src="IndexedDBShim.min.js">\x3C/script>');
-    </script>
-    <script type="text/javascript" src="Dexie.js"></script>
-    <script>
-        //
-        // App global database instance and schema
-        //
-        var db = new Dexie("MyDB");
-        db.version(1).stores({
-            friends: "++id,name,shoeSize"
-        });
-        db.open();
+  <script src="dexie.js"></script>
+  <script>
 
-        //
-        // Populate some data
-        //
-        function populateSomeData() {
-            log("Populating some data", "heading");
-            return db.transaction("rw", db.friends, function (friends) {
-                friends.clear();
-                friends.add({ name: "David", shoeSize: 43 });
-                friends.add({ name: "Ylva", shoeSize: 37 });
-                friends.add({ name: "Jon", shoeSize: 44 });
-                friends.add({ name: "Måns", shoeSize: 42 });
-                friends.add({ name: "Daniel", shoeSize: 39 });
-                friends.add({ name: "Nils", shoeSize: 45 });
-                friends.add({ name: "Zlatan", shoeSize: 47 });
-                // Log data from DB:
-                friends.orderBy('name').each(function (friend) {
-                    log(JSON.stringify(friend));
-                });
-            }).catch(function (e) {
-                log(e, "error");
-            });
-        }
+	//does new Dexie overwrite a current db?
+    var db = new Dexie("Stack");
 
-        //
-        // Examples
-        //
-        function equalsAnyOf() {
-            log("db.friends.where('name').anyOf('David', 'Zlatan', 'Daniel')", "heading");
-            return db.friends.where('name').anyOf('David', 'Zlatan', 'Daniel')
-                             .each(function (friend) {
-                                 log(JSON.stringify(friend));
-                             });
-        }
+	// Define Database Schema
+	//value for USER contains json password, testing, timestamp, username, version, _id (mongo)
+	//value for MENU contains json id, pageid, pagename, parentid, sectionid, _id (mongo)
+	//value for PAGES contains json id, pageid, pagename, parentid, sectionid, _id (mongo)
+	db.version(1).stores({
+	  user: "++id, value",
+	  menu: "++id, name, age",
+	  pages: "++id, value",
+	});
 
-        function equalsIgnoreCase() {
-            log("db.friends.where('name').equalsIgnoreCase('david')", "heading");
-            return db.friends.where('name').equalsIgnoreCase('david')
-                             .each(function (friend) {
-                                 log(JSON.stringify(friend));
-                             });
-        }
+	var jsonData1 = returnData(1);
+	var jsonData2 = returnData(2);
+	var jsonData3 = returnData(3);
+	var jsonData4 = returnData(4);
+	 
+	//console.log (jsonData1);
+    // Now add some values.
+	db.menu.bulkPut([
+      { id: 1, name: "Josephine", age: 21 },
+      { id: 2, name: "Per", age: 75 },
+      { id: 3, name: "Simon", age: 5 },
+      { id: 4, name: "Sara", age: 50, notIndexedProperty: 'foo' }
+    ]).then(() => {
 
-        function startsWithIgnoreCase() {
-            log("db.friends.where('name').startsWithIgnoreCase('da')", "heading");
-            return db.friends.where('name').startsWithIgnoreCase('da')
-                             .each(function (friend) {
-                                 log(JSON.stringify(friend));
-                             });
-        }
+      return db.menu.toArray(); //.where("age").between(0, 25).toArray();
 
-        function logicalOR() {
-            log("db.friends.where('name').startsWithIgnoreCase('da').or('shoeSize').below(40)", "heading");
-            return db.friends.where('name').startsWithIgnoreCase('da')
-                             .or('shoeSize').below(40)
-                             .each(function (friend) {
-                                 log(JSON.stringify(friend));
-                             });
-        }
+    }).then(menu => {
+		
+      alert("Found menu: " + menu.map(menu => menu.id));
 
-        function logicalAND() {
-            log("db.friends.where('name').startsWithIgnoreCase('da').and(function (friend) { return friend.shoeSize > 40; })", "heading");
-            return db.friends.where('name').startsWithIgnoreCase('da')
-                .and(function (friend) { return friend.shoeSize > 40; })
-                .each(function (friend) {
-                    log(JSON.stringify(friend));
-                });
-        }
+      return db.menu.toArray();
 
-        //
-        // Helpers
-        //
-        function log(txt, clazz) {
-            var li = document.createElement('li');
-            li.textContent = txt.toString();
-            if (clazz) li.className = clazz;
-            document.getElementById('log').appendChild(li);
-        }
+    }).then(menu => {
 
-        function runSamples() {
-            populateSomeData()
-                .then(equalsAnyOf)
-                .then(equalsIgnoreCase)
-                .then(startsWithIgnoreCase)
-                .then(logicalOR)
-                .then(logicalAND)
-            .catch(function (e) {
-                log(e, "error");
-            });
-        }
+		const friendsContainingLetterA = db.menu
+	    	.filter(menuItem => /im/i.test(menuItem.name))
+	    	.toArray();
+		console.log (friendsContainingLetterA);
+		return friendsContainingLetterA;
 
-    </script>
-    <style>
-        li {list-style-type:none;}
-        .error { color: red; }
-        .heading { color: #808080; margin-top: 12px;}
-    </style>
+    }).then(menu => {
+
+      alert("Menu id's': " +
+        menu.map(menu => `${menu.id}`));
+
+      return db.menu.where('name').startsWith("S").keys();
+
+	
+	}).then(menu_names => {
+
+      	alert("Menu names on 'S': " + menu_names);		   		
+	
+	}).catch(err => {
+
+      alert("Ouch... " + err);
+
+    });
+
+function returnData(_id){
+		var jsonData = JSON.stringify({ 
+		id: _id, 
+		parentid: _id, 
+		sectionid: _id, 
+		pageid: _id, 
+		"pagename": "testing pagename", 
+		"content": "testing pagecontent ", 
+		"questions" : "[questions array]"
+	})
+	let parsedData = JSON.parse(jsonData);
+
+	return parsedData;
+}
+  </script>
 </head>
-<body onload="runSamples();">
-    <ul id="log"></ul>
-</body>
-</html> 
+</html>

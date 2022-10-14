@@ -20,7 +20,8 @@ async function indexdb_fill(data){
 	        index: 
 	            [
 	                ["id", "id", { unique: true }],
-	                ["parentid", "parentid", { unique: false }] 
+	                ["iparentid", "parentid", { unique: false }],
+	                ["ipagename", "pagename", { unique: false }] 
 	           ]     
 	          
         })
@@ -53,12 +54,6 @@ async function indexdb_fill(data){
 getUserInfo : passes through cidb object - ie, IndexedDb (new SimpleIDB)
 callbackFunction : either getRemoteMenuData or IDBMenuData
 --- passes url_id from functions_shared : url_id = urlParams.get('id');
-//change to https://www.loginradius.com/blog/engineering/callback-vs-promises-vs-async-await/
-//eg const getIDBMenuPromise = new Promise((resolve, reject) => {
-	//then call it using  getIDBMenuPromise
-	//						.then(getIDBPagePromise)
-	//						.then(success-result) ==>
-	//						.catch(fail)
 */
 async function getUserInfo(cidb, callbackFunction){
 	var idbUser;
@@ -165,11 +160,20 @@ async function getIDBPageData(cidb, _menuid, _pageid, _parentid, _sectionid){
 
 //on return or keypress then run this search() function
 async function search(cidb, _sstore , _searchterm){
+	//var idb = await cidb.open("basename", "storename", { schema: s, index: i })
 	idbMenu = await cidb.open("menu", "fstore",  {
             schema: { keyPath: "id", autoIncrement:false },
+			index: 
+	            [
+	                ["iparentid", "iparentid", { unique: false }], 
+	                ["ipagename", "ipagename", { unique: false }] 
+	           ]     
     })
-	var search_content = await cidb.find(idbMenu, "fstore", _searchterm);
-	console.log (search_content);
+//	                ["iparentid", "parentid", { unique: false }],
+//	                ["ipagename", "pagename", { unique: false }] 
+
+	var aIdentfiers = await cidb.getIndex("fstore", "pagename", _searchterm)
+	console.log (aIdentfiers)
 }
 
 //delete All three databases.
@@ -211,15 +215,17 @@ function getRemoteMenuData(cidb, _menuid, _sectionid){
 			//console.log("in getMenu then statement=" + data[1])
 			menu.filter_populateMenu(data[1], _menuid, _sectionid, "remote") //prints out menu of section we are in --> see cMenu.js
 			//console.log ("_url_id" + _url_id);
-			//console.log ("menu.pageid" + menu.pageid);
-			getRemotePageData(menu.pageid, _menuid, menu.parentid, menu.sectionid); //getContent function in cPage class js file
+			//console.log ("menu.pageorder" + menu.pageorder);
+			getRemotePageData(menu.pageid, _menuid, menu.parentid, menu.pageorder, menu.sectionid); //getContent function in cPage class js file
 			//primary_nav.sectionid
+console.log("menu.parentid" + menu.parentid);
+console.log("menu.pageorder" + menu.pageorder);
 			document.getElementById("para_loader").style.display = "none";
 		})
 }	
 //called from getMenu as data needed from menu.json to populate page. 
 //call listPages - ie --> return data from ListPages lamda from Pages data. 
-function getRemotePageData(_pageid, _menuid, _parentid, _sectionid){
+function getRemotePageData(_pageid, _menuid, _parentid, _pageorder, _sectionid){
 	//instatiate page class  
 	//console.log("IN getContent()=" + _pageid)
 	let page = new Page(_pageid);  	
@@ -231,9 +237,9 @@ function getRemotePageData(_pageid, _menuid, _parentid, _sectionid){
 		  .then((pagedata) => {
 				//console.log(gEditView);
 				if(gEditView){
-					page.pageContentEdit(pagedata[1], _pageid, _menuid, _parentid, _sectionid);				
+					page.pageContentEdit(pagedata[1], _pageid, _menuid, _parentid, _pageorder, _sectionid);				
 				}else{
-					page.pageContent(pagedata[1], _pageid, _menuid, _parentid, _sectionid);
+					page.pageContent(pagedata[1], _pageid, _menuid, _parentid, _pageorder, _sectionid);
 				}
 				//console.log("in getContent after then statement _url_id=" + _url_id)
 				//console.log("pagedata[0]=" + pagedata[0]);
