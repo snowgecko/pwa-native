@@ -18,11 +18,13 @@ function updatePage(_pageid, _id, _parentid, _sectionid){
 async function savePage(){
 	//posted id to addPage is menuid - as addpage adds record to Menu and Pages data
 	document.getElementById("content_main").classList.add("disable-form");
+	var menuID = document.getElementById("editable_id").value;
+	var secID = document.getElementById("editable_sectionid").value;
 //element.classList.add("mystyle");
 	var jsonData = JSON.stringify({ 
-		id: document.getElementById("editable_id").value, 
+		id: menuID, 
 		parentid: document.getElementById("editable_parentid").value, 
-		sectionid: document.getElementById("editable_sectionid").value, 
+		sectionid: secID, 
 		pageid: document.getElementById("editable_pageid").value, 
 		pageorder: document.getElementById("editable_pageorder").value, 
 		"pagename": document.getElementById("editable_name").value, 
@@ -39,6 +41,10 @@ async function savePage(){
 	//console.log(parsedData.id)
 	//console.log(parsedData.pageid)
 	alert("Saved Page");
+	//getRemoteMenuData(cidb, _menuid, _sectionid) in functions.data.js
+	//cidb - declared at the top of pages.html and pages-edit.html
+	getMenuRemote(cidb, menuID, secID); //var x = await **calls different function based on edit or NOT edit */ //getIDBMenuData(cidb, url_id, sectionid);				
+
 	document.getElementById("content_main").classList.remove("disable-form");
 	//document.getElementById("form1").disabled = false;
 }	
