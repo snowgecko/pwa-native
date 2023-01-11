@@ -57,6 +57,7 @@ window.addEventListener('load', ()=>{
 							</div>
 							<li><a href="#">About</a></li>
 				      		<li><a href="#">Contact</a></li>
+							<li><a href="#" id="logout">logout (exit)</a></li>
 						</ul>
 					</div>
 				</div>
@@ -66,7 +67,13 @@ window.addEventListener('load', ()=>{
 				<h3><!--does not appear after load--></h3><div id="para_loader"><p><div id="loading_text">loading ....</div><div class="lds-hourglass" id="loader"></div></p></div>
 				<!--content once the indexedDB is loaded-->
 				<p id="content">
-					<!--LOGIN START used on login page-->
+					<!--used on content pages-->
+					<div class="element"></div>
+					<div id="questions"></div>
+				</p>
+			</div>
+			<div id="login_main">			
+				<!--LOGIN START used on login page-->
 					<form method="post" id="loginForm">
 						<h3>Login</h3>
 		          		<label for="username">Email &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
@@ -76,11 +83,9 @@ window.addEventListener('load', ()=>{
 	          			<button type="submit" id="submitBtn">Login</button>
 					</form>
 					<p id="passwordmessage"></p>
+					<!--//-->
 					<!--LOGIN END used on login page-->
-					<!--used on content pages-->
-					<div class="element"></div>
-					<div id="questions"></div>
-				</p>
+				<p><a href="#" id="logout">logout (exit)</a></p>
 			</div>
 		</div>
 <script>
@@ -94,11 +99,19 @@ window.addEventListener('load', ()=>{
 	var listElem; 
 	//IF YOU WANT TO GET THE DATA FROM MONGO THEN PASS getRemoteMenuData into getUserInfo AND in UserLogOut below
 	
+	//<div class="content main textsection1" id="content_main">
+	//<h2>FRCA Primary</h2>
+	//<p id="content"> //everything written dynamically... 
+	//lost the login form entirely. 
+	
+	
 	//callbackFunction - specific to menu data - called from IDB OR fetch (edit)
 	window.onload = function() {
+		document.getElementById("loginForm").style.display = "none";
 		document.getElementById("para_loader").style.display = "block";
 		//check in IndexedDB - see if the sectionid passed through to pages matches the user indexedDB db
 		getUserInfo(cidb, gDataSource); //onload just checks the user indexedDB and Menu (to make sure the user should be able to see content)	
+		//**in functions_data.js
 			//--> from getUserInfo (async) 
 			//--> if No access then calls UserLogOut()
 			//--> 		on complete calls menu
@@ -114,6 +127,8 @@ window.addEventListener('load', ()=>{
 			e.preventDefault();
 			handleLoginSubmit(gDataSource); //handleSubmit() in functions_idb.js --> fills IndexedDB with content based on login
 		}
+//alert("onload" + document.getElementById("loginForm"));
+
 		const contentItems = document.querySelectorAll(".content");
 		contentItems.forEach(function(cItems) {
 			//alert(cItems);
@@ -134,7 +149,13 @@ window.addEventListener('load', ()=>{
 			//e.target.getAttribute('class').indexOf("collapsible") == "-1")
 			//alert(e.target.nodeName); //the expand and collapse sections are also buttons?
 			if(e.target.id == "submitBtn"){
-				handleLoginSubmit(gDataSource);				
+				handleLoginSubmit(gDataSource);		//handleLoginSubmit() in functions_shared.js
+				//check this to see if the object goes... 		
+			}else if(e.target && e.target.id == "logout") {
+				changeNavState();
+				//the login form in null?? don't know why'
+				//what about set sectionid == null
+				UserLogOut();
 			}else if(e.target && e.target.nodeName == "A") {
 				if (e.target.href.indexOf("#menu") == -1) resolveLink(e);
 				//changePage();
@@ -155,24 +176,6 @@ search(cidb, "fstore", s);
 }
 
 
-//add in other features of being loggedIn
-function UserLoggedIn (){
-	document.getElementById("loginForm").style.display = "none";	
-	document.getElementById("para_loader").style.display = "none";
-}
-//add in other features of being loggedIn
-function UserLogOut(){
-	document.getElementById("loginForm").style.display = "block";	
-		deleteDatabases("user"); //delete before recreating
-		deleteDatabases("menu"); //delete before recreating
-		deleteDatabases("pages"); //delete before recreating
-		//show login form. 				
-		document.getElementById("loginForm").onsubmit = function(e){
-			e.preventDefault();
-			handleLoginSubmit(gDataSource);
-		}
-	document.getElementById("para_loader").style.display = "none";
-}
 
 //********************************************************************//
 /* options: 

@@ -245,6 +245,11 @@ display: inline block;
 	margin-top: -5%;
   transform: translateX(-10%);
 }
+#login_main{
+            position: sticky;
+            top: 0px;
+            padding: 10px 0px;
+}
 #loginForm{
 	display:none;
 }

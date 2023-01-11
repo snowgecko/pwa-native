@@ -75,6 +75,8 @@ async function getUserInfo(cidb, callbackFunction){
 		sectionid = x["section"];	
 		timestamp = x["timestamp"];	
 	}    
+	console.log("username=" + username);
+	console.log("sectionid=" + sectionid);
 	//if sectionid == null then just set Boolean and leave page as Login page and do no more 
 	if (sectionid == null) {
 		//console.log ("sectionid==null");
@@ -86,9 +88,10 @@ async function getUserInfo(cidb, callbackFunction){
 		//console.log("bLogginIn = true");	
 		bIsLoggedIn = true;	
 		//*** asynchronous function that gets Menu and Page data - either getIDBMenuData or getMenuRemote[edit only]**//////
-		callbackFunction(cidb, url_id, sectionid); //var x = await **calls different function based on edit or NOT edit */ //getIDBMenuData(cidb, url_id, sectionid);				
+		//***WEDNESDAY changed this recently from url_id to sectionid */
+		callbackFunction(cidb, sectionid, sectionid); //var x = await **calls different function based on edit or NOT edit */ //getIDBMenuData(cidb, url_id, sectionid);				
+		//REPLACE AT SOME POINT WITH INDEX PAGE CODE.
 		//***call function to display loggedIn user */
-		
 		UserLoggedIn(); //just hide the login box etc. (page.html)
 	}
 	/** call remote User info here - timestamp */	
@@ -177,11 +180,16 @@ async function search(cidb, _sstore , _searchterm){
 }
 
 //delete All three databases.
+
 function deleteDatabases(_dbName){	
 	var req = indexedDB.deleteDatabase(_dbName);
 	req.onsuccess = function () {
 	    console.log("Deleted database successfully");
 	};
+req.onblocked = function(e) {
+  console.log("blocked: " + e);
+  // Close connections here
+};
 	req.onerror = function () {
 	    console.log("Couldn't delete database");
 	};
@@ -220,7 +228,7 @@ function getRemoteMenuData(cidb, _menuid, _sectionid){
 			//primary_nav.sectionid
 console.log("menu.parentid" + menu.parentid);
 console.log("menu.pageorder" + menu.pageorder);
-			document.getElementById("para_loader").style.display = "none";
+			//document.getElementById("para_loader").style.display = "none";
 		})
 }	
 //called from getMenu as data needed from menu.json to populate page. 

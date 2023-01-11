@@ -119,15 +119,17 @@ class Menu {
 		
 	}
 	//iterate up pages tree to find the parent node
+	//** */TYPE ERROR 127 when ID no go.... fix with error trapping**
 	findSection(menu_cont, _id, _count, _arr){
-		//console.log("_id" + parseInt(_id));	
+		console.log("_id" + parseInt(_id));	
+		console.log("menu_cont=" + menu_cont[0].id);
 		let menu_obj = menu_cont.find(el => el.id === parseInt(_id));
 		if (_count == 0) {
 			this.pageid = menu_obj["pageid"];
 			this.parentid = menu_obj["parentid"];
-			//console.log ("page[\"pageid\"]" + page["pageid"]);
-			//console.log ("pageid" + this.pageid);
-			//console.log ("parentid" + this.parentid);
+			console.log ("page[\"pageid\"]" + page["pageid"]);
+			console.log ("pageid" + this.pageid);
+			console.log ("parentid" + this.parentid);
 		}
 		//console.log (page["parentid"]);
 		if ((menu_obj["parentid"] == 0) || (_count == 5)){

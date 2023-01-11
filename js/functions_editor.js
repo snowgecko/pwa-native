@@ -43,7 +43,7 @@ async function savePage(){
 	alert("Saved Page");
 	//getRemoteMenuData(cidb, _menuid, _sectionid) in functions.data.js
 	//cidb - declared at the top of pages.html and pages-edit.html
-	getMenuRemote(cidb, menuID, secID); //var x = await **calls different function based on edit or NOT edit */ //getIDBMenuData(cidb, url_id, sectionid);				
+	getRemoteMenuData(cidb, menuID, secID); //var x = await **calls different function based on edit or NOT edit */ //getIDBMenuData(cidb, url_id, sectionid);				
 
 	document.getElementById("content_main").classList.remove("disable-form");
 	//document.getElementById("form1").disabled = false;

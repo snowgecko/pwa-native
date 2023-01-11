@@ -27,7 +27,7 @@ async function handleLoginSubmit (callbackFunction) {
 	var username = document.getElementById("username").value;
 	var password = document.getElementById("password").value;
 	///
-	document.getElementById("para_loader").style.display = "block";
+	//document.getElementById("para_loader").style.display = "block";
 
 	fetch("https://sm5a54kkhi.execute-api.eu-west-1.amazonaws.com/default/listPages?username=" + username + "&password=" + password)
 		.then(response => response.json()) //NEW condensed
@@ -40,7 +40,7 @@ async function handleLoginSubmit (callbackFunction) {
 			if (array_length > 1){ //ie, if menupages array length contains more than 1 record.
 				indexdb_fill(data).then(() => { 
 					//console.log(data);
-					document.getElementById("loginForm").style.display = "none";	
+					//document.getElementById("loginForm").style.display = "none";	
 					getUserInfo(cidb, callbackFunction); //calls menu from UserInfo function			
 					//if (data[0][0].section != NaN) window.location = "pages.html?id=" + data[0][0].section;
 				});
@@ -54,7 +54,8 @@ async function handleLoginSubmit (callbackFunction) {
 			//}catch(e){
 			//	document.getElementById("content_main").innerHTML += e
 			//}
-			document.getElementById("para_loader").style.display = "none";
+			//alert(document.getElementById("loginForm"));
+			//document.getElementById("para_loader").style.display = "none";
 		}); 
 	//...don't think I need JWT at present'
   	// Extract the JWT from the response
@@ -88,6 +89,7 @@ function addEvent(cItem){
 	cItem.addEventListener( 'click', evnt => {
 		//check to see if menuItem if menuItem check to see if has Children
 		//evnt.preventDefault();
+//alert("addEvent" + document.getElementById("loginForm")); //null
 		closeNav();
 	});
 }
@@ -99,6 +101,8 @@ function changeNavState() {
 	}else{
 		sideNav.style.width = "0px";
 		sideNav.setAttribute('class', "sidenav");
+//id="content"
+	//alert("changeNavState=" + document.getElementById("content")); //null
 	}
 }
 function closeNav() {
@@ -106,6 +110,33 @@ function closeNav() {
 	sideNav.style.width = "0";
 	sideNav.setAttribute('class', "sidenav");
 	//document.getElementById("main").style.marginLeft= "0";
+}
+
+
+//add in other features of being loggedIn
+function UserLoggedIn (){
+	//document.getElementById("loginForm").style.display = "none";	
+	//document.getElementById("para_loader").style.display = "none";
+	document.getElementById("content_main").style.display = "block";
+	document.getElementsByClassName('content')[0].style.height = '100%';
+}
+//add in other features of being loggedIn
+function UserLogOut(){
+	//alert("in UserLogOut")
+	document.getElementsByClassName('content')[0].style.height = '0%';
+	document.getElementById("content_main").style.display = "none";
+	document.getElementById("loginForm").style.display = "block";	
+console.log("just before deleting datbases");
+		deleteDatabases("user"); //delete before recreating
+		deleteDatabases("menu"); //delete before recreating
+		deleteDatabases("pages"); //delete before recreating
+		//show login form. 				
+		document.getElementById("loginForm").onsubmit = function(e){
+			e.preventDefault();
+console.log("just before handleLoginSubmit");
+			handleLoginSubmit(gDataSource);
+		}
+	//document.getElementById("para_loader").style.display = "none";
 }
 
 
