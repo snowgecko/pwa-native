@@ -1,6 +1,7 @@
 /*if you take this away then the four lines for the drop-down call reduce in width */
 *{
 	 box-sizing: content-box;
+	font-family: Helvetica, Sans-Serif;
 }
 
 body, td {
@@ -17,8 +18,7 @@ html, body {
 	height:100%;	
 }
 .content {
-	padding: 2em;
-    padding-left: 1em;
+    padding: 2em;
 	padding-top: 0.5em;
 	line-height: 170%;
 	text-align: left;
@@ -42,6 +42,12 @@ html, body {
   display:none;
 }
 [aria-expanded="true"] ul{
+  display:block;
+}
+[open="false"] ul{
+  display:none;
+}
+[open="true"] ul{
   display:block;
 }
 #header,
@@ -236,7 +242,7 @@ display: inline block;
 }
 .headerimage{
 	width: 100%;
-	height: 250px;
+	height: 10px;
 	overflow: hidden;
 	display: block;
 }
@@ -246,18 +252,20 @@ display: inline block;
   transform: translateX(-10%);
 }
 #login_main{
-            position: sticky;
-            top: 0px;
-            padding: 10px 0px;
+	margin-top: 20px;
+	padding: 0em 0em 1em 1em;
+	position: sticky;
 }
 #loginForm{
 	display:none;
 }
 #form1{
+	padding:1em;
 	display:none;
 }
 #para_loader{
-	display:none;
+	/*display:none;*/
+	visibility:hidden;
 }
 .disable-form {
    /* Make form elements appear disabled against grey background */
@@ -266,3 +274,4 @@ display: inline block;
    /* Prevent user interaction with form while disabled */
    pointer-events:none;
 }
+

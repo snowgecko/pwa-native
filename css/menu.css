@@ -99,9 +99,16 @@ text-overflow: ellipsis;
 li[aria-expanded="true"] ul li{
 	display:block;
 }
-/*li[aria-expanded="true"] ul li a{
-	color: #60c2d3;
-}*/
+li[aria-expanded="false"] ul li{
+	display:none;
+}
+li[open="true"] ul li{
+	display:block;
+}
+li[open="false"] ul li{
+	display:none;
+}
+
 li.active a, li.active ul li.active a{
 	color: #60c2d3;
 	font-weight: 300;
@@ -124,9 +131,6 @@ li.active ul li a{
 }
 
 
-li[aria-expanded="false"] ul li{
-	display:none;
-}
 .sidenav li.currentpage a{
 	font-weight:600;
 	color: #60c2d3 !important; 	

@@ -89,11 +89,11 @@ class Page {
 				*/
 			}
 			//_pagecontent += "<h3>" + this.name + "</h3>"
-			_pagecontent += "<p id=\"content\">" + this.content
+			_pagecontent = "<p id=\"content\">" + this.content
 			_pagecontent += _qpagecontent;
 			_pagecontent += "</p>";								
 			//console.log("_pagecontent=" + _pagecontent);
-			var pagecontent_Target = document.getElementById('content_main');
+			var pagecontent_Target = document.getElementById('content');
 			pagecontent_Target.classList.add("textsection" + _sectionid);
 			pagecontent_Target.innerHTML = _pagecontent;			
 		}
@@ -123,24 +123,32 @@ class Page {
 			}
 			//print
 			//_pagecontent += "<h3>" + this.name + "</h3>"
-			_pagecontent += "<p id=\"content\">" + this.content
+			_pagecontent = "<p id=\"content\">" + this.content
 			_pagecontent += _qpagecontent;
 			_pagecontent += "</p>";								
 			//console.log("_pagecontent=" + _pagecontent);
-			var pagecontent_Target = document.getElementById('content_main');
+			var pagecontent_Target = document.getElementById('content');
 			pagecontent_Target.classList.add("textsection" + _sectionid);
 			pagecontent_Target.innerHTML = _pagecontent;			
 		}
 	}
 	printPageError(){
-			var pagecontent_Target = document.getElementById('content_main');
+			var pagecontent_Target = document.getElementById('content');
 			pagecontent_Target.innerHTML = "No page match";			
 	}
+	//*****need to change this so it dynamically calls content as href's don't work */
+
+	printHomePage(){
+			var pagecontent_Target = document.getElementById('content');
+			pagecontent_Target.innerHTML = printHomepage();	//printHomepage in prl_1.js
+	}	  
+
+
 	//page.pageContentEdit(pagedata, _pageid, _url_id, _parentid, _sectionid);
 	pageContentEdit(data, _pageid, _menuid, _parentid, _pageorder, _sectionid){
 		if (_pageid != null){
 			//console.log("_pageid != null");
-			console.log("_pageid=" + _pageid);
+			//console.log("_pageid=" + _pageid);
 			//console.log("_menuid=" + _menuid);
 			//console.log("data[0]" + data[0]);
 			// Now call the function inside fetch promise resolver
@@ -337,7 +345,13 @@ ed.render();
 
 }
 ///end of cPage class
-
+//_html_menu +=  	"<a onclick=\"menuItem_click(event," + page.pageid + "," + page.parentid + "," + page.pageorder + "," + this.sectionid + ")\" href='pages.html?id=" +  page.id + "'" + current_page + ">" + page.pagename + html_count_string + "</a>";
+//??current_page
+function printPageLink(_pageid, _parentid, _pageorder, _sectionid, _current_page, _pagename, _html_count_string){
+		var _pagelink = "";
+		_pagelink = "<a onclick=\"menuItem_click(event," + _pageid + "," + _parentid + "," + _pageorder + "," + _sectionid + ")\" href='pages.html?id=" +  _pageid + "'" + _current_page + ">" + _pagename + _html_count_string + "</a>";		
+		return _pagelink
+}
 
 
 function myCustomInitInstance(inst) {

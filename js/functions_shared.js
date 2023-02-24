@@ -20,51 +20,6 @@ function opentoID(){
 
 /*FUNCTIONS*/
 //**************************Shared functions with callbackFunction passed through******************************************//
-async function handleLoginSubmit (callbackFunction) {
-	//...pass through username and password... 
-	//[sectionid, menupages, contentpages]
-	//[0] array used for information
-	var username = document.getElementById("username").value;
-	var password = document.getElementById("password").value;
-	///
-	//document.getElementById("para_loader").style.display = "block";
-
-	fetch("https://sm5a54kkhi.execute-api.eu-west-1.amazonaws.com/default/listPages?username=" + username + "&password=" + password)
-		.then(response => response.json()) //NEW condensed
-		.then(data => { 
-			//if no section returned then data[0] = null otherwise section_id is data[0]
-			//if password incorrect then data[1] == "password incorrect" //data[1] contains empty array [] 
-			//try{
-			console.log("data[1].length" + data[1].length);
-			let array_length = data[1].length; 
-			if (array_length > 1){ //ie, if menupages array length contains more than 1 record.
-				indexdb_fill(data).then(() => { 
-					//console.log(data);
-					//document.getElementById("loginForm").style.display = "none";	
-					getUserInfo(cidb, callbackFunction); //calls menu from UserInfo function			
-					//if (data[0][0].section != NaN) window.location = "pages.html?id=" + data[0][0].section;
-				});
-			}else if(array_length == 1){ //if contains 1 record that record will be a "password incorrect" record
-				document.getElementById("passwordmessage").innerHTML = data[1][array_length-1];		
-				document.getElementById("loginForm").onsubmit = function(e){
-					e.preventDefault();
-					handleLoginSubmit(callbackFunction);
-				};
-			}	
-			//}catch(e){
-			//	document.getElementById("content_main").innerHTML += e
-			//}
-			//alert(document.getElementById("loginForm"));
-			//document.getElementById("para_loader").style.display = "none";
-		}); 
-	//...don't think I need JWT at present'
-  	// Extract the JWT from the response
-  	//const { jwt_token } = await response.json()
-  	// Do something the token in the login method
-  	//await login({ jwt_token })
-}
-
-
 //This function expands and collapses the Q/A bars 
 function expand_collapse(evt){
 	//var coll = document.getElementsByClassName("collapsible");
@@ -85,6 +40,8 @@ function expand_collapse(evt){
 	//});
 //}
 }
+
+
 function addEvent(cItem){
 	cItem.addEventListener( 'click', evnt => {
 		//check to see if menuItem if menuItem check to see if has Children
@@ -113,31 +70,6 @@ function closeNav() {
 }
 
 
-//add in other features of being loggedIn
-function UserLoggedIn (){
-	//document.getElementById("loginForm").style.display = "none";	
-	//document.getElementById("para_loader").style.display = "none";
-	document.getElementById("content_main").style.display = "block";
-	document.getElementsByClassName('content')[0].style.height = '100%';
-}
-//add in other features of being loggedIn
-function UserLogOut(){
-	//alert("in UserLogOut")
-	document.getElementsByClassName('content')[0].style.height = '0%';
-	document.getElementById("content_main").style.display = "none";
-	document.getElementById("loginForm").style.display = "block";	
-console.log("just before deleting datbases");
-		deleteDatabases("user"); //delete before recreating
-		deleteDatabases("menu"); //delete before recreating
-		deleteDatabases("pages"); //delete before recreating
-		//show login form. 				
-		document.getElementById("loginForm").onsubmit = function(e){
-			e.preventDefault();
-console.log("just before handleLoginSubmit");
-			handleLoginSubmit(gDataSource);
-		}
-	//document.getElementById("para_loader").style.display = "none";
-}
 
 
 

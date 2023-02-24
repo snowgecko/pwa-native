@@ -43,7 +43,9 @@ async function savePage(){
 	alert("Saved Page");
 	//getRemoteMenuData(cidb, _menuid, _sectionid) in functions.data.js
 	//cidb - declared at the top of pages.html and pages-edit.html
-	getRemoteMenuData(cidb, menuID, secID); //var x = await **calls different function based on edit or NOT edit */ //getIDBMenuData(cidb, url_id, sectionid);				
+	
+	////****need something here to repopulate the menu correctly.  */
+	//getRemoteMenuData(cidb, menuID, secID); //var x = await **calls different function based on edit or NOT edit */ //getIDBMenuData(cidb, url_id, sectionid);				
 
 	document.getElementById("content_main").classList.remove("disable-form");
 	//document.getElementById("form1").disabled = false;
@@ -59,10 +61,9 @@ function addSubPgae(){
 	let page = new Page("-1");  		
 
 	//jsonData2 = JSON.stringify('[{"_id":"62671229494b8a8d29895518","id":"-1","content":"<p></p>","name":"","questions":"[{\"question\":\"Question 1 title \", \"contents\":\"<p>Question 1 content</p>\"}]"}]')
-	const jsonData = '[{"id": "-1", "name": "", "content": "testing", "questions": "[]"}]';
+	const jsonData = '[{"id": "-1", "name": "", "content": "testing", "questions": "[]"}]'; //removed the surrounding []
 	const obj = JSON.parse(jsonData);
-	console.log(obj.content);
-	//page.pageContentEdit(pagedata, _pageid, _menuid, _parentid, _sectionid);
+
 	page.pageContentEdit(obj, "-1", "-1", _parentid, _pageorder, _sectionid);
 }
 
@@ -157,10 +158,10 @@ function handleSubmit(event) {
 	event.preventDefault();
 	var parElem = event.target.parentElement;
 	 const data = new FormData(parElem);
-	console.log(tinyMCE.get('editable_content').getContent());
+	//console.log(tinyMCE.get('editable_content').getContent());
 	const value = Object.fromEntries(data.entries());
 	// const value = data.get('editable_id');
-  	console.log({ value });
+  	//console.log({ value });
 }
 
 

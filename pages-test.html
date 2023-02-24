@@ -1,113 +1,42 @@
-<html>
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width minimum-scale=1.0 maximum-scale=1.0 user-scalable=no" />
-		<title>Content Pages</title>
-		<link rel="shortcut icon" type="image/jpg" href="./favicon.ico"/>
-
-		<link type="text/css" rel="stylesheet" href="./css/style.css" />
-		<link type="text/css" rel="stylesheet" href="./css/pages.css" />
-		<link type="text/css" rel="stylesheet" href="./css/menu.css" />
-		
-		<link rel="manifest" href="./manifest.json">
-		<!--class declaration--> 
-  		<script src="./js/cPage-test.js" ></script>
-  		<script src="./js/cMenu.js" ></script>
-
-
-		<!--include module for editor--> 
-	</head>
-	<body>
-				<div id="page">
-			<div class="header" id="header">
-				<!--//-->
-				<div class="text"><a href="#menu" class="menulines"><span></span></a><div id="section_title">FRCA Primary</div></div>
-				<!--//-->
-				<div id="mySidenav" class="sidenav">
-					<input type="search" name="searchbox" id="searchbox"/>
-					<div id="menu">
-				      <!--<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>-->
-				      	<ul> 
-							<li class="Selected"><a href="./">Home</a></li>
-							<!--onclick="javascript:toggleMenu(1)"-->
-							<div id="html_menu">
-								<!--*****WILL BE POPULATED DYNAMICALLY JS******-->
-							</div>
-							<li><a href="#">About</a></li>
-				      		<li><a href="#">Contact</a></li>
-						</ul>
-					</div>
-				</div>
-			</div>
-
-			<!--change content according to passed value-->
-			<div class="content main">
-				<h3>Title</h3><br />
-				<p id="content">
-				<div class="element"></div>
-					Try to extend the cotnent across the page so that when you click on it - it closes the menu... blah blah 
-					Try to extend the cotnent across the page so that when you click on it - it closes the menu... blah blah 
-					Try to extend the cotnent across the page so that when you click on it - it closes the menu... blah blah 
-					Try to extend the cotnent across the page so that when you click on it - it closes the menu... blah blah 
-				</p>
-			</div>
-		</div>
-	
-
-<!--CLASS SETTINGS-->
-<script>
-//		fetch("./assets/menu.json")
-//			.then(response => response.json()) //NEW condensed.
-//			.then(data => this.filter_populateMenu(data, this.id)) //NEW VERSION ?	
-/*
-
-foo(function(result) {
-    // Code that depends on 'result'
-});
-foo(function(result) {
-    // Code that depends on 'result'
-});
-
-*/
-var url = window.location;
-var urlParams = new URLSearchParams(url.search);
-url_id = urlParams.get('id');
-if ((url_id == "")||(url_id == null)){
-	url_id = "1";	
-}
-console.log(url.href)
-
-getMenu();
-getContent();
-
-function getMenu(){
-	//instatiate class 
-	let test_menu = new Test("1");  //ASYNC CLASS CALLING JSON menu
-	
-	fetch("./assets/menu.json")
-		.then(response => response.json()) //NEW condensed.
-		.then(data => {
-			test_menu.filter_populateMenu(data, url_id) //NEW VERSION ?	
-			console.log("test_menu.sectionid" + test_menu.sectionid);
-			//primary_nav.sectionid
-		})
-
-		/*.then((data) => {
-			// Work with JSON data here
-			console.log(data);
-			
-		})*/
-		//return this.id;
-		///	
-}	
-function getContent(){
-
-//I guess more of a push than a pull 
-//so once this is done it pushes (callsback)
-}
-
-
-</script>
-
+<!DOCTYPE html5>
+<head>
+  <link href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:600,300" rel="stylesheet" type="text/css"/>
+  <link rel="stylesheet" type="text/css" href="/css/loader.css"/>
+</head>
+<body>
+    <header>
+      <div class="left">
+        <h1>Loaders<span>.css</span></h1>
+        <h2>Delightful and performance-focused pure css loading animations.</h2>
+      </div>
+      <div class="right"><a href="https://github.com/ConnorAtherton/loaders.css" class="btn right">View on Github</a></div>
+    </header>
+    <div class="loaders">
+      <div class="loader">
+        <div class="loader-inner ball-grid-pulse">
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+      </div>
+      <div class="loader">
+        <div class="loader-inner ball-pulse">
+          <div></div>
+          <div></div>
+          <div></div>
+        </div><span class="tooltip">
+          <p>ball-pulse</p></span>
+      </div>
+    </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      document.querySelector('main').className += 'loaded';
+    });
+  </script>
 </body>
-</html>

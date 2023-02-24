@@ -25,7 +25,7 @@ var idb = await cidb.open("basename", "storename", { schema: s, index: i })
 				r = indexedDB.open(dname);								
 			}
 		    r.onupgradeneeded = function(e) {
-			console.log("opened new indexedDB");
+			//console.log("opened new indexedDB");
 		        var idb = r.result
 		        var store
 		        if(sflag)
@@ -72,10 +72,12 @@ var store;
 	        for(var obj of arr) {
 	            if(sflag){
 					if (idb.name == "user") obj.timestamp = Date.now();
-   	       	        store.put(obj)
+//console.log ("****sflag true obj" + obj.section);
+   	       	        store.put(obj);
 				}
    	       	    else {
    	       	        let key = Object.keys(obj)[0]
+//console.log ("***sflag false obj" + obj);
    	       	        store.put(obj[key], key)
    	       	    }
        	    }
@@ -99,8 +101,60 @@ var store;
                 idb.close()
                 resolve(cont)
             }	
+			tactn.onerror = function(event){
+				console.log(event);
+			}
         })
     }
+
+/*
+try {
+  adddlert("Welcome guest!");
+}
+catch(err) {
+  document.getElementById("demo").innerHTML = err.message;
+}
+var cont = await cidb.getAllData(idbUser, "fstore"); //- may be quicker to use getAllData
+* */
+	getAllData(idb, sname){
+	        //var dname = this.dname
+	        return new Promise(function(resolve) {
+	            //var r = indexedDB.open(dname)
+	   	        //r.onsuccess = function(e) {
+		try{
+	   	            //let idb = r.result
+	                /**should group any 'transactions together' */
+					let tactnA = idb.transaction(sname, "readonly")	                
+            		var cont=[] //probably doesn't need to be an array'
+					//var objectStore = db.createObjectStore('contactsList', { keyPath: 'id' }); 
+					let store = tactnA.objectStore(sname)  //sname = fstore
+					const myIndex = store.index("id");  //causing an error
+					const getAllRequest = myIndex.getAll();
+					getAllRequest.onsuccess = () => {
+						cont = getAllRequest.result;
+		  				//console.log(getAllRequest.result);
+						const d5 = new Date().getSeconds();	
+						//console.log ("just after getAllRequest=" + d5);
+					};
+					tactnA.oncomplete = function() {
+		                idb.close()
+                		resolve(cont); //if I leave resolve off then the loop from dump doesn't run???????'
+  						//console.log("Transaction is complete");
+					};
+					tactnA.onerror = function(event){
+		                idb.close()
+                		resolve(); //if I leave resolve off then the loop from dump doesn't run???????'
+						//console.log(event);
+					}
+				//}
+				//r.onerror = function(e){
+				//		console.log(e + "database not opening");					
+				//}
+				}catch(e){
+					//console.log (e);
+				}
+			})
+	}
 
 //// Get the 'name' index from your 'friends' table.
 //var index = trans.objectStore("friends").index("name");
@@ -114,7 +168,7 @@ var store;
 			osc.onsuccess = e => {
 				const cursor = e.target.result;
 				if (cursor) {
-	console.log(cursor.value.pagename + "|||" + _svalue);
+	//console.log(cursor.value.pagename + "|||" + _svalue);
             		if (cursor.value.pagename === _svalue) {
 						cont.push(cursor.value)
     	        	}
@@ -193,7 +247,7 @@ var store;
         return new Promise(function(resolve) {
             var r = indexedDB.open(dname)
    	        r.onsuccess = function(e) {
-   	            let idb = r.result
+   	            let idb = r.resultst
                 let tactn = idb.transaction(sname, "readwrite")
                 let store = tactn.objectStore(sname) 
 		        if(store.indexNames.contains(iname)) {
@@ -204,13 +258,16 @@ var store;
                     } 
 		        }  
 		        else {
-		            console.log(`Index '${iname}' not found.`)
+		           // console.log(`Index '${iname}' not found.`)
 		        }
      
    	        }
         })        
     }
     
+
+
+
     kill(dname) {
         return new Promise(function(resolve) {
             var k = indexedDB.deleteDatabase(dname)

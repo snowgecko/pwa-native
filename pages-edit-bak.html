@@ -9,7 +9,10 @@
 
 		<link type="text/css" rel="stylesheet" href="./css/style.css" />
 		<link type="text/css" rel="stylesheet" href="./css/pages.css" />
-		<link type="text/css" rel="stylesheet" href="./css/menu.css" />
+		<link type="text/css" rel="stylesheet" href="./css/menu.css" />		
+  		<link rel="stylesheet" type="text/css" href="/css/loader.css"/>
+		<!--just for the home page-->
+		<link rel="stylesheet" href="./css/home.css">
 		
 		<link rel="manifest" href="./manifest.json">
 		<!--class declaration--> 
@@ -17,56 +20,71 @@
   		<script src="./js/cMenu.js" ></script>
 		<script type="text/javascript" src="./simpleIDB/SimpleIDB.js"></script>
 		<!--DOES NOT WORK FOR SUB_SUB NAVIGATION ?ARIA issue-->
+		<script src="./js/dl_1.js"></script>	<!--refactoring-->	
+		<script src="./js/prl_1.js"></script>	<!--refactoring-->	
 		<script src="./js/functions_data.js"></script>		
-		<script src="./js/functions_shared.js"></script>		
-		<script src="./js/functions_editor.js"></script>		
+
 		<!--include module for editor--> 
+		<script src="./js/functions_editor.js"></script>		
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 		<script src="./js/tinymce/tinymce.min.js"></script>
 		
 <script>
 	//****see shared_functions.js for urlParameters and global variable setting*****
 </script>
-
-	</head>
+</head>
 	<body>
+	    <header> 
+	      <h1><image src="./favicon.ico" alt="picture of stack of papers"/> STACK</h1>
+	    </header>
 		<div id="page">
 			<div class="header" id="header">
 				<!--//-->
-				<div class="text"><a href="#menu" class="menulines"><span></span></a><div id="section_title">Stack Title</div></div>
+				<div class="text"><a href="#menu" class="menulines"><span></span></a><div id="section_title">.....</div></div>
 				<!--//-->
 				<div id="mySidenav" class="sidenav">
-					<input type="search" name="searchbox" id="searchbox"/>
+					<input type="search" name="searchbox" id="searchbox" onKeyUp="edValueKeyPress()"/>
 					<div id="menu">
 				      <!--<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>-->
 				      	<ul> 
-							<!--<li class="Selected"><a href="./">Home</a></li>-->
 							<!--onclick="javascript:toggleMenu(1)"-->
 							<div id="html_menu">
 								<!--*****WILL BE POPULATED DYNAMICALLY JS******-->
 							</div>
 							<li><a href="#">About</a></li>
 				      		<li><a href="#">Contact</a></li>
+							<li><a href="#" id="logout">logout (exit)</a></li>
 						</ul>
 					</div>
 				</div>
-			</div>
-			<div class="headerimage"><img src="https://stackicm.s3.eu-west-1.amazonaws.com/criticalcare3.jpg"/></div>			
+			    <div class="ca_loaders" id="ca_loaders">
+			      <div class="ca_loader" id="ca_loader">
+			        <div class="loader-inner ball-grid-pulse">
+			          <div></div>
+			          <div></div>
+			          <div></div>
+			          <div></div>
+			          <div></div>
+			          <div></div>
+			          <div></div>
+			          <div></div>
+			          <div></div>
+			        </div>
+			      </div>
+				<p>&nbsp;&nbsp;&nbsp;loading content....</p>
+				</div>
+			</div><!--end of header div-->
+			<!-- change header depending on section-->
+			<div class="headerimage" id="headerimage"></div>
+			<!-- /////-->
 			<div class="content main" id="content_main">
 				<h3></h3><div id="para_loader"><p><div id="loading_text">loading ....</div><div class="lds-hourglass" id="loader"></div></p></div>
 				<!--content once the indexedDB is loaded-->
 				<p id="content">
-					<!--LOGIN START used on login page-->
-					<form method="post" id="loginForm">
-						<h3>Login</h3>
-		          		<label for="username">Email &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-		          		<input type="text" id="username" name="username" required><br/>
-		          		<label for="password">Password&nbsp;&nbsp;</label>
-		          		<input type="text" id="password" name="password" required><br/>&nbsp;<br/>
-	          			<button type="submit" id="submitBtn">Login</button>
-					</form>
-					<p id="passwordmessage"></p>
-					<!--LOGIN END used on login page-->
+					<!--used on content pages-->
+					<div class="element"></div>
+					<div id="questions"></div>
+				
 					<!--*******START OF EDIT*************-->
 					<form name="form1" id="form1"  class="form_addcontent">
 						<!--NEED TO ADD ID, NAME, PARENTID--><!--GET GREATEST NO FROM DATABASE AND ADD 1-->
@@ -95,6 +113,22 @@
 					</fieldset>
 					<!-- FINISHED ADDING--> 
 				<!--END OF EDIT-->
+			<!-- /////-->
+			<div id="login_main">			
+				<!--LOGIN START used on login page-->
+					<form method="post" id="loginForm">
+						<h3>Login</h3>
+		          		<label for="username">Email &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+		          		<input type="text" id="username" name="username" required><br/>
+		          		<label for="password">Password&nbsp;&nbsp;</label>
+		          		<input type="text" id="password" name="password" required><br/>&nbsp;<br/>
+	          			<button type="submit" id="submitBtn">Login</button>
+					</form>
+					<p id="passwordmessage"></p>
+					<!--//-->
+					<!--LOGIN END used on login page-->
+				<p><a href="#" id="logout">logout (exit)</a></p>
+			</div>
 				<p>&nbsp;</p>
 				<p>&nbsp;</p>
 				<p>&nbsp;</p>
@@ -105,22 +139,68 @@
 <script>
 	//*****global variables set in functions_shared.js
 	var cidb = new SimpleIDB();
-	var bIsLoggedIn = false; //set this if logged in and content in IndexedDB
-
+	var bIsLoggedIn = new Boolean(false);
+	//var gDataSource = getIDBMenuData;
+	//var gPageDataSource = getIDBPageData;
 	var gDataSource = getRemoteMenuData;
 	var gPageDataSource = getRemotePageData;
+	var listElem; 
+	//IF YOU WANT TO GET THE DATA FROM MONGO THEN PASS getRemoteMenuData into getUserInfo AND in UserLogOut below
+
 
 	//callbackFunction - specific to menu data - called from IDB OR fetch (edit)
 	window.onload = function() {
+		document.getElementById("loginForm").style.display = "block";
 		document.getElementById("para_loader").style.display = "block";
-		//check in IndexedDB - to see if this user has rights to edit 
-		getUserInfo(cidb, gDataSource); //onload just checks the user indexedDB and Menu (to make sure the user should be able to see content)	
-		
-		//try {
-		//	getRemoteMenuData(url_id);	//function in cMenu.js		
-		//}catch{
-		//	getRemoteMenuData(1)
-		//}		
+
+		//check in IndexedDB - see if the sectionid passed through to pages matches the user indexedDB db
+		//prl_1.js - if page refreshed....
+		verifyUserContent(cidb, gDataSource);
+
+		document.body.addEventListener("click", function(e) {
+			e.preventDefault();		
+
+			if(e.target.id == "submitBtn"){
+				var username = document.getElementById("username").value;
+				var password = document.getElementById("password").value;
+				///************************VERIFYLOGIN - needs to be called from LoginForm AND onload**************
+				const output = verifyLogin(cidb, gDataSource, username, password);
+				
+			}else if(e.target && e.target.id == "logout") {
+				///**clicked on LOGOUT in menu in ***functions_shared.js***					
+				UserLoggedOut();					
+				changeNavState();
+				//the login form in null?? don't know why'
+				//what about set sectionid == null
+			}else if(e.target && e.target.nodeName == "A") {
+				//console.log("e.target.parent=" + e.target.parentNode.className);
+				//console.log("e.target.href=" + e.target.href);
+				var loc_href = e.target.href 
+				//to get start of url to add on the new ID
+				var equalsLoc = loc_href.indexOf("?id=") + 4; //? + 3
+				var eTargetID = loc_href.substring(equalsLoc, loc_href.length);
+				//if not a menu expansion
+				if(e.target.parentNode.className.indexOf("pad")!=-1){
+					//var loc_href = e.target.href 
+					history.pushState('data to be passed', 'Page Title', e.target.href );
+					console.log("loc_href=" + loc_href);
+					console.log("eTargetID=" + eTargetID);
+					//calls menu before user has picked section
+					//getIDBMenuData(cidb, url_id, sectionid);
+					const menuData = gDataSource(cidb, eTargetID, eTargetID); //var x = await **calls different function based on edit or NOT edit */ 							
+				}
+				console.log("e.target.href.indexOf(#menu)" + e.target.href.indexOf("#menu"));
+				if (e.target.href.indexOf("#menu") == -1){
+					resolveLink_ExpandMenu_printPage(e);	
+				} 
+				//changePage();
+			}else{
+				//console.log ("on click with no event listener attached");
+			}
+				
+		})
+
+
 		tinymce.init({
 			selector: '.editor-content',
 			init_instance_callback: function (editor) {
@@ -171,51 +251,7 @@
 		/*******event listeners*****/			
 	};
 
-//add in other features of being loggedIn
-function UserLogOut(){
-	document.getElementById("loginForm").style.display = "block";	
-		deleteDatabases("user"); //delete before recreating
-		deleteDatabases("menu"); //delete before recreating
-		deleteDatabases("pages"); //delete before recreating
-		//show login form. 				
-		document.getElementById("loginForm").onsubmit = function(e){
-			e.preventDefault();
-			handleLoginSubmit(getRemoteMenuData);
-		}
-	document.getElementById("para_loader").style.display = "none";
-}
-//add in other features of being loggedIn
-function UserLoggedIn (){
-	//document.getElementById("para_loader").style.display = "block";
-	document.getElementById("loginForm").style.display = "none";	
-	document.getElementById("form1").style.display = "block";	
-}
 
-function menuItem_click(evt, _pageid, _parentid, _pageorder, _sectionid){
-	evt.preventDefault();
-	var parElem = evt.target.parentElement;
-	////evt.target will not bring back correct because we are preventing Default. //so does not change until we pushState
-	//alert("parElem" + parElem.id); 
-	if (parElem.getAttribute('aria-expanded') == 'false' || parElem.getAttribute('aria-expanded') ==  null) {
-		parElem.setAttribute('aria-expanded', "true");
-	} else {
-		parElem.setAttribute('aria-expanded', "false");
-		parElem.removeAttribute("class");
-	}
-	
-	history.pushState('data to be passed', 'Page Title', "pages-edit?id=" + parElem.id);
-	
-	document.querySelectorAll('li').forEach(b=> {if(b.getAttribute('class')!="no-break") b.removeAttribute('class')});
-	
-	var newurl_id = window.location.toString().split("?id=").pop();
-	var newurl_idElem = document.getElementById(newurl_id);
-	//alert("window.location;" + window.location.toString());
-	//alert("newurl_id=" + newurl_id);
-	newurl_idElem.setAttribute("class", "active");
-	//if (evt.target == "testing") parElem.setAttribute("class", "active");
-	
-	getRemotePageData(_pageid, parElem.id, _parentid, _pageorder, _sectionid)	
-}
 </script>
 
 </body>
