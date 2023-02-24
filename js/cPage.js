@@ -51,16 +51,11 @@ class Page {
 	pageContent(data, _pageid, _menuid, _parentid, _pageorder, _sectionid){
 		var _pagecontent = "";
 		var jsonQObjects, page_content;
+		_pagecontent = "";
 
 		if (_pageid != null){
-			//console.log("_pageid != null");
-			//console.log("_pageid=" + _pageid);
-			//console.log("_menuid=" + _menuid);
-			//console.log("data[0]" + data[0]);
 			for (var key in data[0]) {
 			    var arr = data[0][key];
-				//console.log("key=" + key);
-				//console.log("arr=" + arr);
 				if (key == "id"){ //id as returned from Pages data would be page_id
 					this.pageid = arr;
 				}else if(key == "name"){
@@ -89,11 +84,12 @@ class Page {
 				*/
 			}
 			//_pagecontent += "<h3>" + this.name + "</h3>"
-			_pagecontent = "<p id=\"content\">" + this.content
+			_pagecontent += "<p id=\"content\">" + this.content
 			_pagecontent += _qpagecontent;
 			_pagecontent += "</p>";								
 			//console.log("_pagecontent=" + _pagecontent);
 			var pagecontent_Target = document.getElementById('content');
+			pagecontent_Target.className = "";
 			pagecontent_Target.classList.add("textsection" + _sectionid);
 			pagecontent_Target.innerHTML = _pagecontent;			
 		}

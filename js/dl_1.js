@@ -174,7 +174,7 @@ getUserInfo :
 	//passing through -1 to the fetch call getes all... 
 */
 async function getRemoteMenuData(cidb, _menuid, _sectionid){
-
+	console.log("_sectionid=" + _sectionid);
 	let menu = new Menu(_menuid);  	
 	menu.url = window.location.pathname; 
 	try{
@@ -204,13 +204,13 @@ async function getRemotePageData(_pageid, _menuid, _parentid, _pageorder, _secti
 	//console.log("IN getContent()=" + _pageid)
 	let page = new Page(_pageid);  
 	const parsed = parseInt(_pageid);		
-	//console.log("in getContent after new Page() _url_id=" + _url_id)
 	if ((_pageid == null)||(_pageid == NaN)){
 		page.printPageError();
 	}else if (parsed == 0){
 		page.printHomePage();
 	}else{
 		try{
+	console.log("_sectionid=" + _sectionid);
 			fetch("https://sm5a54kkhi.execute-api.eu-west-1.amazonaws.com/default/listPages?content_id=" + _pageid + "")
 		  		.then((response) => response.json())
 		  		.then((pagedata) => {

@@ -186,7 +186,7 @@ class Menu {
 		var _count = 0;
 		var html_count_string = ""
 		var titleTarget = "", editViewUrl = "";
-	
+	console.log("_sectionid=" + _sectionid);
 		var arr = [];
 		if (_source == "remote"){
 			this.findSection(menu_cont, this.id, 0, arr); //setting the sectionid

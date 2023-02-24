@@ -40,6 +40,7 @@ const verifyUserContent = async function(cidb, callbackFunction){
 		//console.log ("userInfo[]" + + userInfo.length+ " " + userInfo[0]["section"]); //could be multiples
 		//console.log ("bIsLoggedIn" + bIsLoggedIn); 
 		if (userInfo.length != 0){
+			console.log("userInfo[0][\"section\"]" + userInfo[0]["section"]);
 			const menuData = await callbackFunction(cidb, userInfo[0]["section"], userInfo[0]["section"]); //var x = await **calls different function based on edit or NOT edit */ //getIDBMenuData(cidb, url_id, sectionid);
 			//await used so that printHomepage can include allowed links..							
 			UserLoggedIn();
@@ -250,14 +251,12 @@ function resolveLink_ExpandMenu_printPage(e){
 	//var newurl_id = window.location.toString().split("?id=").pop();
 
 //console.log ("loc_href" + loc_href);
-//console.log ("eTargetID" + eTargetID);
 
-	//listElem needs expanding
-	var listElem = document.getElementById(eTargetID);	
-	//alert(eTargetID); //function is below in pages.html
+	//listElem needs expanding - when it first gets here - ie, from Homepage menu objects don't exist.'
+	var listElem = document.getElementById("" + eTargetID);	
+
 	expandorCollapseCurrent(listElem);
 
-	//console.log(e.target.attributes); //href and class for menu e.targets...
 	if (e.target.attributes.length >1){
 		bMenuLink = true;
 	}
@@ -271,13 +270,14 @@ function resolveLink_ExpandMenu_printPage(e){
 		history.pushState('data to be passed', 'Page Title', loc_href);
 	}catch(e){
 		//console.log("in catch statement for aLinks navigateUpTree()");
-		parID = 4;
-		secID = 4; 		
+		parID = eTargetID;
+		secID = eTargetID; 		
 	}
 	///*****NOT  printing getRemotePageData properly.... ?with or without EDIT...*/
 	if (gPageDataSource == getRemotePageData){
 		//console.log ("in resolveLink_ExpandMenu_printPage Remote=" + eTargetID + " " + eTargetID  + " " +  parID  + " " + secID);
 		getRemotePageData(eTargetID, eTargetID, parID, "" , secID)
+		
 		if (gEditView){
 			var pagecontent_Target = document.getElementById('content');
 			pagecontent_Target.innerHTML = ""; //when not in edit mode the content is inputted like this.. in Edit mode just display form.
@@ -298,8 +298,7 @@ function resolveLink_ExpandMenu_printPage(e){
 
 //push into array then return array
 function navigateUpTree(_testElem, _aLinks, _bMenuLink, _count){
-	//only expand if link comes NOT from menu 
-	//console.log(typeof _testElem.id); //string
+console.log("testElem has id =" + _testElem.hasAttribute("id"));
 	if (_testElem == null){
 		return;
 	}else if (_testElem.hasAttribute("id")){

@@ -96,7 +96,8 @@ window.addEventListener('load', ()=>{
 			<div class="headerimage" id="headerimage"></div>
 			<!-- /////-->
 			<div class="content main" id="content_main">
-				<h3><!--does not appear after load--></h3><div id="para_loader"><p><div id="loading_text">loading ....</div><div class="lds-hourglass" id="loader"></div></p></div>
+				<h3 id="pagetitle"><!--does not appear after load--></h3>
+				<!--<div id="para_loader"><p><div id="loading_text">loading ....</div><div class="lds-hourglass" id="loader"></div></p></div>-->
 				<!--content once the indexedDB is loaded-->
 				<p id="content">
 					<!--used on content pages-->
@@ -142,7 +143,7 @@ window.addEventListener('load', ()=>{
 	window.onload = function() {
 				
 		document.getElementById("loginForm").style.display = "block";
-		document.getElementById("para_loader").style.display = "block";
+		//document.getElementById("para_loader").style.display = "block";
 
 		//check in IndexedDB - see if the sectionid passed through to pages matches the user indexedDB db
 		//prl_1.js - if page refreshed....
