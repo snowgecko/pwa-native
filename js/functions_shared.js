@@ -4,7 +4,7 @@ var gEditView = false;
 var gIsLoggedIn = false;
 
 var url = window.location;
-if (url.toString().includes("pages-edit")) gEditView = true;
+if (url.toString().includes("index-edit")) gEditView = true;
 
 //get url param id and use to pass to lamda service to call content from mongodb
 var urlParams = new URLSearchParams(url.search);

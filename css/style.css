@@ -19,9 +19,13 @@ h1{
 	font-weight: bold;
 	font-size: 1.2em;
 }
-h2, h3, h4, h5, h6 {
+h2 {
 	font-size: 1.3em;
     margin: 15px 0 10px 0;
+}
+h3, h4, h5, h6{
+	font-size: 1.1em;
+    margin: 15px 0 10px 0;	
 }
 .textsection1 h2, .textsection1 h3, .textsection1 h4{
 	color: #1a2238;	

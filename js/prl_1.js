@@ -9,7 +9,7 @@ var gEditView = false;
 var gIsLoggedIn = false;
 
 var url = window.location;
-if (url.toString().includes("pages-edit")) gEditView = true;
+if (url.toString().includes("index-edit")) gEditView = true;
 
 //get url param id and use to pass to lamda service to call content from mongodb
 var urlParams = new URLSearchParams(url.search);
@@ -40,7 +40,7 @@ const verifyUserContent = async function(cidb, callbackFunction){
 		//console.log ("userInfo[]" + + userInfo.length+ " " + userInfo[0]["section"]); //could be multiples
 		//console.log ("bIsLoggedIn" + bIsLoggedIn); 
 		if (userInfo.length != 0){
-			console.log("userInfo[0][\"section\"]" + userInfo[0]["section"]);
+			//console.log("userInfo[0][\"section\"]" + userInfo[0]["section"]);
 			const menuData = await callbackFunction(cidb, userInfo[0]["section"], userInfo[0]["section"]); //var x = await **calls different function based on edit or NOT edit */ //getIDBMenuData(cidb, url_id, sectionid);
 			//await used so that printHomepage can include allowed links..							
 			UserLoggedIn();
@@ -247,7 +247,7 @@ function resolveLink_ExpandMenu_printPage(e){
 	var eTargetStart = loc_href.substring(0, equalsLoc); 
 	var bMenuLink = false;
 	var aLinks = new Array;
-	if (loc_href.indexOf("index.html") != -1) window.location = loc_href;
+	//if (loc_href.indexOf("index.html") != -1) window.location = loc_href;
 	//var newurl_id = window.location.toString().split("?id=").pop();
 
 //console.log ("loc_href" + loc_href);
@@ -260,7 +260,6 @@ function resolveLink_ExpandMenu_printPage(e){
 	if (e.target.attributes.length >1){
 		bMenuLink = true;
 	}
-	//**li id="10" aria-expanded="true"><a onclick="menuItem_click(event,10,8,4)" href="pages.html?id=10">General concepts 		
 	var parID, secID
 	try{
 		aLinks = navigateUpTree(listElem, aLinks, bMenuLink, 0); 
@@ -273,6 +272,8 @@ function resolveLink_ExpandMenu_printPage(e){
 		parID = eTargetID;
 		secID = eTargetID; 		
 	}
+	//console.log("parID=" + parID)
+	//console.log("secID=" + secID)
 	///*****NOT  printing getRemotePageData properly.... ?with or without EDIT...*/
 	if (gPageDataSource == getRemotePageData){
 		//console.log ("in resolveLink_ExpandMenu_printPage Remote=" + eTargetID + " " + eTargetID  + " " +  parID  + " " + secID);
@@ -298,7 +299,7 @@ function resolveLink_ExpandMenu_printPage(e){
 
 //push into array then return array
 function navigateUpTree(_testElem, _aLinks, _bMenuLink, _count){
-console.log("testElem has id =" + _testElem.hasAttribute("id"));
+//console.log("testElem has id =" + _testElem.hasAttribute("id"));
 	if (_testElem == null){
 		return;
 	}else if (_testElem.hasAttribute("id")){
@@ -366,11 +367,11 @@ function menuItem_click(evt, _pageid, _parentid, _sectionid){
 	//} else {
 	//	parElem.setAttribute('aria-expanded', "false");
 	//}
-	let result2 = url.toString().includes("pages-edit");
+	let result2 = url.toString().includes("index-edit");
 	if (result2){
-		history.pushState('data to be passed', 'Page Title', "pages-edit?id=" + parElem.id);
+		history.pushState('data to be passed', 'Page Title', "index-edit?id=" + parElem.id);
 	}else{
-		history.pushState('data to be passed', 'Page Title', "pages?id=" + parElem.id);
+		history.pushState('data to be passed', 'Page Title', "index?id=" + parElem.id);
 	}		
 	//alert(parElem.id);
 	//getContent and update page. 

@@ -345,7 +345,7 @@ ed.render();
 //??current_page
 function printPageLink(_pageid, _parentid, _pageorder, _sectionid, _current_page, _pagename, _html_count_string){
 		var _pagelink = "";
-		_pagelink = "<a onclick=\"menuItem_click(event," + _pageid + "," + _parentid + "," + _pageorder + "," + _sectionid + ")\" href='pages.html?id=" +  _pageid + "'" + _current_page + ">" + _pagename + _html_count_string + "</a>";		
+		_pagelink = "<a onclick=\"menuItem_click(event," + _pageid + "," + _parentid + "," + _pageorder + "," + _sectionid + ")\" href='index.html?id=" +  _pageid + "'" + _current_page + ">" + _pagename + _html_count_string + "</a>";		
 		return _pagelink
 }
 

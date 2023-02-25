@@ -186,7 +186,7 @@ class Menu {
 		var _count = 0;
 		var html_count_string = ""
 		var titleTarget = "", editViewUrl = "";
-	console.log("_sectionid=" + _sectionid);
+	//console.log("_sectionid=" + _sectionid);
 		var arr = [];
 		if (_source == "remote"){
 			this.findSection(menu_cont, this.id, 0, arr); //setting the sectionid
@@ -196,7 +196,7 @@ class Menu {
 		if (this.sectionname != null ){
 			titleTarget = document.getElementById('section_title');
 			titleTarget.innerHTML = this.sectionname;
-			_html_menu += "<li id=\"" + this.sectionid + "\" class=\"no-break\"><a href=\"." + this._url + "?id=0\">Home&nbsp;&nbsp;></a><a href=\"." +  this._url + "?id=" + this.sectionid  + "\">&nbsp;&nbsp;Section Home</a></li>";	
+			_html_menu += "<li id=\"" + this.sectionid + "\" class=\"no-break\"><a href=\"" + this._url + "?id=0\">Home&nbsp;&nbsp;></a><a href=\"" +  this._url + "?id=" + this.sectionid  + "\">&nbsp;&nbsp;Section Home</a></li>";	
 		}else{
 
 		}
@@ -253,13 +253,8 @@ class Menu {
 					current_page = " class=\"active\" ";
 				} 
 				if (_arr[2]==page.id) bExpandedText = "true";
-				//console.log("current_page=", current_page);
-//Object.keys(page).forEach(prop => console.log(prop))
-//console.log ("page.id=" + page.id) //8,8 and 8,9
-//console.log ("page.pageorder=" + page.pageorder) //8,8 and 8,9
 				//call populateSubPages to get substring and count 
 				sCMenu = this.populateSubPages(pages, page.id, "", 0, _arr); //passing through the whole pages data returned by json.fetch
-				//console.log("/////" + page.pagename + "|||" + sCMenu[0]+ "|||" + sCMenu[1] + "//////");
 				if (sCMenu[1] != 0 ) html_count_string = "<div class=\"right-align\">[" + sCMenu[1] + "]</div>";	
 				_html_menu = _html_menu + "<li id='" + page.id + "' open=\"" + bExpandedText + "\" " + current_page + ">"  
 				_html_menu = _html_menu +	"<a  href='" + this._url + "?id=" +  page.id + "'" + current_page + ">" + page.pagename + html_count_string + "</a>";

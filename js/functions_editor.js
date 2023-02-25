@@ -8,7 +8,7 @@ if(gEditView){
 /*This function is called from each Menu click*/ /** called from cMenu-page.js***/
 function updatePage(_pageid, _id, _parentid, _sectionid){
 	let page1 = new Page(_pageid);
-	let result2 = url.toString().includes("pages-edit");
+	let result2 = url.toString().includes("index-edit");
 	if (result2){
 		page1.pageContentEdit(_pageid, _id, _parentid,  _sectionid);								
 	}else{

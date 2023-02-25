@@ -9,7 +9,7 @@ console.log("data[0].length" + data[0].length); //data[0] includes the user data
 console.log("data[1].length" + data[1].length); //data[1] includes the ?menu data
 console.log("data[2].length" + data[1].length); //data[1] includes the ?page data
 
-pages.html --> FormSubmit calls verifyLogin() --> handleLoginSubmit_new
+index.html --> FormSubmit calls verifyLogin() --> handleLoginSubmit_new
 	on submit passing through username and password 
 	Main purpuse to fill the indexedDB database locally
 	returns indexFilled array[] a multi-dimensional (3) deep array - this is not used above
@@ -174,7 +174,7 @@ getUserInfo :
 	//passing through -1 to the fetch call getes all... 
 */
 async function getRemoteMenuData(cidb, _menuid, _sectionid){
-	console.log("_sectionid=" + _sectionid);
+	//console.log("_sectionid=" + _sectionid);
 	let menu = new Menu(_menuid);  	
 	menu.url = window.location.pathname; 
 	try{
@@ -203,14 +203,15 @@ async function getRemotePageData(_pageid, _menuid, _parentid, _pageorder, _secti
 	//instatiate page class  
 	//console.log("IN getContent()=" + _pageid)
 	let page = new Page(_pageid);  
-	const parsed = parseInt(_pageid);		
+	const parsed = parseInt(_pageid);
 	if ((_pageid == null)||(_pageid == NaN)){
 		page.printPageError();
 	}else if (parsed == 0){
+	console.log("just before page.printHomepage() parsed=" + parsed);		
 		page.printHomePage();
 	}else{
 		try{
-	console.log("_sectionid=" + _sectionid);
+	//console.log("_sectionid=" + _sectionid);
 			fetch("https://sm5a54kkhi.execute-api.eu-west-1.amazonaws.com/default/listPages?content_id=" + _pageid + "")
 		  		.then((response) => response.json())
 		  		.then((pagedata) => {
@@ -278,13 +279,13 @@ async function getIDBPageData(cidb, _menuid, _pageid, _parentid, _sectionid){
 	
 	let page = new Page(_pageid); //set in  1) resolveLink_ExpandMenu_printPage (pages.html)
 	const parsed = parseInt(_pageid);
-	//console.log(parsed);
 	idbPage = await cidb.open("pages", "fstore",  {
             schema: { keyPath: "id", autoIncrement:false },
     })
 	if ((_pageid == null)||(_pageid == NaN)){
 		page.printPageError();
 	}else if (parsed == 0){
+	console.log("parsed==0" + parsed);
 		page.printHomePage();
 	}else{
 		try{
