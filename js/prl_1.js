@@ -9,6 +9,8 @@ var gEditView = false;
 var gIsLoggedIn = false;
 
 var url = window.location;
+//var protocol  = url.protocol
+
 if (url.toString().includes("index-edit")) gEditView = true;
 
 //get url param id and use to pass to lamda service to call content from mongodb
@@ -23,85 +25,48 @@ function opentoID(){
 	
 }
 
-//*********************/
-/*******************
-<img src="https://stackicm.s3.eu-west-1.amazonaws.com/criticalcare3.jpg"/
-Need to update what's clickable and what's initially visible on the page.. 
-****************** */
-/***just to continue to display content and menu  - ie, logged in then returned to site with data in indexeddb*/
+///called when page refreshed or newly arriving at site 
 const verifyUserContent = async function(cidb, callbackFunction){
-//function verifyUserContent(cidb, gDataSource){
-	//document.getElementById("ca_loaders").style.display = "block";
-	document.getElementById("ca_loaders").style.visibility = "visible";
 	try {
-		//from dl_1.js
-		const userInfo = await getUserInfo(cidb, callbackFunction);
-		//console.log ("userInfo=" + userInfo);
-		//console.log ("userInfo[]" + + userInfo.length+ " " + userInfo[0]["section"]); //could be multiples
-		//console.log ("bIsLoggedIn" + bIsLoggedIn); 
+		ca_loaders.style.visibility = "visible";	
+		userInfo = await getUserInfo(cidb, callbackFunction); ////from dl_1.js
 		if (userInfo.length != 0){
-			//console.log("userInfo[0][\"section\"]" + userInfo[0]["section"]);
-			const menuData = await callbackFunction(cidb, userInfo[0]["section"], userInfo[0]["section"]); //var x = await **calls different function based on edit or NOT edit */ //getIDBMenuData(cidb, url_id, sectionid);
-			//await used so that printHomepage can include allowed links..							
+			/**does it make sense to call the menu here - it loads even if homepage is landed on (from refresh) */
+			const menuData = await callbackFunction(cidb, userInfo[0]["section"], userInfo[0]["section"]); 
 			UserLoggedIn();
-			const content = document.getElementById("content");
-			content.innerHTML = printHomepage();
+			resolveLink_ExpandMenu_printPage(url_id); 
 		}else{
-			//***need to update these boxes in dl_1.js and prl_1.js to only be clickable if the user has access..
 			UserLoggedOut("");
-			//**********			
 		}
-		document.getElementById("ca_loaders").style.visibility = "hidden";
-		//document.getElementById("para_loader").style.display = "none";
-		//const rolesInfo = await dataBase.getRoles(userInfo);
-		//const logStatus = await dataBase.logAccess(userInfo);
+		ca_loaders.style.visibility = "hidden";
 		return userInfo;
 	}catch (e){
-		//handle errors as needed
-		//console.log("e" + e);
 	}
 };
 
 
-//***THIS ALSO NEEDS TO CALLED WHEN LOGGING IN..... */
+/***
+	//called when logging in from index.html
+ **/
 //***maybe a different function but similar architecture.... */
 const verifyLogin = async function(cidb, callbackFunction, username, password){
-   try {
-		document.getElementById("ca_loaders").style.visibility = "visible";
-       //const loginData = await handleLoginSubmit(username, password);
+   	try {
+		ca_loaders.style.visibility = "visible";
 		const d1 = new Date().getSeconds();	
-		//console.log ("HERE d1=" + d1);
-		
-		//handleLoginSubmit_new - uses fetch to check Mongo for User - and populates indexedDB with user, menu, and pages based on that user.
-		//dl_1.js
-		//fills local databases if user record found
 		let jsonData = await handleLoginSubmit_new(username, password);  //calls JSON and fills local
-		
 		const d2 = new Date().getSeconds();	
-		//console.log ("verifyLogin post filling - HERE d2=" + d2);
-		
-		//getUserInfo -> gets User information from ?indexedDB		
-		//dl_1.js
-		const userInfo = await getUserInfo(cidb, callbackFunction);
+		userInfo = await getUserInfo(cidb, callbackFunction);
 		
 		if (userInfo.length != 0){
-			//console.log ("userInfo NOT 0 ");
 			UserLoggedIn();
-			const content = document.getElementById("content");
-			content.innerHTML = printHomepage();
-			//content_main.innerHTML = printHomepage();
+			homepageNode.style.display = "block";
+			if (bEditMode) formNode.style.display = "none";	
 		}else{
-			//console.log ("userInfo  0 ");
 			UserLoggedOut("Not a valid user");
 		}	
-		document.getElementById("ca_loaders").style.visibility = "hidden";		
-	//change the homepage links to active or not active based on the output of the above userInfo
-	//ie, loop through and change to clicable the home page links
-		
-       //const rolesInfo = await dataBase.getRoles(userInfo);
-       //const logStatus = await dataBase.logAccess(userInfo);
+		ca_loaders.style.visibility = "hidden";		
        return userInfo;
-   }catch (e){
+   	}catch (e){
        //handle errors as needed
 		switch(e.message) {
 		  case "Failed to fetch":
@@ -114,8 +79,7 @@ const verifyLogin = async function(cidb, callbackFunction, username, password){
 		    // code block
 		} 
 		//console.log(e);
-		
-   }
+   	}
 };
 //async function getUserInfo(cidb, callbackFunction){	
 /****
@@ -153,7 +117,7 @@ function printHomepage(){
 //add in other features of being loggedIn
 function UserLoggedIn (){
 	document.getElementsByClassName('content')[0].style.height = '100%';
-	const content = document.getElementById("content");
+	const content = document.getElementById("content_variable");
 	content.style.display = "block";
 	content.style.borderTop = "100px";
 
@@ -164,34 +128,37 @@ function UserLoggedIn (){
 	headerimage.style.display = "block";
 	headerimage.style.height = "0px";
 
-
-	const login_form = document.getElementById("loginForm");
-	login_form.style.display = "none";
+	//const login_form = document.getElementById("loginForm");
+	//login_form.style.display = "none";
 }
 //add in other features of being loggedIn
 			//const content_main = document.getElementById("content_main");
 			//content_main.innerHTML  = ""
 
 function UserLoggedOut(_userMessage){
-	//alert("in UserLogOut")
 	const headerimage = document.getElementById("headerimage");
 	headerimage.style.display = "none";
 	
 	document.getElementsByClassName('content')[0].style.height = '0%';
-	const content = document.getElementById("content");
-	content.style.display = "none";
+	//content.style.display = "none";
+	loginNode.style.display = "block";
+	
+// store the result of opening the database in the db variable.
+db = DBOpenRequest.result;
+// now let's close the database again!
+db.close()
 
-	const login_form = document.getElementById("loginForm");
-	login_form.style.display = "block";
-	login_form.innerHTML += _userMessage;	
-		//console.log("just before deleting datbases");
-		//deleteDatabases("user"); //delete before recreating
-		//deleteDatabases("menu"); //delete before recreating
-		//deleteDatabases("pages"); //delete before recreating
-		//show login form. 				
+	//loginNode.innerHTML += _userMessage;		
+	//cidb.kill("menu"); //destroy the Temp user table			  		
+	//cidb.kill("pages"); //destroy the Temp user table			  		
+
+		//set defaults 
+		homepageNode.style.display = "none";
+		pagecontent_div.style.display = "none";		
+		loginNode.style.display = "block";
+
 	document.getElementById("loginForm").onsubmit = function(e){
 		e.preventDefault();
-		//console.log("just before handleLoginSubmit");
 		handleLoginSubmit_new(gDataSource);
 	}
 	//document.getElementById("para_loader").style.display = "none";
@@ -233,86 +200,134 @@ to find if I have come from 1) I could navigate up the e.target tree....
 
 if this link comes from the homepage boxes then the menu is not in-situ 
 does it make sense to load a menu here?
-const menuData = await callbackFunction(cidb, userInfo[0]["section"], userInfo[0]["section"]); //var x = await **calls different function based on edit or NOT edit */ //getIDBMenuData(cidb, url_id, sectionid);							
-
-//				console.log("e.target.parent=" + e.target.parentNode.className);
-//				console.log("e.target.href=" + e.target.href);
-/////////	
-function resolveLink_ExpandMenu_printPage(e){
-	//what target is in the link - issue with expanding navigation where -- contain current url, 
-	var loc_href = e.target.href 
-	//to get start of url to add on the new ID
-	var equalsLoc = loc_href.indexOf("?id=") + 4; //? + 3
-	var eTargetID = loc_href.substring(equalsLoc, loc_href.length);
-	var eTargetStart = loc_href.substring(0, equalsLoc); 
-	var bMenuLink = false;
-	var aLinks = new Array;
-	//if (loc_href.indexOf("index.html") != -1) window.location = loc_href;
-	//var newurl_id = window.location.toString().split("?id=").pop();
-
-//console.log ("loc_href" + loc_href);
-
-	//listElem needs expanding - when it first gets here - ie, from Homepage menu objects don't exist.'
-	var listElem = document.getElementById("" + eTargetID);	
-
-	expandorCollapseCurrent(listElem);
-
-	if (e.target.attributes.length >1){
-		bMenuLink = true;
+*/////////	
+function checkPageID(eID){
+	var loc_href, equalsLoc, eTargetID, eTargetStart; 
+	try{
+		loc_href = eID.target.href;  //not always coming from a link...
+		equalsLoc = loc_href.indexOf("?id=") + 4; //? + 3
+		eTargetID = loc_href.substring(equalsLoc, loc_href.length);
+		eTargetStart = loc_href.substring(0, equalsLoc); 
+	}catch(e){
+		//different type e = ID 
+		if(isNaN(eID)){
+			loc_href = 0;
+		}else{
+			eTargetID = eID;
+		}		
 	}
+	return eTargetID;
+}
+
+function resolveLink_ExpandMenu_printPage(e){
+
+	var bMenuLink;
+	var aLinks = new Array;
 	var parID, secID
+
+	var eTargetID = checkPageID(e); //returns targetID from multiple sources
+	var listElem = document.getElementById("" + eTargetID);	
+	expandorCollapseCurrent(listElem);
+	//navigate up the Tree - if listElem is there then expand, and call page, etc
+	//if listElem is NOT there then 
+	//1) is this user allowed to access ?
+	//2) should I display something else ?
+	try {
+		if (e.target.attributes.length >1) bMenuLink = true;
+	}catch(e){
+		bMenuLink = false;
+	}
 	try{
 		aLinks = navigateUpTree(listElem, aLinks, bMenuLink, 0); 
 		parID = aLinks[1]; 
-		secID = aLinks[aLinks.length-1]; 		
-		//alert(aLinks + "|||" + parID + " " + secID);
-		history.pushState('data to be passed', 'Page Title', loc_href);
+		secID = aLinks[aLinks.length-1]; 	//XCHECK USER SECTION //url.protocol + url.hostname	
+		//history.pushState('data to be passed', 'Page Title', url.pathname + "?id=" + eTargetID);
 	}catch(e){
-		//console.log("in catch statement for aLinks navigateUpTree()");
 		parID = eTargetID;
 		secID = eTargetID; 		
 	}
-	//console.log("parID=" + parID)
-	//console.log("secID=" + secID)
-	///*****NOT  printing getRemotePageData properly.... ?with or without EDIT...*/
-	if (gPageDataSource == getRemotePageData){
-		//console.log ("in resolveLink_ExpandMenu_printPage Remote=" + eTargetID + " " + eTargetID  + " " +  parID  + " " + secID);
-		getRemotePageData(eTargetID, eTargetID, parID, "" , secID)
-		
-		if (gEditView){
-			var pagecontent_Target = document.getElementById('content');
-			pagecontent_Target.innerHTML = ""; //when not in edit mode the content is inputted like this.. in Edit mode just display form.
-			document.getElementById("form1").style.display = "block";			
-		}
+	//console.log (userInfo[0]["section"]);
+	//switch maybe better.
+	const parsed = parseInt(eTargetID);
+	message.innerHTML = "<p></p>"			
+	switch(parsed) {
+  		case NaN:
+  		case null:
+    		showError();
+    		break;
+  		case 0:
+    		displayHomepageDivs();
+    		break;
+  		default:
+    		// code block //need to add on for multiple allowed section 
+			if (secID == userInfo[0]["section"]){  ///if coming from userlogin then navigate to page via pads ERROR
+				if (gPageDataSource == getRemotePageData){
+					//if this is inputed incorrectly then it will populate the form and re-submission will be wrong!!!
+					getRemotePageData(eTargetID, eTargetID, parID, "" , secID)
+				}else{
+					getIDBPageData(cidb, eTargetID, eTargetID, parID, secID); //getContent function in cPage class js file		
+				}			
+				displayContentDivs();
+			}else{
+	    		displayHomepageDivs();
+				message.innerHTML = "<p>User does not have access to other sections</p>"			
+			}
+	} 
+}
+
+function showError(){
+	
+}
+function displayHomepageDivs(){
+	if (bEditMode) {
+		formNode.style.display = "none";	
 	}else{
-		//***difference between pages.html and pages-edit.html
-		//if clicked on from the homepage end up here...
-		//console.log ("in resolveLink_ExpandMenu_printPage IDB=" + eTargetID + " " + eTargetID  + " " +  parID  + " " + secID);
-		getIDBPageData(cidb, eTargetID, eTargetID, parID, secID); //getContent function in cPage class js file		
+		pagecontent_div.style.display = "none";						
 	}
-
-	//e.preventDefault();
-	//getUserInfo(cidb, gDataSource); //onload just checks the user indexedDB and Menu (to make sure the user should be able to see content)
-	//if comes from an a link then 				
-
+	loginNode.style.display = "none";
+	homepageNode.style.display = "block";	
+}
+function displayContentDivs(){
+	if (bEditMode){
+		formNode.style.display = "block";	
+	}else{
+		pagecontent_div.style.display = "block";						
+	}
+	homepageNode.style.display = "none";
+	loginNode.style.display = "none";		
 }
 
 //push into array then return array
+//doesn't work if on section page...'
 function navigateUpTree(_testElem, _aLinks, _bMenuLink, _count){
-//console.log("testElem has id =" + _testElem.hasAttribute("id"));
-	if (_testElem == null){
-		return;
-	}else if (_testElem.hasAttribute("id")){
+	var parElem = _testElem.parentElement; 
+	switch(_testElem.nodeName) {
+	  case null:
+	    return;
+	  case "LI":
+		if (_testElem.hasAttribute("id")){
+			_aLinks.push(_testElem.id);	//
+			if ((parElem.id == "html_menu") && (_testElem.id == parElem.firstChild.id)){ //then on Section page..
+				_aLinks[1] = "0";
+			}
+			if (_bMenuLink == false) expandMenuElement(_testElem)
+			navigateUpTree(parElem, _aLinks, _bMenuLink, _count + 1)
+		}
+	    break;
+	  case "UL":
+		navigateUpTree(parElem, _aLinks, _bMenuLink, _count + 1)
+	    break;
+	  case "DIV":
 		if (_testElem.id == "html_menu"){
 			_aLinks.push(_testElem.firstChild.id); //push SectionID
-		}else{
-			_aLinks.push(_testElem.id);			
+			//_aLinks.push("0");		
+			//console.log(_aLinks);
 		}
-		if (_bMenuLink == false) expandMenuElement(_testElem)
-		//alert(_testElem.nodeName + "||" + _testElem.id + "||" + _count );
-	}
-	_count = _count + 1;	
-	if (_testElem.id != "html_menu") navigateUpTree(_testElem.parentElement, _aLinks, _bMenuLink, _count) 
+	    break;
+	  default:
+		break;
+	   //code block
+	} 
 	return _aLinks;
 }
 
@@ -361,23 +376,12 @@ function expandorCollapseCurrent(listElem){
 function menuItem_click(evt, _pageid, _parentid, _sectionid){
 	evt.preventDefault();
 	var parElem = evt.target.parentElement;
-	//parElem.style.backgroundColor = "red";
-	//if (parElem.getAttribute('aria-expanded') == 'false' || parElem.getAttribute('aria-expanded') ==  null) {
-	//	parElem.setAttribute('aria-expanded', "true");
-	//} else {
-	//	parElem.setAttribute('aria-expanded', "false");
-	//}
 	let result2 = url.toString().includes("index-edit");
 	if (result2){
 		history.pushState('data to be passed', 'Page Title', "index-edit?id=" + parElem.id);
 	}else{
 		history.pushState('data to be passed', 'Page Title', "index?id=" + parElem.id);
 	}		
-	//alert(parElem.id);
-	//getContent and update page. 
-	//getContent(_pageid, parElem.id, _parentid, _sectionid)
-	///*****NOT  printing getRemotePageData properly.... ?with or without EDIT...*/
-	//updatePage(_pageid, parElem.id, _parentid, _sectionid);					
 }
 	
 		/*not used as not dynamically binding*/

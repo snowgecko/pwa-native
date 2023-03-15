@@ -26,7 +26,7 @@ header p {
   background:fff;
   width: 100%;
   box-shadow: 10px 10px 20px black;
-  margin-bottom: 150px;
+  margin-bottom: 50px;
 }
 .pads div div a{
 	text-decoration: none;
@@ -98,4 +98,7 @@ background: #bd1e51;
   .pads{
     margin-bottom: 100px;
   }
+}
+#message{
+	font-weight: bold;	
 }

@@ -66,23 +66,25 @@ var store;
 */ 
     fill(idb, sname, arr) {
         let sflag=this.sflag
-        return new Promise(function(resolve) {
-	        let tactn = idb.transaction(sname, "readwrite")
-            var store = tactn.objectStore(sname)
-	        for(var obj of arr) {
-	            if(sflag){
-					if (idb.name == "user") obj.timestamp = Date.now();
-//console.log ("****sflag true obj" + obj.section);
-   	       	        store.put(obj);
-				}
-   	       	    else {
-   	       	        let key = Object.keys(obj)[0]
-//console.log ("***sflag false obj" + obj);
-   	       	        store.put(obj[key], key)
-   	       	    }
-       	    }
-            resolve(true)        
-        })
+		try{
+        	return new Promise(function(resolve) {
+	    	    let tactn = idb.transaction(sname, "readwrite")
+        	    var store = tactn.objectStore(sname)
+	    	    for(var obj of arr) {
+	    	        if(sflag){
+						if (idb.name == "user") obj.timestamp = Date.now();
+						//console.log ("****sflag true obj" + obj.section);
+   	       	        	store.put(obj);
+					}
+	   	       	    else {
+	   	       	        let key = Object.keys(obj)[0]
+						//console.log ("***sflag false obj" + obj);
+   	       	        	store.put(obj[key], key)
+   	       	    	}
+       	    	}
+            	resolve(true)        
+        	})	
+		}catch(e){}
     }
 
     dump(idb, sname) {
@@ -156,29 +158,51 @@ var cont = await cidb.getAllData(idbUser, "fstore"); //- may be quicker to use g
 			})
 	}
 
+	searchNEW(){
+		db.transaction(['table'], 'readonly')
+		  .objectStore('table')
+		  .openCursor(
+		    IDBKeyRange.bound(searchTerm, searchTerm + '\uffff'), // The important part, thank Velmont to point out
+		    'prev')
+		  .onsuccess = function (e) {
+		    e || (e = event);
+		    var cursor = e.target.result;
+		    if (cursor) {
+		      // console.log(cursor.value.column1 + ' = ' + cursor.value.column2);
+		      cursor.continue();
+		    }
+		  };		
+	}
+
+
 //// Get the 'name' index from your 'friends' table.
 //var index = trans.objectStore("friends").index("name");
 
-	find(idb, sname, _svalue){
-		return new Promise(function(resolve) {
-			let tactn = idb.transaction(sname, "readonly")
-            let osc = tactn.objectStore(sname).openCursor()
-            var cont=[];
-			//new format = e => { }  rather than = function(e){}
-			osc.onsuccess = e => {
-				const cursor = e.target.result;
-				if (cursor) {
-	//console.log(cursor.value.pagename + "|||" + _svalue);
-            		if (cursor.value.pagename === _svalue) {
-						cont.push(cursor.value)
-    	        	}
-	            	cursor.continue();
-        		}
+	find(sname, _svalue){
+        var dname=this.dname
+	    return new Promise(function(resolve) {
+		    var r = indexedDB.open(dname)
+   		    r.onsuccess = function(e) {
+			    var idb = r.result		
+				let tactn = idb.transaction(sname, "readonly")
+    	        let osc = tactn.objectStore(sname).openCursor(IDBKeyRange.bound(_svalue, _svalue + '\uffff'), 'prev') // The important part, thank Velmont to point out
+       		    var cont=[];
+				//new format = e => { }  rather than = function(e){}
+				osc.onsuccess = e => {
+					const cursor = e.target.result;
+					if (cursor) {
+						//console.log(cursor.value.pagename + "|||" + _svalue);
+            			//if (cursor.value.pagename === _svalue) {
+							cont.push(cursor.value)
+	    	        	//}
+	    	        	cursor.continue();
+        			}
+				}
+				tactn.oncomplete = function() {
+            	    idb.close()
+            	    resolve(cont)
+            	}
 			}
-			tactn.oncomplete = function() {
-                idb.close()
-                resolve(cont)
-            }
 		});
 	}
 	
@@ -247,7 +271,7 @@ var cont = await cidb.getAllData(idbUser, "fstore"); //- may be quicker to use g
         return new Promise(function(resolve) {
             var r = indexedDB.open(dname)
    	        r.onsuccess = function(e) {
-   	            let idb = r.resultst
+   	            let idb = r.result
                 let tactn = idb.transaction(sname, "readwrite")
                 let store = tactn.objectStore(sname) 
 		        if(store.indexNames.contains(iname)) {
@@ -266,14 +290,19 @@ var cont = await cidb.getAllData(idbUser, "fstore"); //- may be quicker to use g
     }
     
 
-
-
     kill(dname) {
         return new Promise(function(resolve) {
             var k = indexedDB.deleteDatabase(dname)
-            k.onsuccess = function(e) {
+			k.onsuccess = function () {
+			    console.log("Deleted database successfully", dname);
                 resolve(k)
-            }    
+			};
+			k.onerror = function () {
+			    console.log("Couldn't delete database", dname);
+			};
+			k.onblocked = function () {
+			    console.log("Couldn't delete database due to the operation being blocked", dname);
+			};
         })    
     }
 }

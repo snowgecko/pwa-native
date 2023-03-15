@@ -96,9 +96,6 @@ class Menu {
 	////***only good for three levels */
 	//Not know being used...
 	findSectionwIDB_(_menu_cont, _id, _count, _arr, _sectionid){
-		//console.log("in findSectionwIDB_ Function");
-		//console.log("_menu_cont=" + _menu_cont);
-		//console.log("_id=" + _id);
 		try{
 			let menu_obj = _menu_cont.find(el => el.id === parseInt(_id));		
 				this.id = menu_obj["id"];
@@ -109,14 +106,11 @@ class Menu {
 				this.sectionname = section_obj["pagename"];
 				this.color = this.sectionid;	
 			if ((menu_obj["parentid"] == 0) || (_count == 10)){
-								
 			}else{
-				
 			}			
 			_arr.push(this.sectionid);
 			_arr.push(this.parentid);
 			_arr.push(this.id);
-			//console.log ("_arr" , _arr)
 		}catch(e){
 			//console.log ("URL id does not match any page in the Users page array either in IndexDB or fetch")
 		}
@@ -132,6 +126,7 @@ class Menu {
 			//		2)
 			// _count - as iterative 
 			// _arr - as iterative 
+
 
 	findSection(menu_cont, _id, _count, _arr){
 		let menu_obj = menu_cont.find(el => el.id === parseInt(_id));
@@ -186,7 +181,6 @@ class Menu {
 		var _count = 0;
 		var html_count_string = ""
 		var titleTarget = "", editViewUrl = "";
-	//console.log("_sectionid=" + _sectionid);
 		var arr = [];
 		if (_source == "remote"){
 			this.findSection(menu_cont, this.id, 0, arr); //setting the sectionid
@@ -201,31 +195,31 @@ class Menu {
 
 		}
 		var parentpages = this.filterRootPages(menu_cont); //will return nothing but not error if no page match		
-
 		var bExpandedText = "";
-		for (var page of parentpages)  //looping around the parentpages
-		{
-			current_page = "";
-			html_count_string = "";
-			bExpandedText = "false";
-			
-			if(page.id == this.id) {
-				this.pageorder = page.pageorder;
-				current_page = " class=\"active\" "; //can I open the parent page by using current class?
-			}
-			if (arr[1]==page.id) bExpandedText = "true";
-
-			//console.log("page.id=" + page.id);
-			//console.log("arr=" + arr);
-
-			sCMenu = this.populateSubPages(menu_cont, page.id, "", 0, arr); //passing through the whole pages data returned by json.fetch
-			if (sCMenu[1] != 0 ) html_count_string = "<div class=\"right-align\">[" + sCMenu[1] + "]</div>";	
-			_html_menu +=  "<li id='" + page.id + "' open=\"" + bExpandedText + "\" " + current_page + ">"  
-			_html_menu +=  	"<a  href='" + this._url + "?id=" +  page.id + "'" + current_page + ">" + page.pagename + html_count_string + "</a>";
-			_html_menu +=  		sCMenu[0];			
-			_html_menu +=  "</li>";
-			_count = _count + 1
-		}		
+		try{
+			for (var page of parentpages)  //looping around the parentpages
+			{
+				current_page = "";
+				html_count_string = "";
+				bExpandedText = "false";
+				
+				if(page.id == this.id) {
+					this.pageorder = page.pageorder;
+					current_page = " class=\"active\" "; //can I open the parent page by using current class?
+				}
+				if (arr[1]==page.id) bExpandedText = "true";
+	
+				sCMenu = this.populateSubPages(menu_cont, page.id, "", 0, arr); //passing through the whole pages data returned by json.fetch
+				if (sCMenu[1] != 0 ) html_count_string = "<div class=\"right-align\">[" + sCMenu[1] + "]</div>";	
+				_html_menu +=  "<li id='" + page.id + "' open=\"" + bExpandedText + "\" " + current_page + ">"  
+				_html_menu +=  	"<a  href='" + this._url + "?id=" +  page.id + "'" + current_page + ">" + page.pagename + html_count_string + "</a>";
+				_html_menu +=  		sCMenu[0];			
+				_html_menu +=  "</li>";
+				_count = _count + 1
+			}					
+		}catch(e){
+			console.log(e);
+		}
 		
 		//PRINT MENU
 		var menuTarget = document.getElementById('html_menu');
@@ -249,7 +243,7 @@ class Menu {
 
 				//console.log("page.id=" + page.id + " this.id=" + this.id);
 				if(page.id == this.id){
-					this.pageorder = page.pageorder;
+					//this.pageorder = page.pageorder;
 					current_page = " class=\"active\" ";
 				} 
 				if (_arr[2]==page.id) bExpandedText = "true";

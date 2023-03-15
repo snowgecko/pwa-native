@@ -75,39 +75,24 @@ class Page {
 						_qpagecontent += "</div>";
 					}
 				}
-				/*fetch("./assets/pages/data" + _pageid + ".json")
-				.then(response => response.json()).catch((error) => { console.log ("data" + _pageid + ".json")}) //NEW condensed.
-				//.then (function (response){  //OLD VERSION OF response => response.json()
-				//	return response.json();
-				//})
-				.then(data => this.showPage(data, _pageid)).catch((error) => { console.log ("data" + _pageid + ".json")})  //NEW VERSION ?
-				*/
 			}
-			//_pagecontent += "<h3>" + this.name + "</h3>"
-			_pagecontent += "<p id=\"content\">" + this.content
-			_pagecontent += _qpagecontent;
-			_pagecontent += "</p>";								
-			//console.log("_pagecontent=" + _pagecontent);
-			var pagecontent_Target = document.getElementById('content');
-			pagecontent_Target.className = "";
-			pagecontent_Target.classList.add("textsection" + _sectionid);
-			pagecontent_Target.innerHTML = _pagecontent;			
+			_pagecontent = this.content + _qpagecontent;
+			pagecontent_div.classList.add("textsection" + _sectionid);
+			pagecontent_div.innerHTML = _pagecontent;			
 		}
 	}
+	
 	//page.pageContentEdit(pagedata, _pageid, _url_id, _parentid, _sectionid);
 	JSONPageContent(page_cont, _pageid, _menuid, _parentid, _pagecontent, _sectionid){
-		var _pagecontent = "", _qpagecontent = "";
-		var jsonQObjects, page_content;
-//console.log(page_cont);
-//console.log(page_cont.id);
-//console.log(page_cont.questions);
-//console.log("_pageid", _pageid);
-		
+		var _qpagecontent = "";
+		var jsonQObjects;
+
 		if (_pageid != null){
 			//set class variables.
 			this.pageid = page_cont.id;
 			this.name = page_cont.name;
 			this.content = page_cont.content;
+			
 			jsonQObjects = JSON.parse(page_cont.questions)
 			for (var i = 0; i <= jsonQObjects.length -1; i++){
 						_qpagecontent += 	"<div class=\"container\">";
@@ -117,41 +102,17 @@ class Page {
 						_qpagecontent += 		"</div>"					
 						_qpagecontent += "</div>";
 			}
-			//print
-			//_pagecontent += "<h3>" + this.name + "</h3>"
-			_pagecontent = "<p id=\"content\">" + this.content
-			_pagecontent += _qpagecontent;
-			_pagecontent += "</p>";								
-			//console.log("_pagecontent=" + _pagecontent);
-			var pagecontent_Target = document.getElementById('content');
-			pagecontent_Target.classList.add("textsection" + _sectionid);
-			pagecontent_Target.innerHTML = _pagecontent;			
+			pagecontent_div.style.display = "block";
+			pagecontent_div.innerHTML = this.content + _qpagecontent;			
 		}
 	}
 	printPageError(){
-			var pagecontent_Target = document.getElementById('content');
-			pagecontent_Target.innerHTML = "No page match";			
+			pagecontent_div.innerHTML = "No page match";			
 	}
-	//*****need to change this so it dynamically calls content as href's don't work */
-
-	printHomePage(){
-			var pagecontent_Target = document.getElementById('content');
-			pagecontent_Target.innerHTML = printHomepage();	//printHomepage in prl_1.js
-	}	  
-
 
 	//page.pageContentEdit(pagedata, _pageid, _url_id, _parentid, _sectionid);
 	pageContentEdit(data, _pageid, _menuid, _parentid, _pageorder, _sectionid){
 		if (_pageid != null){
-			//console.log("_pageid != null");
-			//console.log("_pageid=" + _pageid);
-			//console.log("_menuid=" + _menuid);
-			//console.log("data[0]" + data[0]);
-			// Now call the function inside fetch promise resolver
-			//				.then(this.CheckError())
-			//console.log("data[0].id=" + data[0].id);
-			//console.log("data[0].name=" + data[0].name);
-			////variables passed in from the url 
 			var page_editable_id = document.getElementById('editable_id');
 			page_editable_id.value = _menuid;
 
@@ -169,8 +130,6 @@ class Page {
 			
 			for (var key in data[0]) {
 			    var arr = data[0][key];
-				//console.log("key=" + key);
-				//console.log("arr=" + arr);
 				if (key == "id"){ //id as returned from Pages data would be page_id
 					this.pageid = arr;
 					page_editable_pageid = document.getElementById('editable_pageid');
@@ -189,13 +148,7 @@ class Page {
 					//clear first as also used for Add Sub Page
 					var page_questions = document.getElementById('questions');
 					page_questions.innerHTML = "";
-					//console.log(jsonQObjects);
-					//console.log(jsonQObjects[0].question)
-					//console.log ("jsonQObjects.length" + jsonQObjects.length);
-					//tinyMCE.get("#editable_answer0").remove();
-					//tinymce.EditorManager.get($(elem).attr("id"))!=null
 					for (var i = 0; i <= jsonQObjects.length -1; i++){
-						//addQuestion(_bwithContent) ==> boolean with content
 						addQuestion(true);
 						var question_string = "editable_question" +  i.toString();
 						var questionElem = document.getElementById(question_string);
@@ -204,18 +157,11 @@ class Page {
 						var answer_string = "editable_answer" +  i.toString();
 						var answerElem = document.getElementById(answer_string);
 						answerElem.value = jsonQObjects[i].contents;
-						//add content to tinyMCE area
-						//var answer_string_content = jsonQObjects[i].contents
-						//***need to remove tinymce instances before re-instatiating. */						
-						//console.log("1st jsonQObjects[i].contents=" + jsonQObjects[i].contents);
+
 						let tinmyMceInstance = tinymce.get(answer_string);
 						if( tinmyMceInstance != null ){
-							//var ed = tinyMCE.EditorManager.get("#editable_answer0")
-							//console.log (answer_string + " ALREADY INITIALISED");
 							tinmyMceInstance.remove();
 						}
-						//console.log("answer_string" + answer_string);
-						//var answerstringTA = document.getElementById(answer_string);
 						tinymce.init({
 							selector: "#" + answer_string,
 							plugins: 'table code lists fullscreen link image',

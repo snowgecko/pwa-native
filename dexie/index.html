@@ -41,15 +41,15 @@
 
     }).then(menu => {
 
-		const friendsContainingLetterA = db.menu
-	    	.filter(menuItem => /im/i.test(menuItem.name))
+		const friendsContainingLetterE = db.menu
+	    	.filter(menuItem => /e/i.test(menuItem.name))
 	    	.toArray();
-		console.log (friendsContainingLetterA);
-		return friendsContainingLetterA;
+		console.log (friendsContainingLetterE);
+		return friendsContainingLetterE;
 
     }).then(menu => {
 
-      alert("Menu id's': " +
+      alert("Menu id's of m containing names': " +
         menu.map(menu => `${menu.id}`));
 
       return db.menu.where('name').startsWith("S").keys();
