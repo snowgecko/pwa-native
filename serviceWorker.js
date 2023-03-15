@@ -1,6 +1,6 @@
 let cacheName = "pwa-app-native";
 let filesToCache = 
-["./index.html", "./index.html","./manifest.json", "./css/pages.css","./css/site.css", "./js/cPage.js", "./js/cMenu.js", "./js/functions_data.js", "./js/functions_editor.js", "./js/functions_shared.js", "./js/countdown.js"]; 
+["./index.html","./manifest.json", "./css/pages.css","./css/site.css", "./js/cPage.js", "./js/cMenu.js", "./js/functions_data.js", "./js/functions_editor.js", "./js/functions_shared.js", "./js/countdown.js"]; 
 
 /* might be needed if live and need to kill the service woker. 
 // A simple, no-op service worker that takes immediate control.
