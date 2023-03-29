@@ -153,7 +153,7 @@ var cont = await cidb.getAllData(idbUser, "fstore"); //- may be quicker to use g
 				//		console.log(e + "database not opening");					
 				//}
 				}catch(e){
-					//console.log (e);
+					console.log (e);
 				}
 			})
 	}

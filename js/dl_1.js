@@ -17,12 +17,19 @@ index.html --> FormSubmit calls verifyLogin() --> handleLoginSubmit_new
 const handleLoginSubmit_new = async (username, password) => {
 	var userData, userDataJSON;
 	try{
-		let userData  = await fetch("https://sm5a54kkhi.execute-api.eu-west-1.amazonaws.com/default/listPages?username=" + username + "&password=" + password)
+		const d1 = Date.now(); 
+		//https://sm5a54kkhi.execute-api.eu-west-1.amazonaws.com/default/listPages?username=kate.wykes@gmail.com&password=testing
+		//https://rcsc26l72a.execute-api.eu-west-1.amazonaws.com/default/listUserMenu?username=kate.wykes@gmail.com&password=testing
+		let userData  = await fetch("https://rcsc26l72a.execute-api.eu-west-1.amazonaws.com/default/listUserMenu?username=" + username + "&password=" + password)
 		userDataJSON = await userData.json();
 		let array_length = userDataJSON[1].length; 
 		if (array_length > 1){ //ie, if menupages array length contains more than 1 record.
 			let indexedFilled = await indexdb_fill(userDataJSON);
 		}							
+		const d2 = Date.now();
+		console.log("Math.abs(d2-d1)=" + Math.abs(d2-d1)); 
+		//let tmpData  = fetch("https://sm5a54kkhi.execute-api.eu-west-1.amazonaws.com/default/listPages?username=willorchard@doctors.org&password=testing");
+		//console.log("tmpData=" + tmpData);
 	}catch(e){
 		userDataJSON = "[{\"id\": 0, \"error\"}]";
 	}

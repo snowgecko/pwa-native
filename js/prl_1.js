@@ -56,7 +56,6 @@ const verifyLogin = async function(cidb, callbackFunction, username, password){
 		let jsonData = await handleLoginSubmit_new(username, password);  //calls JSON and fills local
 		const d2 = new Date().getSeconds();	
 		userInfo = await getUserInfo(cidb, callbackFunction);
-		
 		if (userInfo.length != 0){
 			UserLoggedIn();
 			homepageNode.style.display = "block";
@@ -143,10 +142,10 @@ function UserLoggedOut(_userMessage){
 	//content.style.display = "none";
 	loginNode.style.display = "block";
 	
-// store the result of opening the database in the db variable.
-db = DBOpenRequest.result;
-// now let's close the database again!
-db.close()
+	// store the result of opening the database in the db variable.
+	//db = DBOpenRequest.result;
+	// now let's close the database again!
+	//db.close()
 
 	//loginNode.innerHTML += _userMessage;		
 	//cidb.kill("menu"); //destroy the Temp user table			  		
@@ -259,8 +258,23 @@ function resolveLink_ExpandMenu_printPage(e){
     		displayHomepageDivs();
     		break;
   		default:
+			//needs to be changed to reflect the new userInfo DATASET.
     		// code block //need to add on for multiple allowed section 
-			if (secID == userInfo[0]["section"]){  ///if coming from userlogin then navigate to page via pads ERROR
+			secID = parseInt(secID);
+			if (Array.isArray(userInfo[0]["section"])){
+				if (userInfo[0]["section"].includes(secID)) {
+					if (gPageDataSource == getRemotePageData){
+						//if this is inputed incorrectly then it will populate the form and re-submission will be wrong!!!
+						getRemotePageData(eTargetID, eTargetID, parID, "" , secID)
+					}else{
+						getIDBPageData(cidb, eTargetID, eTargetID, parID, secID); //getContent function in cPage class js file		
+					}			
+					displayContentDivs();
+				}else{
+		    		displayHomepageDivs();
+					message.innerHTML = "<p>User does not have access to other sections</p>"								
+				}
+			}else if (secID == userInfo[0]["section"]){  ///if coming from userlogin then navigate to page via pads ERROR
 				if (gPageDataSource == getRemotePageData){
 					//if this is inputed incorrectly then it will populate the form and re-submission will be wrong!!!
 					getRemotePageData(eTargetID, eTargetID, parID, "" , secID)
