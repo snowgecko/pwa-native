@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+<base href=".">
 <html>
 	<head>
 		<meta charset="utf-8" />
@@ -5,15 +7,16 @@
 		<title>Content Pages</title>
 		<link rel="shortcut icon" type="image/jpg" href="./favicon.ico"/>
 		<link rel="manifest" href="./manifest.json">
-	  	<link rel="apple-touch-icon" href="./assets/icons/icon-192x192.png"/>
-		<link rel="apple-touch-icon" sizes="152x152" href="./images/icons/icon-152x152.png"/>
-		<link rel="apple-touch-icon" sizes="167x167" href="./images/icons/icon-152x152.png"/>
-		<link rel="apple-touch-icon" sizes="180x180" href="./images/icons/icon-192x192.png"/>
+	  	<link rel="apple-touch-icon" href="/assets/icons/icon-192x192.png"/>
+		<link rel="apple-touch-icon" sizes="152x152" href="/images/icons/icon-152x152.png"/>
+		<link rel="apple-touch-icon" sizes="167x167" href="/images/icons/icon-152x152.png"/>
+		<link rel="apple-touch-icon" sizes="180x180" href="/images/icons/icon-192x192.png"/>
 	
+
 		<link type="text/css" rel="stylesheet" href="./css/style.css" />
 		<link type="text/css" rel="stylesheet" href="./css/pages.css" />
 		<link type="text/css" rel="stylesheet" href="./css/menu.css" />		
-  		<link rel="stylesheet" type="text/css" href="./css/loader.css"/>
+  		<link rel="stylesheet" type="text/css" href="/css/loader.css"/>
 <!--just for the home page-->
 		<link rel="stylesheet" href="./css/home.css">
 
@@ -24,13 +27,15 @@
 		<!--DOES NOT WORK FOR SUB_SUB NAVIGATION ?ARIA issue-->
 		<script src="./js/dl_1.js"></script>	<!--refactoring-->	
 		<script src="./js/prl_1.js"></script>	<!--refactoring-->	
+		<script src="./js/functions_data.js"></script>		
 		<!--include module for editor--> 
-<style>
-
-</style>
+		<script src="./js/functions_editor.js"></script>		
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+		<script src="./js/tinymce/tinymce.min.js"></script>
+		
 <script>
 window.addEventListener('load', ()=>{
-   // console.log("in window load");	
+    //console.log("in window load");	
 	if ("serviceWorker" in navigator) {
 	    try {
       		navigator.serviceWorker.register('./serviceWorker.js');
@@ -39,7 +44,7 @@ window.addEventListener('load', ()=>{
       		//console.log("Service Worker Registration Failed");
 		}
     }else{
-	    //console.log("Service Worker not supported?");
+	   //console.log("Service Worker not supported?");
 	}
 });
 </script>
@@ -55,13 +60,14 @@ window.addEventListener('load', ()=>{
   <input type="checkbox" id="ckslider">
   <span class="slider round" id="slider"></span>
 </label>
+				<!--//-->
 				<div class="text"><a href="#menu" class="menulines"><span></span></a><div id="section_title">.....</div></div>
 				<!--//-->
 				<div id="mySidenav" class="sidenav">
 					<input type="search" name="searchbox" id="searchbox" onKeyUp="edValueKeyPress()"/>
 					<div id="menu">
 				      <!--<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>-->
-				      	<ul id="root"> 
+				      	<ul> 
 							<!--onclick="javascript:toggleMenu(1)"-->
 							<div id="html_menu">
 								<!--*****WILL BE POPULATED DYNAMICALLY JS******-->
@@ -89,30 +95,61 @@ window.addEventListener('load', ()=>{
 				<p>&nbsp;&nbsp;&nbsp;loading content....</p>
 				</div>
 			</div>
+			<!-- IMPORTANT THINGS TO CHANGE
+			headerimage 
+			para_loader visible at the start - then changes on load 
+			content = 
+				login page first if not logged in  
+				homepage IF logged and has a choice of sections 
+				section page if logged and has one subscription
+			-->
 			<!-- change header depending on section-->
 			<div class="headerimage" id="headerimage"></div>
-			<div id="content_main" class="content main">
-				<h3 id="pagetitle"><!--does not appear after load--></h3>
+			<!-- /////-->
+			<div class="content main" id="content_main">
+				<h3><!--does not appear after load--></h3><div id="para_loader"><p><div id="loading_text">loading ....</div><div class="lds-hourglass" id="loader"></div></p></div>
 				<!--content once the indexedDB is loaded-->
 				<div id="content_variable">
 					<div id="homepagepads" class="pads">
 						<div class="pad-top">
-							<div class="pad1"><a href="index.html?id=1">FRCA Primary</a></div>
-							<div class="pad2"><a href="index.html?id=2">FRCA Final</a></div>
-							<div class="pad3"><a href="index.html?id=4">FICM</a></div>
+							<div class="pad1"><a href="index-edit.html?id=1">FRCA Primary</a></div>
+							<div class="pad2"><a href="index-edit.html?id=2">FRCA Final</a></div>
+							<div class="pad3"><a href="index-edit.html?id=4">FICM</a></div>
 						</div>
 						<div class="pad-bottom">
-							<div class="pad4"><a href="index.html?id=">Pain</a></div>
-							<div class="pad5"><a href="index.html?id=58">....</a></div>
-							<div class="pad6"><a href="index.html?id=4">Thames valley CCC</a></div>
+							<div class="pad4"><a href="index-edit.html?id=">Pain</a></div>
+							<div class="pad5"><a href="index-edit.html?id=58">....</a></div>
+							<div class="pad6"><a href="index-edit.html?id=4">Thames valley CCC</a></div>
 						</div>
 					</div>
-					<div id="page_content">
-						<div class="element"></div>
-						<div id="questions"></div>					
-					</div>
+					<form name="form1" id="form1"  class="form_addcontent">
+						<!--NEED TO ADD ID, NAME, PARENTID--><!--GET GREATEST NO FROM DATABASE AND ADD 1-->
+						<!-- IF I TAKE THE ID OF CURRENT and any page added would be child page-->
+						Page Name: <input type="text"  id="editable_name" class="med"><br/>
+						ID <input type="text"  id="editable_id" class="small">
+						SID<input type="text"  id="editable_sectionid" class="small">
+						ParentID <input type="text"  id="editable_parentid" class="small">
+						PageID <input type="text"  id="editable_pageid" class="small">
+						PageOrder <input type="text"  id="editable_pageorder" class="small">
+						<input type="button" value="Add SubPage" onClick="addSubPgae()" class="alignright">
+						<br/>
+						<strong>Content:</strong>
+						<textarea id="editable_content" name="editable_content" class="editor-content wide">
+					    </textarea>
+						<div id="questions"></div>
+						<input type="button" onclick="addQuestion(false)" value="Add question"></input>
+						<hr/>
+						<p></p>
+						<!--<input type="button" value="Download JSON file" onClick="download()" class="alignright">-->
+						<input id="postSubmit" type="submit" value="Save Page" class="alignright">
+						<!--<button class="file-button" onclick="handleSubmit(event)">Save As</button>-->
+					</p>
+					<div id="storageA"></div>
+					</fieldset>
+					</form>
+					<!-- FINISHED ADDING--> 
+					<!--END OF EDIT-->
 					<div id="message"></div>
-					<!--used on content pages-->
 				</div>
 			</div>
 			<!-- /////-->
@@ -128,19 +165,19 @@ window.addEventListener('load', ()=>{
 					</form>
 					<p id="passwordmessage"></p>
 					<!--//-->
+					<!--LOGIN END used on login page-->
+				<!--<p><a href="#" id="logout">logout (exit)</a></p>-->
 			</div>
 		</div>
 <script>
 	//*****global variables set in functions_shared.js
 	var cidb = new SimpleIDB();
 	var bIsLoggedIn = new Boolean(false);
-	var gMenuDataSource = getIDBMenuData;
-	var gPageDataSource = getIDBPageData;
+	var gMenuDataSource = getRemoteMenuData;
+	var gPageDataSource = getRemotePageData;
 	var listElem; 
-	var bEditMode = false;
-
-	var userInfo; 
-
+	var bEditMode = true;
+	
 	const homepageNode = document.getElementById("homepagepads");
 	const loginNode = document.getElementById("loginForm");
 	const contentVar_div = document.getElementById("content_variable");
@@ -149,22 +186,16 @@ window.addEventListener('load', ()=>{
 
 	const para_loader = document.getElementById("para_loader");
 	const ca_loaders = document.getElementById("ca_loaders");
-
 	const contentItems = document.querySelectorAll(".content");
 
-	url_dev = urlParams.get('dev');
-	if (url_dev == "true"){
-		gMenuDataSource = getRemoteMenuData;
-		gPageDataSource = getRemotePageData;
-		console.log("getRemoteData");
-	}	
-	
+	const formNode = document.getElementById("form1");
+		
 	window.onload = function() {
 				
 		verifyUserContent(cidb, gMenuDataSource);
-		//set defaults 
-		homepageNode.style.display = "none";
-		pagecontent_div.style.display = "none";		
+		//set defaults 		
+		formNode.style.display = "none";
+		homepageNode.style.display = "none";		
 		loginNode.style.display = "block";
 		
 		contentItems.forEach(function(cItems) {
@@ -175,30 +206,21 @@ window.addEventListener('load', ()=>{
 				e.preventDefault();
 				changeNavState(); //called from functions_shared.js - simply changes classes
 		});
-		
 		document.body.addEventListener("click", function(e) {
-			if ((e.target.id !== "slider") && (e.target.id !== "ckslider")) e.preventDefault();
-
-			var _ckslider = document.getElementById("ckslider");
-			if((e.target.id !== "ckslider") && !(_ckslider.checked)){
-				console.log ("e.target.id", e.target.id);
-   				 console.log('get offline content');
-			}
-			
+			e.preventDefault();
 			if(e.target.id == "submitBtn"){
 				var username = document.getElementById("username").value;
 				var password = document.getElementById("password").value;
 				///************************VERIFYLOGIN - needs to be called from LoginForm AND onload**************
-				const output = verifyLogin(cidb, gMenuDataSource, username, password); //displays homepage if logged in success
-				
+				const output = verifyLogin(cidb, gMenuDataSource, username, password);
 			}else if(e.target && e.target.id == "logout") {
-				UserLoggedOut();
+				UserLoggedOut();					
 				changeNavState();
 			}else if(e.target && e.target.nodeName == "A") {
 				var loc_href = e.target.href 
 				var equalsLoc = loc_href.indexOf("?id=") + 4; //? + 3
 				var eTargetID = loc_href.substring(equalsLoc, loc_href.length);
-				history.pushState('data to be passed', 'Page Title', e.target.href );
+				history.pushState('data to be passed', 'Page Title', loc_href );
 				if(e.target.parentNode.className.indexOf("pad")!=-1){
 					const menuData = gMenuDataSource(cidb, eTargetID, eTargetID); //var x = await **calls different function based on edit or NOT edit */ 							
 				}
@@ -209,13 +231,25 @@ window.addEventListener('load', ()=>{
 				//console.log ("on click with no event listener attached");
 			}
 		});
-		
-		/*******event listeners*****/
-				//console.log("e.target.parent=" + e.target.parentNode.className);
-				//console.log("e.target.href=" + e.target.href);
+		tinymce.init({
+			selector: '.editor-content',
+			init_instance_callback: function (editor) {
+				// Shortcuts and useful things go here.
+				editor.shortcuts.add("alt+s", "Save Me My Content", function() {
+					savePage();		    				
+					//alert("saved");
+  				}),
+	    		editor.shortcuts.add("alt+b", "A New Way To Bold", "Bold");
+  			},
+			plugins: 'table code lists fullscreen link image',
+			toolbar: 'undo redo | formatselect | bold italic | numlist bullist | link | image' +
+			'alignleft aligncenter alignright alignjustify | indent outdent | ' +
+			'table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol'
+		});	
 		//document.body.addEventListener
 		//document.getElementById("searchbox").addEventListener("keypress", edValueKeyPress);
 		
+		/*******event listeners*****/
 	};	
 
 </script>
