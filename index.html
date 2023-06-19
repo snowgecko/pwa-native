@@ -50,7 +50,7 @@ window.addEventListener('load', ()=>{
 	    </header>
 		<div id="page">
 			<div class="header" id="header">
-<div class="floatright" id="offline">offline</div>
+<div class="floatright" id="offline">online</div>
 <label class="switch">
   <input type="checkbox" id="ckslider">
   <span class="slider round" id="slider"></span>
@@ -153,7 +153,11 @@ window.addEventListener('load', ()=>{
 	const contentItems = document.querySelectorAll(".content");
 
 	url_dev = urlParams.get('dev');
-	if (url_dev == "true"){
+	var _ckslider = document.getElementById("ckslider");
+	var _cksliderText = document.getElementById("offline");
+	console.log("_ckslider.checked" + _ckslider.checked)
+	
+	if ((url_dev == "true") || !(_ckslider.checked)){
 		gMenuDataSource = getRemoteMenuData;
 		gPageDataSource = getRemotePageData;
 		console.log("getRemoteData");
@@ -177,14 +181,24 @@ window.addEventListener('load', ()=>{
 		});
 		
 		document.body.addEventListener("click", function(e) {
+			//*** need the slider to slide so DO NOT PREVENT default.... DO NOT duplicate so e.target.id = slider
 			if ((e.target.id !== "slider") && (e.target.id !== "ckslider")) e.preventDefault();
-
-			var _ckslider = document.getElementById("ckslider");
-			if((e.target.id !== "ckslider") && !(_ckslider.checked)){
-				console.log ("e.target.id", e.target.id);
-   				 console.log('get offline content');
-			}
-			
+			//console.log ("e.target.id", e.target.id);
+			if(e.target.id == "ckslider"){
+				//console.log ("_ckslider.checked", _ckslider.checked);
+				if (_ckslider.checked){
+					//console.log('get online content');
+					gMenuDataSource = getIDBMenuData;
+					gPageDataSource = getIDBPageData;
+					//console.log("getRemoteData");
+					_cksliderText.innerHTML = "offline";
+				}else{
+					//console.log('get offline content');
+					gMenuDataSource = getRemoteMenuData;
+					gPageDataSource = getRemotePageData;
+					_cksliderText.innerHTML = "online";
+				}
+			} 
 			if(e.target.id == "submitBtn"){
 				var username = document.getElementById("username").value;
 				var password = document.getElementById("password").value;

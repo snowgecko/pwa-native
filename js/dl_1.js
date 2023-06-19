@@ -18,22 +18,34 @@ const handleLoginSubmit_new = async (username, password) => {
 	var userData, userDataJSON;
 	try{
 		const d1 = Date.now(); 
-		//https://sm5a54kkhi.execute-api.eu-west-1.amazonaws.com/default/listPages?username=kate.wykes@gmail.com&password=testing
-		//https://rcsc26l72a.execute-api.eu-west-1.amazonaws.com/default/listUserMenu?username=kate.wykes@gmail.com&password=testing
 		let userData  = await fetch("https://rcsc26l72a.execute-api.eu-west-1.amazonaws.com/default/listUserMenu?username=" + username + "&password=" + password)
 		userDataJSON = await userData.json();
 		let array_length = userDataJSON[1].length; 
 		if (array_length > 1){ //ie, if menupages array length contains more than 1 record.
+			//at the moment this fills 3 tables - need it to fill User/Menu but pages can be done asynchronosoly	
 			let indexedFilled = await indexdb_fill(userDataJSON);
+			//fill the pages contents actually asynchronously
+			loadPageData(username, password);
 		}							
 		const d2 = Date.now();
 		console.log("Math.abs(d2-d1)=" + Math.abs(d2-d1)); 
-		//let tmpData  = fetch("https://sm5a54kkhi.execute-api.eu-west-1.amazonaws.com/default/listPages?username=willorchard@doctors.org&password=testing");
-		//console.log("tmpData=" + tmpData);
 	}catch(e){
 		userDataJSON = "[{\"id\": 0, \"error\"}]";
 	}
 	return userDataJSON;
+}
+
+/******try using import statements ES6 */
+//import dataJson from 'config.json';
+//document.getElementById('main').innerHTML = JSON.stringify(dataJson);
+async function loadPageData(username, password){
+
+	let pagesData  =  fetch("https://sm5a54kkhi.execute-api.eu-west-1.amazonaws.com/default/listPages?username=" + username + "&password=" + password)
+		.then(response => response.json())
+		.then(data => indexPagesdb_fill(data))
+		.catch(error => console.log(error))
+		.finally(() => console.log("finally"))
+	//let pagesFilled = pagesdb_fill(userData)
 }
 
 //**************************DATA LAYER for IndexedDB******************************************//
@@ -89,6 +101,22 @@ async function getUserInfo(cidb, callbackFunction){
 }
 
 //1st fill up all three IndexedDB databases.
+async function indexPagesdb_fill(data)
+{
+		//keyPath - which one do I want to use as key
+		idbPages = await cidb.open("pages", "fstore",  {
+            schema: { keyPath: "id", autoIncrement:false },
+	        index: 
+	            [
+	                ["id", "id", { unique: false }],
+	           ]     	          
+        })
+		console.log (data[2]);			
+		//console.log (data[1][0]);			
+		cidb.fill(idbPages, "fstore", data[2])						
+}
+
+//1st fill up all three IndexedDB databases.
 async function indexdb_fill(data){
 	
 	idbUser = await cidb.open("user", "fstore",  {
@@ -109,30 +137,15 @@ async function indexdb_fill(data){
 	           ]     
 	          
         })
-	//keyPath - which one do I want to use as key
-    idbPages = await cidb.open("pages", "fstore",  {
-            schema: { keyPath: "id", autoIncrement:false },
-	        index: 
-	            [
-	                ["id", "id", { unique: false }],
-	           ]     	          
-        })
-
 		//console.log ("data[0][0]" + data[0][0].section);			
 		//console.log ("data[0][1]" + data[0][1].section);			
 
-		//console.log (data[1]);			
-		//console.log (data[1][0]);			
-
-		//console.log (data[2]);	
-
 		cidb.fill(idbUser, "fstore", data[0]);
 		cidb.fill(idbMenu, "fstore", data[1]);
-		cidb.fill(idbPages, "fstore", data[2])			
-			
+		
 		//console.log(data[0][0].section);
     	//displayAll(cidb, "storage")
-//addMarkers().then(() => doSomething());
+		//addMarkers().then(() => doSomething());
 }
 
 

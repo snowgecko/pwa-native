@@ -30,6 +30,7 @@ const verifyUserContent = async function(cidb, callbackFunction){
 	try {
 		ca_loaders.style.visibility = "visible";	
 		userInfo = await getUserInfo(cidb, callbackFunction); ////from dl_1.js
+		
 		if (userInfo.length != 0){
 			/**does it make sense to call the menu here - it loads even if homepage is landed on (from refresh) */
 			const menuData = await callbackFunction(cidb, userInfo[0]["section"], userInfo[0]["section"]); 
@@ -53,9 +54,13 @@ const verifyLogin = async function(cidb, callbackFunction, username, password){
    	try {
 		ca_loaders.style.visibility = "visible";
 		const d1 = new Date().getSeconds();	
-		let jsonData = await handleLoginSubmit_new(username, password);  //calls JSON and fills local
+		//****calls fetch JSON and fills local indexedDB with menu (and pages async)
+		let jsonData = await handleLoginSubmit_new(username, password);  
+
+		//****   *******************////
 		const d2 = new Date().getSeconds();	
 		userInfo = await getUserInfo(cidb, callbackFunction);
+
 		if (userInfo.length != 0){
 			UserLoggedIn();
 			homepageNode.style.display = "block";
