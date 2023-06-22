@@ -45,7 +45,15 @@ const verifyUserContent = async function(cidb, callbackFunction){
 	}
 };
 
-
+const updateContent = async function(cidb, username, password){
+	//****calls fetch JSON and fills local indexedDB with menu (and pages async)
+	//let jsonData = await handleUpdateContent(username, password);  
+	let jsonData  =  fetch("https://rcsc26l72a.execute-api.eu-west-1.amazonaws.com/default/listUserMenu?username=" + username + "&password=" + password)
+		.then(response => response.json())
+		.then(data => indexdb_fill(data))
+		.catch(error => console.log(error))
+		.finally(() => console.log("finally"))
+}
 /***
 	//called when logging in from index.html
  **/
@@ -266,6 +274,7 @@ function resolveLink_ExpandMenu_printPage(e){
 			//needs to be changed to reflect the new userInfo DATASET.
     		// code block //need to add on for multiple allowed section 
 			secID = parseInt(secID);
+			//console.log("from resolveLink_ExpandMenu_printPage secID=" + secID);
 			if (Array.isArray(userInfo[0]["section"])){
 				if (userInfo[0]["section"].includes(secID)) {
 					if (gPageDataSource == getRemotePageData){
