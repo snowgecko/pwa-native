@@ -281,4 +281,13 @@ display: inline block;
    /* Prevent user interaction with form while disabled */
    pointer-events:none;
 }
-
+@media (max-width:740px){
+	#section_title{
+		padding-left:2em;
+	}	
+}
+@media only screen and (max-device-width: 740px) {
+	#section_title{
+		padding-left:2em;
+	}	
+}
