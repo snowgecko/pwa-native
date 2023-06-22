@@ -34,6 +34,28 @@ const handleLoginSubmit_new = async (username, password) => {
 	}
 	return userDataJSON;
 }
+//same as handleLoginSubmit_new ***replace that with this...
+const handleUpdateContent = async (username, password) => {
+	var userData, userDataJSON;
+	try{
+		const d1 = Date.now(); 
+		let userData  = await fetch("https://rcsc26l72a.execute-api.eu-west-1.amazonaws.com/default/listUserMenu?username=" + username + "&password=" + password)
+		userDataJSON = await userData.json();
+		let array_length = userDataJSON[1].length; 
+		if (array_length > 1){ //ie, if menupages array length contains more than 1 record.
+			//at the moment this fills 3 tables - need it to fill User/Menu but pages can be done asynchronosoly	
+			let indexedFilled = await indexdb_fill(userDataJSON);
+			//fill the pages contents actually asynchronously
+			loadPageData(username, password);
+		}							
+		const d2 = Date.now();
+		console.log("Math.abs(d2-d1)=" + Math.abs(d2-d1)); 
+	}catch(e){
+		userDataJSON = "[{\"id\": 0, \"error\"}]";
+	}
+	return userDataJSON;
+}
+
 
 /******try using import statements ES6 */
 //import dataJson from 'config.json';
@@ -244,7 +266,7 @@ async function getIDBPageData(cidb, _menuid, _pageid, _parentid, _sectionid){
 	var idbPage, page_data;
 	var username, sectionid;
 	var page_cont; 
-	
+	//console.log("sectionid in getIDBPageData _sectionid=" + _sectionid);
 	let page = new Page(_pageid); //set in  1) resolveLink_ExpandMenu_printPage (pages.html)
 	const parsed = parseInt(_pageid);
 	idbPage = await cidb.open("pages", "fstore",  {
@@ -258,7 +280,8 @@ async function getIDBPageData(cidb, _menuid, _pageid, _parentid, _sectionid){
 	}else{
 		try{
 			page_cont = await cidb.read("fstore", parsed)	
-			page.JSONPageContent(page_cont, _pageid, _menuid, _parentid, _sectionid);	
+			//	JSONPageContent(page_cont, _pageid, _menuid, _parentid, _pagecontent, _sectionid){
+			page.JSONPageContent(page_cont, _pageid, _menuid, _parentid, "", _sectionid);	
 		}catch(e){
 			//error	
 		}

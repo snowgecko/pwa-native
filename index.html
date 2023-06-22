@@ -9,7 +9,9 @@
 		<link rel="apple-touch-icon" sizes="152x152" href="./images/icons/icon-152x152.png"/>
 		<link rel="apple-touch-icon" sizes="167x167" href="./images/icons/icon-152x152.png"/>
 		<link rel="apple-touch-icon" sizes="180x180" href="./images/icons/icon-192x192.png"/>
-	
+		
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.css">	
+
 		<link type="text/css" rel="stylesheet" href="./css/style.css" />
 		<link type="text/css" rel="stylesheet" href="./css/pages.css" />
 		<link type="text/css" rel="stylesheet" href="./css/menu.css" />		
@@ -50,12 +52,32 @@ window.addEventListener('load', ()=>{
 	    </header>
 		<div id="page">
 			<div class="header" id="header">
-<div class="floatright" id="offline">online</div>
-<label class="switch">
-  <input type="checkbox" id="ckslider">
-  <span class="slider round" id="slider"></span>
-</label>
-				<div class="text"><a href="#menu" class="menulines"><span></span></a><div id="section_title">.....</div></div>
+				<div class="floatright" id="offline">online</div>
+				<label class="switch">
+					<input type="checkbox" id="ckslider">
+					<span class="slider round" id="slider"></span>
+				</label>
+				<div class="floatright" id="settingsMenu">
+					<ul>
+						<li>&nbsp;<i class="fas fa-cog"></i>
+							<ul>
+								<li><a id="updateContent">update content</a></li>
+								<li><a>settings 2</a></li>
+							</ul>
+						</li> 
+						<!--<li class="twitter">twitter</li> -->
+					</ul>
+				</div>
+					<!--<ul>
+						<li><span>Navigation</span></li>
+						<li><a class="active">Dashboard</a></li>
+						<li class="inactive"><a>Statistics</a></li>
+					</ul>-->
+					<!--<div class="floatright borderwhite" id="update">Update Content</div>-->
+				<div class="text">
+					<a href="#menu" class="menulines"><span></span></a>
+					<div id="section_title">.....</div>
+				</div>
 				<!--//-->
 				<div id="mySidenav" class="sidenav">
 					<input type="search" name="searchbox" id="searchbox" onKeyUp="edValueKeyPress()"/>
@@ -138,7 +160,8 @@ window.addEventListener('load', ()=>{
 	var gPageDataSource = getIDBPageData;
 	var listElem; 
 	var bEditMode = false;
-
+	var username = "";
+	var password = "";
 	var userInfo; 
 
 	const homepageNode = document.getElementById("homepagepads");
@@ -183,7 +206,7 @@ window.addEventListener('load', ()=>{
 		document.body.addEventListener("click", function(e) {
 			//*** need the slider to slide so DO NOT PREVENT default.... DO NOT duplicate so e.target.id = slider
 			if ((e.target.id !== "slider") && (e.target.id !== "ckslider")) e.preventDefault();
-			//console.log ("e.target.id", e.target.id);
+			console.log ("e.target.id", e.target.id);
 			if(e.target.id == "ckslider"){
 				//console.log ("_ckslider.checked", _ckslider.checked);
 				if (_ckslider.checked){
@@ -199,16 +222,30 @@ window.addEventListener('load', ()=>{
 					_cksliderText.innerHTML = "online";
 				}
 			} 
+			//from Login
 			if(e.target.id == "submitBtn"){
-				var username = document.getElementById("username").value;
-				var password = document.getElementById("password").value;
+				username = document.getElementById("username").value;
+				password = document.getElementById("password").value;
 				///************************VERIFYLOGIN - needs to be called from LoginForm AND onload**************
 				const output = verifyLogin(cidb, gMenuDataSource, username, password); //displays homepage if logged in success
-				
 			}else if(e.target && e.target.id == "logout") {
 				UserLoggedOut();
 				changeNavState();
+			}else if(e.target.id == "updateContent"){
+				if (username == ""){
+					UserLoggedOut();					
+					changeNavState();
+				} else{
+					console.log("username=" + username + " password=" + password);
+					handleUpdateContent(username, password)
+				}
+				//couuld call the serviceWorker.js - what advantage?
+				//async function requestBackgroundSync() {
+ 			   	//	const registration = await navigator.serviceWorker.ready;
+    			//	await registration.sync.register('updateData');
+				//}
 			}else if(e.target && e.target.nodeName == "A") {
+				//from navigation
 				var loc_href = e.target.href 
 				var equalsLoc = loc_href.indexOf("?id=") + 4; //? + 3
 				var eTargetID = loc_href.substring(equalsLoc, loc_href.length);

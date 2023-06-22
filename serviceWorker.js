@@ -37,6 +37,12 @@ self.addEventListener("fetch", (e) => {
   // })
   //);
 });
+self.addEventListener('sync', event => {
+    if (event.tag === 'updateData') {
+        event.waitUntil(doTheWork());
+    }
+});
+
 
 /*
 self.addEventListener('activate', () => {

@@ -92,6 +92,8 @@ class Page {
 			this.pageid = page_cont.id;
 			this.name = page_cont.name;
 			this.content = page_cont.content;
+
+			//console.log("sectionid in getIDBPageData _sectionid=" + _sectionid);
 			
 			jsonQObjects = JSON.parse(page_cont.questions)
 			for (var i = 0; i <= jsonQObjects.length -1; i++){
