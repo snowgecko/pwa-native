@@ -28,7 +28,7 @@ const handleLoginSubmit_new = async (username, password) => {
 			loadPageData(username, password);
 		}							
 		const d2 = Date.now();
-		console.log("Math.abs(d2-d1)=" + Math.abs(d2-d1)); 
+		//console.log("Math.abs(d2-d1)=" + Math.abs(d2-d1)); 
 	}catch(e){
 		userDataJSON = "[{\"id\": 0, \"error\"}]";
 	}
@@ -49,7 +49,7 @@ const handleUpdateContent = async (username, password) => {
 			loadPageData(username, password);
 		}							
 		const d2 = Date.now();
-		console.log("Math.abs(d2-d1)=" + Math.abs(d2-d1)); 
+		//console.log("Math.abs(d2-d1)=" + Math.abs(d2-d1)); 
 	}catch(e){
 		userDataJSON = "[{\"id\": 0, \"error\"}]";
 	}
@@ -133,7 +133,7 @@ async function indexPagesdb_fill(data)
 	                ["id", "id", { unique: false }],
 	           ]     	          
         })
-		console.log (data[2]);			
+		//console.log (data[2]);			
 		//console.log (data[1][0]);			
 		cidb.fill(idbPages, "fstore", data[2])						
 }
@@ -189,17 +189,23 @@ getUserInfo :
 	//throw new Error('Program Terminated');
 	//callbackFunction(cidb, url_id, sectionid); //called from getUserInfo above
 	//passing through -1 to the fetch call getes all... 
+
+	IF called from prl_1.js - verifyUserContent 
+	const menuData = await callbackFunction(cidb, userInfo[0]["section"], userInfo[0]["section"]); 
+	--> menu.filter_populateMenu(data[1], _menuid, _sectionid, "remote") //populates Menu into html_menu div
+	--> but then _menuid not used in that function. 
 */
 async function getRemoteMenuData(cidb, _menuid, _sectionid){
 	let menu = new Menu(_menuid);  	
 	menu.url = window.location.pathname; 
 	try{
+		console.log("_menuid" + _menuid , "_sectionid" + _sectionid)
 		fetch("https://sm5a54kkhi.execute-api.eu-west-1.amazonaws.com/default/listPages?section_id=" + _sectionid)
 			.then(response => response.json()) 
 			.then(data => {
 				menu.filter_populateMenu(data[1], _menuid, _sectionid, "remote") //populates Menu into html_menu div
 			})
-			console.log("Date.now()", Date.now());
+			//console.log("Date.now()", Date.now());
 		//console.log ("data[1].timestamp" , data[1].timestamp);
 	}catch(e){
 			
@@ -275,7 +281,7 @@ async function getIDBPageData(cidb, _menuid, _pageid, _parentid, _sectionid){
 	if ((_pageid == null)||(_pageid == NaN)){
 		page.printPageError();
 	}else if (parsed == 0){
-		console.log("parsed==" + parsed);
+		//console.log("parsed==" + parsed);
 		//page.printHomePage();
 	}else{
 		try{

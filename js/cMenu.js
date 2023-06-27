@@ -101,6 +101,7 @@ class Menu {
 				this.id = menu_obj["id"];
 				this.pageid = menu_obj["pageid"];
 				this.parentid = menu_obj["parentid"];
+
 			let section_obj = _menu_cont.find(el => el.id === parseInt(_sectionid));		
 				this.sectionid = section_obj["sectionid"];
 				this.sectionname = section_obj["pagename"];
@@ -129,12 +130,15 @@ class Menu {
 
 
 	findSection(menu_cont, _id, _count, _arr){
+
 		let menu_obj = menu_cont.find(el => el.id === parseInt(_id));
-		//console.log("_id="+ _id + " menu_obj[id]=" + menu_obj["id"] + " _count" + _count);
+		//console.log("in findSection(cMenu.js) _id="+ _id + " menu_obj[id]=" + menu_obj["id"] + " _count" + _count);
+		
 		if (menu_obj){
 			if (_count == 0) {
 				this.pageid = menu_obj["pageid"]; //errors here...
 				this.parentid = menu_obj["parentid"];
+				//console.log(menu_obj["parentid"]);
 			}
 			if ((menu_obj["parentid"] == 0) || (_count == 5)){
 				this.sectionid = menu_obj["id"];
@@ -173,7 +177,12 @@ class Menu {
 			getRemoteMenuData(cidb, _menuid, _sectionid) --> 
 			menu.filter_populateMenu(data[1], _menuid, _sectionid, "remote") //prints out menu of section we are in --> see cMenu.js
 		var x = await calls different function based on edit or NOT edit getIDBMenuData(cidb, url_id, sectionid);
-	 ***/
+	
+		***from dl_1.js
+		***if called from refresh then _menuid is the same as _sectionid - because from verifyUserContent in prl_1.js 
+					const menuData = await callbackFunction(cidb, userInfo[0]["section"], userInfo[0]["section"]); 
+		menu.filter_populateMenu(data[1], _menuid, _sectionid, "remote") //populates Menu into html_menu div
+		***/
 	filter_populateMenu(menu_cont, _menuid, _sectionid, _source){
 		var _html_menu = "";			
 		var current_page = "";
@@ -182,11 +191,14 @@ class Menu {
 		var html_count_string = ""
 		var titleTarget = "", editViewUrl = "";
 		var arr = [];
+		//menu_cont passed through from fetch (in getRemoteData) data[1] - menuData
+		//this.id - 
 		if (_source == "remote"){
 			this.findSection(menu_cont, this.id, 0, arr); //setting the sectionid
 		}else{
 			this.findSection(menu_cont, this.id, 0, arr, _sectionid);
 		}
+		//console.log("arr" + arr);
 		if (this.sectionname != null ){
 			titleTarget = document.getElementById('section_title');
 			titleTarget.innerHTML = this.sectionname;

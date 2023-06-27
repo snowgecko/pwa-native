@@ -19,7 +19,7 @@
   		<link rel="stylesheet" type="text/css" href="/css/loader.css"/>
 <!--just for the home page-->
 		<link rel="stylesheet" href="./css/home.css">
-
+		
 		<!--class declaration--> 
   		<script src="./js/cPage.js" ></script>
   		<script src="./js/cMenu.js" ></script>
@@ -55,11 +55,11 @@ window.addEventListener('load', ()=>{
 	    </header>
 		<div id="page">
 			<div class="header" id="header">
-<div class="floatright" id="offline">online</div>
-<label class="switch">
-  <input type="checkbox" id="ckslider">
-  <span class="slider round" id="slider"></span>
-</label>
+				<div class="floatright" id="offline">online</div>
+				<label class="switch">
+				<input type="checkbox" id="ckslider">
+				<span class="slider round" id="slider"></span>
+				</label>
 				<!--//-->
 				<div class="text"><a href="#menu" class="menulines"><span></span></a><div id="section_title">.....</div></div>
 				<!--//-->
@@ -137,7 +137,7 @@ window.addEventListener('load', ()=>{
 						<textarea id="editable_content" name="editable_content" class="editor-content wide">
 					    </textarea>
 						<div id="questions"></div>
-						<input type="button" onclick="addQuestion(false)" value="Add question"></input>
+						<input type="button" onclick="addQuestionDivs()" value="Add question"></input>
 						<hr/>
 						<p></p>
 						<!--<input type="button" value="Download JSON file" onClick="download()" class="alignright">-->
@@ -231,6 +231,7 @@ window.addEventListener('load', ()=>{
 				//console.log ("on click with no event listener attached");
 			}
 		});
+
 		tinymce.init({
 			selector: '.editor-content',
 			init_instance_callback: function (editor) {
@@ -244,7 +245,36 @@ window.addEventListener('load', ()=>{
 			plugins: 'table code lists fullscreen link image',
 			toolbar: 'undo redo | formatselect | bold italic | numlist bullist | link | image' +
 			'alignleft aligncenter alignright alignjustify | indent outdent | ' +
-			'table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol'
+			'table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol',
+		 	/* enable title field in the Image dialog*/
+		 	image_title: true,
+			automatic_uploads: true,
+			file_picker_types: 'image',
+			file_picker_callback: function (cb, value, meta) {
+				var input = document.createElement('input');
+				input.setAttribute('type', 'file');
+				input.setAttribute('accept', 'image/*');
+				input.onchange = function () {
+					  var file = this.files[0];
+					  var reader = new FileReader();
+					  reader.onload = function () {
+					/*
+					  Note: Now we need to register the blob in TinyMCEs image blob
+					  registry. In the next release this part hopefully won't be
+					  necessary, as we are looking to handle it internally.
+					*/
+					var id = 'blobid' + (new Date()).getTime();
+					var blobCache =  tinymce.activeEditor.editorUpload.blobCache;
+					var base64 = reader.result.split(',')[1];
+					var blobInfo = blobCache.create(id, file, base64);
+					blobCache.add(blobInfo);
+					/* call the callback and populate the Title field with the file name */
+					cb(blobInfo.blobUri(), { title: file.name });
+				  };
+			  reader.readAsDataURL(file);
+			};
+			input.click();
+	  		}
 		});	
 		//document.body.addEventListener
 		//document.getElementById("searchbox").addEventListener("keypress", edValueKeyPress);

@@ -114,6 +114,8 @@ class Page {
 
 	//page.pageContentEdit(pagedata, _pageid, _url_id, _parentid, _sectionid);
 	pageContentEdit(data, _pageid, _menuid, _parentid, _pageorder, _sectionid){
+		console.log("_parentid" + _parentid);
+		///WRONG parentid
 		if (_pageid != null){
 			var page_editable_id = document.getElementById('editable_id');
 			page_editable_id.value = _menuid;
@@ -127,6 +129,8 @@ class Page {
 			var page_editable_sectionid = document.getElementById('editable_sectionid');
 			page_editable_sectionid.value = _sectionid;
 
+			var page_questions = document.getElementById('questions');
+		
 			var jsonQObjects;
 			var page_editable_pageid, page_editable_name, page_editable_content;
 			
@@ -148,38 +152,14 @@ class Page {
 				}else if (key == "questions"){
 					jsonQObjects = JSON.parse(arr)	
 					//clear first as also used for Add Sub Page
-					var page_questions = document.getElementById('questions');
 					page_questions.innerHTML = "";
+					//create and populate questions
 					for (var i = 0; i <= jsonQObjects.length -1; i++){
-						addQuestion(true);
-						var question_string = "editable_question" +  i.toString();
-						var questionElem = document.getElementById(question_string);
-						questionElem.value = jsonQObjects[i].question;
+					
+						createQuestionDivs(page_questions, i, true);
+						
+						populateTinyMCE(jsonQObjects[i], i.toString())
 
-						var answer_string = "editable_answer" +  i.toString();
-						var answerElem = document.getElementById(answer_string);
-						answerElem.value = jsonQObjects[i].contents;
-
-						let tinmyMceInstance = tinymce.get(answer_string);
-						if( tinmyMceInstance != null ){
-							tinmyMceInstance.remove();
-						}
-						tinymce.init({
-							selector: "#" + answer_string,
-							plugins: 'table code lists fullscreen link image',
-							init_instance_callback: function (editor) {
-								// Shortcuts and useful things go here.
-								editor.shortcuts.add("alt+s", "Save Me My Content", function() {
-									savePage();		    				
-									//alert("saved");
-				  				}),
-					    		editor.shortcuts.add("alt+b", "A New Way To Bold", "Bold");
-				  			},
-						  	toolbar: 'undo redo | formatselect | bold italic | numlist bullist | link | image' +
-							'alignleft aligncenter alignright alignjustify | indent outdent | ' +
-							'table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol'
-							});						
-						//tinyMCE.activeEditor.render();
 					}	
 
 				}	
