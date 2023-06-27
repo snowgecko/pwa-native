@@ -20,7 +20,7 @@ async function savePage(){
 	document.getElementById("content_main").classList.add("disable-form");
 	var menuID = document.getElementById("editable_id").value;
 	var secID = document.getElementById("editable_sectionid").value;
-//element.classList.add("mystyle");
+	//element.classList.add("mystyle");
 	var jsonData = JSON.stringify({ 
 		id: menuID, 
 		parentid: document.getElementById("editable_parentid").value, 
@@ -67,15 +67,30 @@ function addSubPgae(){
 	page.pageContentEdit(obj, "-1", "-1", _parentid, _pageorder, _sectionid);
 }
 
+//has to be set here as 
+function addQuestionDivs(){
+	//var page_questionsDiv = document.getElementById('questions');
+
+	var page_questionsDiv = document.getElementById('questions');
+	//element.childElementCount
+	//element.children.length //so if length 2 then Div0, Div1 are present 
+	//console.log(page_questionsDiv.children.length);
+	try{
+		let divCount = page_questionsDiv.children.length;
+		createQuestionDivs(page_questionsDiv, divCount , false)
+		let localJsonObject = JSON.parse('{"question": "question", "contents": "update question contents"}');
+		populateTinyMCE(localJsonObject, divCount)
+	}catch(e){console.log(e)}
+}
+
 /*add Questions dynamically*/
 /*add Question div?*/
 //adds blank question //need to combine to add blank content OR populated content 
-function addQuestion(_bwithContent){
+//called from cPage and index-edit.html onclick="addQuestion(false)"
+function createQuestionDivs(page_questions, updated_number, _bwithContent){
 	//var elem = document.getElementById('container');
-	var page_questions = document.getElementById('questions');
-	var questions_count = page_questions.childNodes.length;
 
-	updated_number = questions_count;
+	//updated_number = questions_count;
 	//console.log("updated_number="+ updated_number);
 	 
 	var text_string = "Expandable text " + updated_number;
@@ -98,31 +113,78 @@ function addQuestion(_bwithContent){
 	div_elem.appendChild(input_elem);
 	div_elem.appendChild(textarea_elem);
 	page_questions.appendChild(div_elem);
+	
+	//tinymce.EditorManager.execCommand('mceAddEditor', true, textarea_elem.id);
 
-	//console.log(_bwithContent);		
-	//called from AddPage click when _bwithContent = false //called from cPage - pageContentEdit with _bwithContent == true
-	if (_bwithContent == false){
-
-	    tinymce.init({
-	    	selector: '.editor-content',
-			init_instance_callback: function (editor) {
-				// Shortcuts and useful things go here.
-				editor.shortcuts.add("alt+s", "Save Me My Content", function() {
-					savePage();		    				
-					//alert("saved");
-  				}),
-	    		editor.shortcuts.add("alt+b", "A New Way To Bold", "Bold");
-  			},
-			plugins: 'table code lists fullscreen link image',
-			toolbar: 'undo redo | formatselect | bold italic | numlist bullist | link | image' +
-	    	'alignleft aligncenter alignright alignjustify | indent outdent | ' +
-			'table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol'    });
-	}
 	//tinyMCE.execCommand("mceAddControl", false, textarea_elem.id)
 	//page_questions.append("Question5: <input type=\"text\"  id=\"editable_question5\" class=\"wide\">");
 	//page_questions.append("<textarea id=\"editable_answer1\" name=\"editable_answer5\" class=\"editor-content wide\"></textarea>");
 
 }	
+
+
+function populateTinyMCE(jsonObject, iCount){
+
+//console.log(jsonObject);
+	var question_string = "editable_question" +  iCount;
+	var questionElem = document.getElementById(question_string);
+	questionElem.value = jsonObject.question;
+
+	var answer_string = "editable_answer" +  iCount;
+	var answerElem = document.getElementById(answer_string);
+	answerElem.value = jsonObject.contents;
+
+	let tinmyMceInstance = tinymce.get(answer_string);
+	if( tinmyMceInstance != null ){
+		tinmyMceInstance.remove();
+	}
+	tinymce.init({
+		selector: "#" + answer_string,
+		init_instance_callback: function (editor) {
+			// Shortcuts and useful things go here.
+			editor.shortcuts.add("alt+s", "Save Me My Content", function() {
+				savePage();		    				
+				//alert("saved");
+			  }),
+			editor.shortcuts.add("alt+b", "A New Way To Bold", "Bold");
+		  },
+		plugins: 'table code lists fullscreen link image',
+		toolbar: 'undo redo | formatselect | bold italic | numlist bullist | link | image' +
+		'alignleft aligncenter alignright alignjustify | indent outdent | ' +
+		'table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol',
+		 /* enable title field in the Image dialog*/
+		 image_title: true,
+		automatic_uploads: true,
+		file_picker_types: 'image',
+		file_picker_callback: function (cb, value, meta) {
+			var input = document.createElement('input');
+			input.setAttribute('type', 'file');
+			input.setAttribute('accept', 'image/*');
+			input.onchange = function () {
+				  var file = this.files[0];
+				  var reader = new FileReader();
+				  reader.onload = function () {
+				/*
+				  Note: Now we need to register the blob in TinyMCEs image blob
+				  registry. In the next release this part hopefully won't be
+				  necessary, as we are looking to handle it internally.
+				*/
+				var id = 'blobid' + (new Date()).getTime();
+				var blobCache =  tinymce.activeEditor.editorUpload.blobCache;
+				var base64 = reader.result.split(',')[1];
+				var blobInfo = blobCache.create(id, file, base64);
+				blobCache.add(blobInfo);
+				/* call the callback and populate the Title field with the file name */
+				cb(blobInfo.blobUri(), { title: file.name });
+			  };
+		  reader.readAsDataURL(file);
+		};
+		input.click();
+		  }
+	});						
+
+}
+
 /////////////////////****Not necessary but useful to keep */
 /*used to be called from the download button - now commented out. */
 function download() {

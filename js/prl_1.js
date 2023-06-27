@@ -28,9 +28,10 @@ function opentoID(){
 ///called when page refreshed or newly arriving at site 
 const verifyUserContent = async function(cidb, callbackFunction){
 	try {
+		//console.log("in verifyUserContent");
 		ca_loaders.style.visibility = "visible";	
-		userInfo = await getUserInfo(cidb, callbackFunction); ////from dl_1.js
-		
+		////getUserInfo in dl_1.js
+		userInfo = await getUserInfo(cidb, callbackFunction); 
 		if (userInfo.length != 0){
 			/**does it make sense to call the menu here - it loads even if homepage is landed on (from refresh) */
 			const menuData = await callbackFunction(cidb, userInfo[0]["section"], userInfo[0]["section"]); 
@@ -231,9 +232,15 @@ function checkPageID(eID){
 	return eTargetID;
 }
 
+/******************/ 
+/* could recieve an e event or a url string
+ * e event from menu click 
+ * string urlid - from const verifyUserContent = async function(cidb, callbackFunction) - url set as global
+ * 
+ */
 function resolveLink_ExpandMenu_printPage(e){
 
-	var bMenuLink;
+	var bMenuLink = true;
 	var aLinks = new Array;
 	var parID, secID
 
@@ -245,20 +252,25 @@ function resolveLink_ExpandMenu_printPage(e){
 	//1) is this user allowed to access ?
 	//2) should I display something else ?
 	try {
+		//console.log("e.target.attributes.length" + e.target.attributes.length);
 		if (e.target.attributes.length >1) bMenuLink = true;
 	}catch(e){
 		bMenuLink = false;
 	}
+	//needs to go up to the top....
 	try{
 		aLinks = navigateUpTree(listElem, aLinks, bMenuLink, 0); 
 		parID = aLinks[1]; 
 		secID = aLinks[aLinks.length-1]; 	//XCHECK USER SECTION //url.protocol + url.hostname	
 		//history.pushState('data to be passed', 'Page Title', url.pathname + "?id=" + eTargetID);
+
 	}catch(e){
+		//console.log("ERROR in resolveLink_ExpandMenu_printPage")
 		parID = eTargetID;
 		secID = eTargetID; 		
 	}
 	//console.log (userInfo[0]["section"]);
+	//console.log ("parID in resolveLink_ExpandMenu_printPage=" + parID);
 	//switch maybe better.
 	const parsed = parseInt(eTargetID);
 	message.innerHTML = "<p></p>"			
@@ -278,6 +290,7 @@ function resolveLink_ExpandMenu_printPage(e){
 			if (Array.isArray(userInfo[0]["section"])){
 				if (userInfo[0]["section"].includes(secID)) {
 					if (gPageDataSource == getRemotePageData){
+						
 						//if this is inputed incorrectly then it will populate the form and re-submission will be wrong!!!
 						getRemotePageData(eTargetID, eTargetID, parID, "" , secID)
 					}else{
@@ -328,7 +341,9 @@ function displayContentDivs(){
 //push into array then return array
 //doesn't work if on section page...'
 function navigateUpTree(_testElem, _aLinks, _bMenuLink, _count){
-	var parElem = _testElem.parentElement; 
+	if (_testElem == null) return;  //on refresh
+
+	var parElem = _testElem.parentElement;
 	switch(_testElem.nodeName) {
 	  case null:
 	    return;
@@ -343,6 +358,7 @@ function navigateUpTree(_testElem, _aLinks, _bMenuLink, _count){
 		}
 	    break;
 	  case "UL":
+		parElem = _testElem.parentElement;
 		navigateUpTree(parElem, _aLinks, _bMenuLink, _count + 1)
 	    break;
 	  case "DIV":
