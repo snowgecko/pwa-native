@@ -110,18 +110,55 @@ window.addEventListener('load', ()=>{
 				<h3><!--does not appear after load--></h3><div id="para_loader"><p><div id="loading_text">loading ....</div><div class="lds-hourglass" id="loader"></div></p></div>
 				<!--content once the indexedDB is loaded-->
 				<div id="content_variable">
-					<div id="homepagepads" class="pads">
-						<div class="pad-top">
-							<div class="pad1"><a href="index-edit.html?id=1">FRCA Primary</a></div>
-							<div class="pad2"><a href="index-edit.html?id=2">FRCA Final</a></div>
-							<div class="pad3"><a href="index-edit.html?id=4">FICM</a></div>
+					<section class="testimonials" id="homepagepads">
+						<div class="container">
+						  <div class="testimonial grid-6">
+							<div class="card">
+							  <div class="circle">
+								<!--<img src="./images/4.jpg" alt="">-->
+							  </div>
+							  <h3 class="pad"><a href="index.html?id=1">FRCA Primary</a></h3>
+							  <p>Resources and questions relevant to the Primary FRCA exam</p>
+							</div>
+							<div class="card">
+							  <div class="circle">
+								<!--<img src="./images/4.jpg" alt="">-->
+							</div>
+							  <h3 class="pad"><a href="index.html?id=2">FRCA Final</a></h3>
+							  <p>Resources and questions relevant to the Final FRCA exam</p>
+							</div>
+							<div class="card">
+							  <div class="circle">
+								<!--<img src="./images/4.jpg" alt="">-->
+							</div>
+							  <h3 class="pad"><a href="index.html?id=4">FICM</a></h3>
+							  <p>Resources and questions relevant to the Part 1 FICM exam</p>
+							</div>
+							<div class="card">
+								<div class="circle">
+								  <!--<img src="./images/4.jpg" alt="">-->
+								</div>
+								<h3 class="pad"><a href="index.html?id=4">Thames valley CCC</a></h3>
+								<p>Resources and questions relevant Thames valley Critical Care course</p>
+							  </div>
+							  <div class="card">
+								<div class="circle">
+								  <!--<img src="./images/4.jpg" alt="">-->
+							  </div>
+								<h3>Pain</h3>
+								<p>Resources and questions relevant to the Pain exams</p>
+							  </div>
+							  <div class="card">
+								<div class="circle">
+								  <!--<img src="./images/4.jpg" alt="">-->
+							  </div>
+								<h3 class="pad"><a href="index.html?id=58">Developement</a></h3>
+								<p>... coming soon...</p>
+							  </div>
+							</div>
 						</div>
-						<div class="pad-bottom">
-							<div class="pad4"><a href="index-edit.html?id=">Pain</a></div>
-							<div class="pad5"><a href="index-edit.html?id=58">....</a></div>
-							<div class="pad6"><a href="index-edit.html?id=4">Thames valley CCC</a></div>
-						</div>
-					</div>
+					  </section>
+
 					<form name="form1" id="form1"  class="form_addcontent">
 						<!--NEED TO ADD ID, NAME, PARENTID--><!--GET GREATEST NO FROM DATABASE AND ADD 1-->
 						<!-- IF I TAKE THE ID OF CURRENT and any page added would be child page-->

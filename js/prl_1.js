@@ -33,6 +33,7 @@ const verifyUserContent = async function(cidb, callbackFunction){
 		////getUserInfo in dl_1.js
 		userInfo = await getUserInfo(cidb, callbackFunction); 
 		if (userInfo.length != 0){
+			//console.log ("userInfo[0][section]" + userInfo[0]["section"])
 			/**does it make sense to call the menu here - it loads even if homepage is landed on (from refresh) */
 			const menuData = await callbackFunction(cidb, userInfo[0]["section"], userInfo[0]["section"]); 
 			UserLoggedIn();

@@ -198,7 +198,9 @@ class Menu {
 		}else{
 			this.findSection(menu_cont, this.id, 0, arr, _sectionid);
 		}
-		//console.log("arr" + arr);
+		console.log("in filter_populateMenu _menuid" + _menuid);
+		console.log("in filter_populateMenu this.id" + this.id);
+		console.log("in filter_populateMenu _sectionid" + _sectionid);
 		if (this.sectionname != null ){
 			titleTarget = document.getElementById('section_title');
 			titleTarget.innerHTML = this.sectionname;

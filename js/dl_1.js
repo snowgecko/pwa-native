@@ -203,6 +203,9 @@ async function getRemoteMenuData(cidb, _menuid, _sectionid){
 		fetch("https://sm5a54kkhi.execute-api.eu-west-1.amazonaws.com/default/listPages?section_id=" + _sectionid)
 			.then(response => response.json()) 
 			.then(data => {
+				console.log("data[1]" + data[1]);
+				console.log("_menuid" + _menuid);
+				console.log("_sectionid" + _sectionid);
 				menu.filter_populateMenu(data[1], _menuid, _sectionid, "remote") //populates Menu into html_menu div
 			})
 			//console.log("Date.now()", Date.now());

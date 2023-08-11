@@ -118,6 +118,8 @@ html, body {
 	text-align: left;
 	outline: none;
 	font-size: 15px;
+	border-radius: 10px;
+    box-shadow: -7px -7px 20px -8px rgba(0, 0, 0, 0.2), 7px 7px 20px -15px rgba(0, 0, 0, 0.2);
 }
 #section_title{
 	padding-left:12em;
@@ -146,6 +148,7 @@ padding: 0px 0px 0px 10px;
   background-color: #f1f1f1;
 width:100%;
 line-height: 160%;
+border-radius: 10px;
 }
 .col_content p:first-child {
   /*  margin-top: 10px; */
