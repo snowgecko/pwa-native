@@ -96,7 +96,7 @@ class Menu {
 	////***only good for three levels */
 	//Not know being used...
 	findSectionwIDB_(_menu_cont, _id, _count, _arr, _sectionid){
-		console.log("findSectionwIDB_" + _id)
+		//console.log("findSectionwIDB_" + _id)
 		try{
 			let menu_obj = _menu_cont.find(el => el.id === parseInt(_id));		
 				this.id = menu_obj["id"];
@@ -135,10 +135,10 @@ class Menu {
 		//need to find a way of getting the section that this refreshed ie, url _id is in...
 */
 	findSection(menu_cont, _id, _count, _arr){
-		console.log("findSection _id" + _id,  + parseInt(_id)) //grabs the first digit - what about now the _id is an array
+		//console.log("findSection _id" + _id,  + parseInt(_id)) //grabs the first digit - what about now the _id is an array
 		//_id if _id array then 
 		let menu_obj = menu_cont.find(el => el.id === parseInt(_id));
-		console.log("in findSection(cMenu.js) _id="+ _id + " menu_obj[id]=" + menu_obj["id"] + " _count" + _count);
+		//console.log("in findSection(cMenu.js) _id="+ _id + " menu_obj[id]=" + menu_obj["id"] + " _count" + _count);
 		
 		if (menu_obj){
 			if (_count == 0) {
@@ -198,8 +198,8 @@ class Menu {
 		var titleTarget = "", editViewUrl = "";
 		var arr = [];
 		//menu_cont passed through from fetch (in getRemoteData) data[1] - menuData
-		console.log("filter_populateMenu this.id" + this.id)
-		console.log("filter_populateMenu _menuid" + _menuid)
+		//console.log("filter_populateMenu this.id" + this.id)
+		//console.log("filter_populateMenu _menuid" + _menuid)
 		if (_source == "remote"){
 			this.findSection(menu_cont, this.id, 0, arr); //setting the sectionid
 		}else{
@@ -266,7 +266,7 @@ class Menu {
 				html_count_string = "";
 				bExpandedText = "false";
 
-				console.log("page.id=" + page.id + " this.id=" + this.id);
+				//console.log("page.id=" + page.id + " this.id=" + this.id);
 				if(page.id == this.id){
 					//this.pageorder = page.pageorder;
 					current_page = " class=\"active\" ";

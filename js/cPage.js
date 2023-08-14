@@ -77,6 +77,7 @@ class Page {
 				}
 			}
 			_pagecontent = this.content + _qpagecontent;
+			pagecontent_div.removeAttribute('class'); 
 			pagecontent_div.classList.add("textsection" + _sectionid);
 			pagecontent_div.innerHTML = _pagecontent;			
 		}
@@ -114,7 +115,7 @@ class Page {
 
 	//page.pageContentEdit(pagedata, _pageid, _url_id, _parentid, _sectionid);
 	pageContentEdit(data, _pageid, _menuid, _parentid, _pageorder, _sectionid){
-		console.log("_parentid" + _parentid);
+		//console.log("_parentid" + _parentid);
 		///WRONG parentid
 		if (_pageid != null){
 			var page_editable_id = document.getElementById('editable_id');
