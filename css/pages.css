@@ -152,21 +152,28 @@ html, body {
 }
 /*question*/
 .col_content blockquote p{
-	margin-left: 25px;
+
 }
-.col_content blockquote p:first-child:after {
+.col_content blockquote > p:first-child:after {
 	content: '\002B';
 	font-weight: bold;
 	float: right;
 	margin-right:45px;
   }  
-.col_content blockquote p:nth-child(1){
+.col_content blockquote > p:nth-child(1){
 	font-weight: bold;
+	background: gainsboro;
+    border-radius: 10px;
+	padding: 0.2em 0em 0.2em 0.5em;
 }
-.col_content blockquote p:nth-child(2){
+/*this is overriding the visibleP class*/
+.col_content blockquote > p:nth-child(1){
+	visibility: visible;
+}
+.col_content blockquote div{
 	visibility: hidden;
 }
-.col_content blockquote p:nth-child(2).visibleP{
+blockquote p.visibleP, blockquote div.visibleP{
 	visibility: visible;
 }
 

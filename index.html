@@ -229,16 +229,22 @@ window.addEventListener('load', ()=>{
 	url_dev = urlParams.get('dev');
 	var _ckslider = document.getElementById("ckslider");
 	var _cksliderText = document.getElementById("offline");
-	console.log("_ckslider.checked" + _ckslider.checked)
+	//console.log("_ckslider.checked" + _ckslider.checked)
 	
 	if ((url_dev == "true") || !(_ckslider.checked)){
 		gMenuDataSource = getRemoteMenuData;
 		gPageDataSource = getRemotePageData;
-		console.log("getRemoteData");
+		//console.log("getRemoteData");
 	}	
 	
 	window.onload = function() {
 				
+		let root  = document.getElementById("html_menu");
+		//console.log("root" + root.innerHTML);
+		//console.log("5" + document.getElementById("5"));
+		//console.log("105" + document.getElementById("105"));
+
+		//verifyUserContent in prl_1.js also prints out divs on page via resolveLinkPrintPage
 		verifyUserContent(cidb, gMenuDataSource);
 		//set defaults 
 		homepageNode.style.display = "none";
@@ -257,13 +263,15 @@ window.addEventListener('load', ()=>{
 		document.body.addEventListener("click", function(e) {
 			//*** need the slider to slide so DO NOT PREVENT default.... DO NOT duplicate so e.target.id = slider
 			if ((e.target.id !== "slider") && (e.target.id !== "ckslider")) e.preventDefault();
-			//console.log ("e.target.id", e.target.id);
 			if (e.target.parentNode.nodeName == "BLOCKQUOTE"){
-				console.log ("e.target.parentNode.firstChild.nextElementSibling;", e.target.parentNode.firstChild.nextElementSibling.nextElementSibling);
-				if (e.target.parentNode.firstChild.nextElementSibling.nextElementSibling.className == "visibleP"){
-					e.target.parentNode.firstChild.nextElementSibling.nextElementSibling.className = ""
+			//console.log ("e.target.nodeName", e.target.nodeName);
+			//console.log ("e.target.nextElementSibling", e.target.nextElementSibling);
+				let customClassName = "";
+				let el = e.target.nextElementSibling;
+				if (el.className == "visibleP"){
+					el.className = "";
 				}else{
-					e.target.parentNode.firstChild.nextElementSibling.nextElementSibling.className = "visibleP"
+					el.className = "visibleP";
 				}
 			}
 			if(e.target.id == "ckslider"){
@@ -295,7 +303,7 @@ window.addEventListener('load', ()=>{
 					UserLoggedOut();					
 					changeNavState();
 				} else{
-					console.log("username=" + username + " password=" + password);
+					//console.log("username=" + username + " password=" + password);
 					handleUpdateContent(username, password)
 				}
 				//couuld call the serviceWorker.js - what advantage?
@@ -319,7 +327,7 @@ window.addEventListener('load', ()=>{
 				//console.log ("on click with no event listener attached");
 			}
 		});
-		
+
 		/*******event listeners*****/
 				//console.log("e.target.parent=" + e.target.parentNode.className);
 				//console.log("e.target.href=" + e.target.href);

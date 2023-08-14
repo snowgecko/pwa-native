@@ -9,17 +9,17 @@
 		  menu: "++id, iparentid, ipagename",
 		  pages: "++id",
 		}).upgrade(tx => {
-			console.log("in upgrade function")
+			//console.log("in upgrade function")
 			//getRemoteMenuData(db, 4, 4); //only called if upgraded...
 		});
 		db.version(2).stores().upgrade(tx => {
-			console.log("in upgrade function 2")
+			//console.log("in upgrade function 2")
 			//getRemotePageData(db, 4, 4)
 		});
 		db.on("ready", () => {
 		//getUserData(db, "kate.wykes@gmail.com", "testing");		
-		  console.log("db.verno", db.verno); // 1
-		  console.log("db.idbdb.version" , db.idbdb.version); // 10
+		  //console.log("db.verno", db.verno); // 1
+		  //console.log("db.idbdb.version" , db.idbdb.version); // 10
 		});
 	}
 
@@ -55,7 +55,7 @@
 	};
 
 	function UserLoggedIn (){
-		console.log("UserLoggedIn function called from verifyuserContent function");
+		//console.log("UserLoggedIn function called from verifyuserContent function");
 		document.getElementsByClassName('content')[0].style.height = '100%';
 		const content = document.getElementById("content_variable");
 			content.style.display = "block";
@@ -84,7 +84,7 @@ async function getRemoteMenuData(db, _menuid, _sectionid){
 	await fetch("https://sm5a54kkhi.execute-api.eu-west-1.amazonaws.com/default/listPages?section_id=" + _sectionid)
 		.then(response => response.json()) //NEW condensed
 		.then(data => {
-			console.log(data[1]);
+			//console.log(data[1]);
 			db.menu.bulkPut(data[1]);
 	});
 	
@@ -111,7 +111,7 @@ async function getUserData(db, username, password){
 			db.user.bulkPut(userDataJSON[0]);
 			db.menu.bulkPut(userDataJSON[1]);
 			db.pages.bulkPut(userDataJSON[2]);		
-	console.log("in getUserData after bulkPut")
+	//console.log("in getUserData after bulkPut")
 		}
 	}catch(e){
 		console.log(e);

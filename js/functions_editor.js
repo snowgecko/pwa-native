@@ -148,8 +148,18 @@ function populateTinyMCE(jsonObject, iCount){
 			  }),
 			editor.shortcuts.add("alt+b", "A New Way To Bold", "Bold");
 		  },
+		  setup: function (editor) {
+			editor.ui.registry.addButton('AnswerDiv', {
+			  text: 'My Button',
+			  onAction: function (_) {
+				//editor.insertContent('&nbsp;<strong>It\'s my button!</strong>&nbsp;');
+				editor.dom.setOuterHTML(editor.selection.getNode(),'<div class="answer">'+editor.dom.getOuterHTML(editor.selection.getNode())+'</div>'); 
+
+			  }
+		   });				
+		},
 		plugins: 'table code lists fullscreen link image',
-		toolbar: 'undo redo | formatselect | bold italic | numlist bullist | link | image' +
+		toolbar: 'AnswerDiv undo redo | formatselect | bold italic | numlist bullist | link | image' +
 		'alignleft aligncenter alignright alignjustify | indent outdent | ' +
 		'table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol',
 		 /* enable title field in the Image dialog*/

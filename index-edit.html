@@ -268,9 +268,10 @@ window.addEventListener('load', ()=>{
 				//console.log ("on click with no event listener attached");
 			}
 		});
-
+			   
 		tinymce.init({
 			selector: '.editor-content',
+			content_css: '../css/pages.css',
 			init_instance_callback: function (editor) {
 				// Shortcuts and useful things go here.
 				editor.shortcuts.add("alt+s", "Save Me My Content", function() {
@@ -279,8 +280,18 @@ window.addEventListener('load', ()=>{
   				}),
 	    		editor.shortcuts.add("alt+b", "A New Way To Bold", "Bold");
   			},
+			setup: function (editor) {
+				editor.ui.registry.addButton('AnswerDiv', {
+				  text: 'My Button',
+				  onAction: function (_) {
+					//editor.insertContent('&nbsp;<strong>It\'s my button!</strong>&nbsp;');
+					editor.dom.setOuterHTML(editor.selection.getNode(),'<div class="answer">'+editor.dom.getOuterHTML(editor.selection.getNode())+'</div>'); 
+
+				  }
+			   });				
+			},
 			plugins: 'table code lists fullscreen link image',
-			toolbar: 'undo redo | formatselect | bold italic | numlist bullist | link | image' +
+			toolbar: 'AnswerDiv undo redo | formatselect | bold italic | numlist bullist | link | image' +
 			'alignleft aligncenter alignright alignjustify | indent outdent | ' +
 			'table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol',
 		 	/* enable title field in the Image dialog*/
