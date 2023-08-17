@@ -96,6 +96,7 @@ class Menu {
 	////***only good for three levels */
 	//Not know being used...
 	findSectionwIDB_(_menu_cont, _id, _count, _arr, _sectionid){
+		//console.log("findSectionwIDB_" + _id)
 		try{
 			let menu_obj = _menu_cont.find(el => el.id === parseInt(_id));		
 				this.id = menu_obj["id"];
@@ -128,9 +129,14 @@ class Menu {
 			// _count - as iterative 
 			// _arr - as iterative 
 
-
+/**
+ * if clicked on link in Menu/or Homepage pads then _id is 1 digit
+ * if page refresh then _id is array of allowed section id's and that takes the first digit ie, 1
+		//need to find a way of getting the section that this refreshed ie, url _id is in...
+*/
 	findSection(menu_cont, _id, _count, _arr){
-
+		//console.log("findSection _id" + _id,  + parseInt(_id)) //grabs the first digit - what about now the _id is an array
+		//_id if _id array then 
 		let menu_obj = menu_cont.find(el => el.id === parseInt(_id));
 		//console.log("in findSection(cMenu.js) _id="+ _id + " menu_obj[id]=" + menu_obj["id"] + " _count" + _count);
 		
@@ -192,13 +198,13 @@ class Menu {
 		var titleTarget = "", editViewUrl = "";
 		var arr = [];
 		//menu_cont passed through from fetch (in getRemoteData) data[1] - menuData
-		//this.id - 
+		//console.log("filter_populateMenu this.id" + this.id)
+		//console.log("filter_populateMenu _menuid" + _menuid)
 		if (_source == "remote"){
 			this.findSection(menu_cont, this.id, 0, arr); //setting the sectionid
 		}else{
 			this.findSection(menu_cont, this.id, 0, arr, _sectionid);
 		}
-		//console.log("arr" + arr);
 		if (this.sectionname != null ){
 			titleTarget = document.getElementById('section_title');
 			titleTarget.innerHTML = this.sectionname;
@@ -236,8 +242,15 @@ class Menu {
 		//PRINT MENU
 		var menuTarget = document.getElementById('html_menu');
 		menuTarget.innerHTML = _html_menu;
+
+		//this seems like the only place to do this.... because otherwise the html_menu nodes don't exist
+		var listElem = document.getElementById(url_id);	
+		expandorCollapseCurrent(listElem)
+
 		return "";
 	}
+	
+	
 	
 	populateSubPages(pages, _parentid, _html_menu, _count, _arr){
 		var current_page = "";

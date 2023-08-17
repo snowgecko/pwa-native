@@ -10,14 +10,15 @@
 		<link rel="apple-touch-icon" sizes="167x167" href="./images/icons/icon-152x152.png"/>
 		<link rel="apple-touch-icon" sizes="180x180" href="./images/icons/icon-192x192.png"/>
 		
+		<link href='https://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.css">	
-
 		<link type="text/css" rel="stylesheet" href="./css/style.css" />
 		<link type="text/css" rel="stylesheet" href="./css/pages.css" />
 		<link type="text/css" rel="stylesheet" href="./css/menu.css" />		
   		<link rel="stylesheet" type="text/css" href="./css/loader.css"/>
 <!--just for the home page-->
 		<link rel="stylesheet" href="./css/home.css">
+		<link rel="stylesheet" href="./css/_testing.css">
 
 		<!--class declaration--> 
   		<script src="./js/cPage.js" ></script>
@@ -117,7 +118,58 @@ window.addEventListener('load', ()=>{
 				<h3 id="pagetitle"><!--does not appear after load--></h3>
 				<!--content once the indexedDB is loaded-->
 				<div id="content_variable">
-					<div id="homepagepads" class="pads">
+
+					<section class="testimonials" id="homepagepads">
+						<div class="container">
+						  <div class="testimonial grid-6">
+							<div class="card">
+							  <div class="circle">
+								<!--<img src="./images/4.jpg" alt="">-->
+							  </div>
+							  <h3 class="pad"><a href="index.html?id=1">FRCA Primary</a></h3>
+							  <p>Resources and questions relevant to the Primary FRCA exam</p>
+							</div>
+							<div class="card">
+							  <div class="circle">
+								<!--<img src="./images/4.jpg" alt="">-->
+							</div>
+							  <h3 class="pad"><a href="index.html?id=2">FRCA Final</a></h3>
+							  <p>Resources and questions relevant to the Final FRCA exam</p>
+							</div>
+							<div class="card">
+							  <div class="circle">
+								<!--<img src="./images/4.jpg" alt="">-->
+							</div>
+							  <h3 class="pad"><a href="index.html?id=4">FICM</a></h3>
+							  <p>Resources and questions relevant to the Part 1 FICM exam</p>
+							</div>
+							<div class="card">
+								<div class="circle">
+								  <!--<img src="./images/4.jpg" alt="">-->
+								</div>
+								<h3 class="pad"><a href="index.html?id=4">Thames valley CCC</a></h3>
+								<p>Resources and questions relevant Thames valley Critical Care course</p>
+							  </div>
+							  <div class="card">
+								<div class="circle">
+								  <!--<img src="./images/4.jpg" alt="">-->
+							  </div>
+								<h3>Pain</h3>
+								<p>Resources and questions relevant to the Pain exams</p>
+							  </div>
+							  <div class="card">
+								<div class="circle">
+								  <!--<img src="./images/4.jpg" alt="">-->
+							  </div>
+								<h3 class="pad"><a href="index.html?id=58">Developement</a></h3>
+								<p>... coming soon...</p>
+							  </div>
+							</div>
+						</div>
+					  </section>
+
+					<!--old pads-->
+					<!--<div id="homepagepads" class="pads">
 						<div class="pad-top">
 							<div class="pad1"><a href="index.html?id=1">FRCA Primary</a></div>
 							<div class="pad2"><a href="index.html?id=2">FRCA Final</a></div>
@@ -128,7 +180,7 @@ window.addEventListener('load', ()=>{
 							<div class="pad5"><a href="index.html?id=58">....</a></div>
 							<div class="pad6"><a href="index.html?id=4">Thames valley CCC</a></div>
 						</div>
-					</div>
+					</div>-->
 					<div id="page_content">
 						<div class="element"></div>
 						<div id="questions"></div>					
@@ -178,16 +230,22 @@ window.addEventListener('load', ()=>{
 	url_dev = urlParams.get('dev');
 	var _ckslider = document.getElementById("ckslider");
 	var _cksliderText = document.getElementById("offline");
-	console.log("_ckslider.checked" + _ckslider.checked)
+	//console.log("_ckslider.checked" + _ckslider.checked)
 	
 	if ((url_dev == "true") || !(_ckslider.checked)){
 		gMenuDataSource = getRemoteMenuData;
 		gPageDataSource = getRemotePageData;
-		console.log("getRemoteData");
+		//console.log("getRemoteData");
 	}	
 	
 	window.onload = function() {
 				
+		let root  = document.getElementById("html_menu");
+		//console.log("root" + root.innerHTML);
+		//console.log("5" + document.getElementById("5"));
+		//console.log("105" + document.getElementById("105"));
+
+		//verifyUserContent in prl_1.js also prints out divs on page via resolveLinkPrintPage
 		verifyUserContent(cidb, gMenuDataSource);
 		//set defaults 
 		homepageNode.style.display = "none";
@@ -204,9 +262,19 @@ window.addEventListener('load', ()=>{
 		});
 		
 		document.body.addEventListener("click", function(e) {
-			//*** need the slider to slide so DO NOT PREVENT default.... DO NOT duplicate so e.target.id = slider
-			if ((e.target.id !== "slider") && (e.target.id !== "ckslider")) e.preventDefault();
-			console.log ("e.target.id", e.target.id);
+			//*** need the slider to slide so DO NOT PREVENT default.... DO NOT duplicate so e.target.id = slider			
+			if ((e.target.id !== "slider") && (e.target.id !== "ckslider") && (e.target.nodeName != "LABEL" && e.target.nodeName != "INPUT")) e.preventDefault();
+			if (e.target.parentNode.nodeName == "BLOCKQUOTE"){
+			//console.log ("e.target.nodeName", e.target.nodeName);
+			//console.log ("e.target.nextElementSibling", e.target.nextElementSibling);
+				let customClassName = "";
+				let el = e.target.nextElementSibling;
+				if (el.className == "visibleP"){
+					el.className = "";
+				}else{
+					el.className = "visibleP";
+				}
+			}
 			if(e.target.id == "ckslider"){
 				//console.log ("_ckslider.checked", _ckslider.checked);
 				if (_ckslider.checked){
@@ -236,7 +304,7 @@ window.addEventListener('load', ()=>{
 					UserLoggedOut();					
 					changeNavState();
 				} else{
-					console.log("username=" + username + " password=" + password);
+					//console.log("username=" + username + " password=" + password);
 					handleUpdateContent(username, password)
 				}
 				//couuld call the serviceWorker.js - what advantage?
@@ -257,11 +325,13 @@ window.addEventListener('load', ()=>{
 				if (loc_href.indexOf("#menu") == -1){
 					resolveLink_ExpandMenu_printPage(e);	
 				} 
+			}else if(e.target.nodeName == "LABEL") {
+				//should never get here because of this line above && (e.target.nodeName != "LABEL" && e.target.nodeName != "INPUT"))
 			}else{
-				//console.log ("on click with no event listener attached");
+				console.log ("on click with no event listener attached="  + e.target);
 			}
 		});
-		
+
 		/*******event listeners*****/
 				//console.log("e.target.parent=" + e.target.parentNode.className);
 				//console.log("e.target.href=" + e.target.href);
