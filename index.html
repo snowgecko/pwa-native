@@ -18,6 +18,7 @@
   		<link rel="stylesheet" type="text/css" href="./css/loader.css"/>
 <!--just for the home page-->
 		<link rel="stylesheet" href="./css/home.css">
+		<link rel="stylesheet" href="./css/_testing.css">
 
 		<!--class declaration--> 
   		<script src="./js/cPage.js" ></script>
@@ -261,8 +262,8 @@ window.addEventListener('load', ()=>{
 		});
 		
 		document.body.addEventListener("click", function(e) {
-			//*** need the slider to slide so DO NOT PREVENT default.... DO NOT duplicate so e.target.id = slider
-			if ((e.target.id !== "slider") && (e.target.id !== "ckslider")) e.preventDefault();
+			//*** need the slider to slide so DO NOT PREVENT default.... DO NOT duplicate so e.target.id = slider			
+			if ((e.target.id !== "slider") && (e.target.id !== "ckslider") && (e.target.nodeName != "LABEL" && e.target.nodeName != "INPUT")) e.preventDefault();
 			if (e.target.parentNode.nodeName == "BLOCKQUOTE"){
 			//console.log ("e.target.nodeName", e.target.nodeName);
 			//console.log ("e.target.nextElementSibling", e.target.nextElementSibling);
@@ -323,8 +324,10 @@ window.addEventListener('load', ()=>{
 				if (loc_href.indexOf("#menu") == -1){
 					resolveLink_ExpandMenu_printPage(e);	
 				} 
+			}else if(e.target.nodeName == "LABEL") {
+				//should never get here because of this line above && (e.target.nodeName != "LABEL" && e.target.nodeName != "INPUT"))
 			}else{
-				//console.log ("on click with no event listener attached");
+				console.log ("on click with no event listener attached="  + e.target);
 			}
 		});
 

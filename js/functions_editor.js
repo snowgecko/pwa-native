@@ -150,11 +150,10 @@ function populateTinyMCE(jsonObject, iCount){
 		  },
 		  setup: function (editor) {
 			editor.ui.registry.addButton('AnswerDiv', {
-			  text: 'My Button',
+			  text: 'Add Question',
 			  onAction: function (_) {
-				//editor.insertContent('&nbsp;<strong>It\'s my button!</strong>&nbsp;');
-				editor.dom.setOuterHTML(editor.selection.getNode(),'<div class="answer">'+editor.dom.getOuterHTML(editor.selection.getNode())+'</div>'); 
-
+				editor.insertContent('<blockquote><p>Question:&nbsp;&nbsp;</p><div class="answer"><p>Answer:&nbsp;</p></div></blockquote><p>&nbsp;</p>');
+				//editor.dom.setOuterHTML(editor.selection.getNode(),'<div class="answer">'+editor.dom.getOuterHTML(editor.selection.getNode())+'</div>'); 
 			  }
 		   });				
 		},

@@ -268,7 +268,73 @@ window.addEventListener('load', ()=>{
 				//console.log ("on click with no event listener attached");
 			}
 		});
-			   
+			 
+		/* example dialog that inserts the name of a Pet into the editor content */
+		const dialogConfig =  {
+		title: 'Pet Name Machine',
+		body: {
+			type: 'panel',
+			items: [
+			{
+				type: 'input',
+				name: 'casedata',
+				label: 'Enter Case'
+			},
+			{
+				type: 'input',
+				name: 'question1data',
+				label: 'Enter Question'
+			},
+			{
+				type: 'input',
+				name: 'answer1data',
+				label: 'Enter Answer'
+			},
+			{
+				type: 'input',
+				name: 'question2data',
+				label: 'Enter Question'
+			},
+			{
+				type: 'input',
+				name: 'answer2data',
+				label: 'Enter Answer'
+			},
+			]
+		},
+		buttons: [
+			{
+			type: 'cancel',
+			name: 'closeButton',
+			text: 'Cancel'
+			},
+			{
+			type: 'submit',
+			name: 'submitButton',
+			text: 'Submit',
+			buttonType: 'primary'
+			}
+		],
+		initialData: {
+			casedata: 'Case title'
+		},
+		onSubmit: (api) => {
+			const data = api.getData();
+			//const pet = data.isdog ? 'dog' : 'cat';
+			const caseText = `<div class="ac"><input class="ac-input" id="ac-1" name="ac-1" type="checkbox" /><label class="ac-label" for="ac-1">Case 1</label>`;
+			const startArticlesText = `<article class="ac-text">`;
+			const question1Text = `<div class="ac-sub"><input class="ac-input" id="ac-2" name="ac-2" type="checkbox" /><label class="ac-label" for="ac-2">${data.question1data}</label>`;
+			const answer1Text = `<article class="ac-sub-text"><p>${data.answer1data}</p></article></div>`
+			const endArticlesText = `</article>`;
+			const caseEndText = `</div>`;
+			const fullText = caseText + startArticlesText + question1Text + answer1Text + endArticlesText + caseEndText
+
+			tinymce.activeEditor.execCommand('mceInsertContent', false, fullText);
+			api.close();
+		}
+		};
+
+
 		tinymce.init({
 			selector: '.editor-content',
 			content_css: '../css/pages.css',
@@ -281,17 +347,21 @@ window.addEventListener('load', ()=>{
 	    		editor.shortcuts.add("alt+b", "A New Way To Bold", "Bold");
   			},
 			setup: function (editor) {
+				editor.ui.registry.addButton('InsertAccordian', {
+      				icon: 'code-sample',
+      				onAction: () => editor.windowManager.open(dialogConfig)
+    			});
 				editor.ui.registry.addButton('AnswerDiv', {
-				  text: 'My Button',
+				  text: 'Add Question',
 				  onAction: function (_) {
-					//editor.insertContent('&nbsp;<strong>It\'s my button!</strong>&nbsp;');
-					editor.dom.setOuterHTML(editor.selection.getNode(),'<div class="answer">'+editor.dom.getOuterHTML(editor.selection.getNode())+'</div>'); 
+					editor.insertContent('<blockquote><p>Question:&nbsp;&nbsp;</p><div class="answer"><p>Answer:&nbsp;</p></div></blockquote><p>&nbsp;</p>');
+					//editor.dom.setOuterHTML(editor.selection.getNode(),'<div class="answer">'+editor.dom.getOuterHTML(editor.selection.getNode())+'</div>'); 
 
 				  }
 			   });				
 			},
 			plugins: 'table code lists fullscreen link image',
-			toolbar: 'AnswerDiv undo redo | formatselect | bold italic | numlist bullist | link | image' +
+			toolbar: 'AnswerDiv InsertAccordian undo redo | formatselect | bold italic | numlist bullist | link | image' +
 			'alignleft aligncenter alignright alignjustify | indent outdent | ' +
 			'table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol',
 		 	/* enable title field in the Image dialog*/
