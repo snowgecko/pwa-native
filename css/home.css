@@ -102,3 +102,75 @@ background: #bd1e51;
 #message{
 	font-weight: bold;	
 }
+
+.testimonial {
+  color: black;
+  padding: 40px;
+}
+/* Wrap the image inside a cirle shape and set height to take up all of parent element */
+.testimonial img {
+  height: 100%;
+  clip-path: circle();
+}
+/* Align text centrally */
+.testimonial h3, .testimonial p{
+  text-align: center;
+}
+
+/* Create a grid of three equal columns. Set a gap of 40 px between them */
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+}
+.grid-6 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+}
+
+
+/* Create a white card with some shadow around it */
+.card {
+  padding: 10px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: -7px -7px 20px rgba(0, 0, 0, 0.2),
+               7px  7px 20px rgba(0, 0, 0, 0.2)
+}
+.card:nth-child(1) {
+  background-color: #1a2238;
+  color: white;
+}
+.card:nth-child(2) {
+  background-color: #490b3d;
+  color: white;
+}
+.card:nth-child(3) {
+  background-color:#ff6a3d;
+  color: white;
+}
+.card:nth-child(4) {
+  background-color: #606bd3;
+  color: white;
+}
+.card:nth-child(5) {
+  background-color: #bd1e51;
+  color: white;
+}
+.card:nth-child(6) {
+  background-color:#60c2d3;
+  color: white;
+}
+.circle {
+  background-color: transparent;
+  border:1px solid purple;
+  height:90px;
+  position: relative;
+  top: -30px;
+  left: 120px;
+  border-radius:50%;
+  -moz-border-radius:50%;
+  -webkit-border-radius:50%;
+  width:90px;
+}

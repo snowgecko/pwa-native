@@ -110,18 +110,55 @@ window.addEventListener('load', ()=>{
 				<h3><!--does not appear after load--></h3><div id="para_loader"><p><div id="loading_text">loading ....</div><div class="lds-hourglass" id="loader"></div></p></div>
 				<!--content once the indexedDB is loaded-->
 				<div id="content_variable">
-					<div id="homepagepads" class="pads">
-						<div class="pad-top">
-							<div class="pad1"><a href="index-edit.html?id=1">FRCA Primary</a></div>
-							<div class="pad2"><a href="index-edit.html?id=2">FRCA Final</a></div>
-							<div class="pad3"><a href="index-edit.html?id=4">FICM</a></div>
+					<section class="testimonials" id="homepagepads">
+						<div class="container">
+						  <div class="testimonial grid-6">
+							<div class="card">
+							  <div class="circle">
+								<!--<img src="./images/4.jpg" alt="">-->
+							  </div>
+							  <h3 class="pad"><a href="index.html?id=1">FRCA Primary</a></h3>
+							  <p>Resources and questions relevant to the Primary FRCA exam</p>
+							</div>
+							<div class="card">
+							  <div class="circle">
+								<!--<img src="./images/4.jpg" alt="">-->
+							</div>
+							  <h3 class="pad"><a href="index.html?id=2">FRCA Final</a></h3>
+							  <p>Resources and questions relevant to the Final FRCA exam</p>
+							</div>
+							<div class="card">
+							  <div class="circle">
+								<!--<img src="./images/4.jpg" alt="">-->
+							</div>
+							  <h3 class="pad"><a href="index.html?id=4">FICM</a></h3>
+							  <p>Resources and questions relevant to the Part 1 FICM exam</p>
+							</div>
+							<div class="card">
+								<div class="circle">
+								  <!--<img src="./images/4.jpg" alt="">-->
+								</div>
+								<h3 class="pad"><a href="index.html?id=4">Thames valley CCC</a></h3>
+								<p>Resources and questions relevant Thames valley Critical Care course</p>
+							  </div>
+							  <div class="card">
+								<div class="circle">
+								  <!--<img src="./images/4.jpg" alt="">-->
+							  </div>
+								<h3>Pain</h3>
+								<p>Resources and questions relevant to the Pain exams</p>
+							  </div>
+							  <div class="card">
+								<div class="circle">
+								  <!--<img src="./images/4.jpg" alt="">-->
+							  </div>
+								<h3 class="pad"><a href="index.html?id=58">Developement</a></h3>
+								<p>... coming soon...</p>
+							  </div>
+							</div>
 						</div>
-						<div class="pad-bottom">
-							<div class="pad4"><a href="index-edit.html?id=">Pain</a></div>
-							<div class="pad5"><a href="index-edit.html?id=58">....</a></div>
-							<div class="pad6"><a href="index-edit.html?id=4">Thames valley CCC</a></div>
-						</div>
-					</div>
+					  </section>
+
 					<form name="form1" id="form1"  class="form_addcontent">
 						<!--NEED TO ADD ID, NAME, PARENTID--><!--GET GREATEST NO FROM DATABASE AND ADD 1-->
 						<!-- IF I TAKE THE ID OF CURRENT and any page added would be child page-->
@@ -231,9 +268,76 @@ window.addEventListener('load', ()=>{
 				//console.log ("on click with no event listener attached");
 			}
 		});
+			 
+		/* example dialog that inserts the name of a Pet into the editor content */
+		const dialogConfig =  {
+		title: 'Pet Name Machine',
+		body: {
+			type: 'panel',
+			items: [
+			{
+				type: 'input',
+				name: 'casedata',
+				label: 'Enter Case'
+			},
+			{
+				type: 'input',
+				name: 'question1data',
+				label: 'Enter Question'
+			},
+			{
+				type: 'input',
+				name: 'answer1data',
+				label: 'Enter Answer'
+			},
+			{
+				type: 'input',
+				name: 'question2data',
+				label: 'Enter Question'
+			},
+			{
+				type: 'input',
+				name: 'answer2data',
+				label: 'Enter Answer'
+			},
+			]
+		},
+		buttons: [
+			{
+			type: 'cancel',
+			name: 'closeButton',
+			text: 'Cancel'
+			},
+			{
+			type: 'submit',
+			name: 'submitButton',
+			text: 'Submit',
+			buttonType: 'primary'
+			}
+		],
+		initialData: {
+			casedata: 'Case title'
+		},
+		onSubmit: (api) => {
+			const data = api.getData();
+			//const pet = data.isdog ? 'dog' : 'cat';
+			const caseText = `<div class="ac"><input class="ac-input" id="ac-1" name="ac-1" type="checkbox" /><label class="ac-label" for="ac-1">Case 1</label>`;
+			const startArticlesText = `<article class="ac-text">`;
+			const question1Text = `<div class="ac-sub"><input class="ac-input" id="ac-2" name="ac-2" type="checkbox" /><label class="ac-label" for="ac-2">${data.question1data}</label>`;
+			const answer1Text = `<article class="ac-sub-text"><p>${data.answer1data}</p></article></div>`
+			const endArticlesText = `</article>`;
+			const caseEndText = `</div>`;
+			const fullText = caseText + startArticlesText + question1Text + answer1Text + endArticlesText + caseEndText
+
+			tinymce.activeEditor.execCommand('mceInsertContent', false, fullText);
+			api.close();
+		}
+		};
+
 
 		tinymce.init({
 			selector: '.editor-content',
+			content_css: '../css/pages.css',
 			init_instance_callback: function (editor) {
 				// Shortcuts and useful things go here.
 				editor.shortcuts.add("alt+s", "Save Me My Content", function() {
@@ -242,8 +346,22 @@ window.addEventListener('load', ()=>{
   				}),
 	    		editor.shortcuts.add("alt+b", "A New Way To Bold", "Bold");
   			},
+			setup: function (editor) {
+				editor.ui.registry.addButton('InsertAccordian', {
+      				icon: 'code-sample',
+      				onAction: () => editor.windowManager.open(dialogConfig)
+    			});
+				editor.ui.registry.addButton('AnswerDiv', {
+				  text: 'Add Question',
+				  onAction: function (_) {
+					editor.insertContent('<blockquote><p>Question:&nbsp;&nbsp;</p><div class="answer"><p>Answer:&nbsp;</p></div></blockquote><p>&nbsp;</p>');
+					//editor.dom.setOuterHTML(editor.selection.getNode(),'<div class="answer">'+editor.dom.getOuterHTML(editor.selection.getNode())+'</div>'); 
+
+				  }
+			   });				
+			},
 			plugins: 'table code lists fullscreen link image',
-			toolbar: 'undo redo | formatselect | bold italic | numlist bullist | link | image' +
+			toolbar: 'AnswerDiv InsertAccordian undo redo | formatselect | bold italic | numlist bullist | link | image' +
 			'alignleft aligncenter alignright alignjustify | indent outdent | ' +
 			'table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol',
 		 	/* enable title field in the Image dialog*/

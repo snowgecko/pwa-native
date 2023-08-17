@@ -19,7 +19,8 @@ url_id = urlParams.get('id');
 if ((url_id == "")||(url_id == null)){
 	url_id = "1";	
 }
-				
+console.log("url_id" + url_id);
+
 /*******global variables*****/
 function opentoID(){
 	
@@ -33,6 +34,7 @@ const verifyUserContent = async function(cidb, callbackFunction){
 		////getUserInfo in dl_1.js
 		userInfo = await getUserInfo(cidb, callbackFunction); 
 		if (userInfo.length != 0){
+			//console.log ("userInfo[0][section]" + userInfo[0]["section"])
 			/**does it make sense to call the menu here - it loads even if homepage is landed on (from refresh) */
 			const menuData = await callbackFunction(cidb, userInfo[0]["section"], userInfo[0]["section"]); 
 			UserLoggedIn();
@@ -236,17 +238,19 @@ function checkPageID(eID){
 /* could recieve an e event or a url string
  * e event from menu click 
  * string urlid - from const verifyUserContent = async function(cidb, callbackFunction) - url set as global
- * 
+ * called after onload 
  */
 function resolveLink_ExpandMenu_printPage(e){
-
+	//console.log ("resolveLink_ExpandMenu_printPage e or url_id=" + e)
 	var bMenuLink = true;
 	var aLinks = new Array;
 	var parID, secID
 
 	var eTargetID = checkPageID(e); //returns targetID from multiple sources
-	var listElem = document.getElementById("" + eTargetID);	
-	expandorCollapseCurrent(listElem);
+	var listElem = document.getElementById(eTargetID);	
+	//console.log ("listElem=" + listElem) //not yet populated tree **so this is null when using url_id from url
+	expandorCollapseCurrent(listElem); //needs to find listElem - its what the expand and display relys on
+
 	//navigate up the Tree - if listElem is there then expand, and call page, etc
 	//if listElem is NOT there then 
 	//1) is this user allowed to access ?
@@ -263,12 +267,12 @@ function resolveLink_ExpandMenu_printPage(e){
 		parID = aLinks[1]; 
 		secID = aLinks[aLinks.length-1]; 	//XCHECK USER SECTION //url.protocol + url.hostname	
 		//history.pushState('data to be passed', 'Page Title', url.pathname + "?id=" + eTargetID);
-
 	}catch(e){
 		//console.log("ERROR in resolveLink_ExpandMenu_printPage")
-		parID = eTargetID;
-		secID = eTargetID; 		
+		parID = 4; ///***REFACTOR - HARDCODED BADNESS */
+		secID = 4; 		
 	}
+	//console.log("after navigateUpTree" + parID, secID + "bMenuLink=" + bMenuLink)
 	//console.log (userInfo[0]["section"]);
 	//console.log ("parID in resolveLink_ExpandMenu_printPage=" + parID);
 	//switch maybe better.
@@ -287,10 +291,13 @@ function resolveLink_ExpandMenu_printPage(e){
     		// code block //need to add on for multiple allowed section 
 			secID = parseInt(secID);
 			//console.log("from resolveLink_ExpandMenu_printPage secID=" + secID);
+
+			console.log ("eTargetID=" + eTargetID)
+			console.log("userInfo[0][section])" + userInfo[0]["section"], secID) //if no listelem then secID is eTargetID
+
 			if (Array.isArray(userInfo[0]["section"])){
 				if (userInfo[0]["section"].includes(secID)) {
 					if (gPageDataSource == getRemotePageData){
-						
 						//if this is inputed incorrectly then it will populate the form and re-submission will be wrong!!!
 						getRemotePageData(eTargetID, eTargetID, parID, "" , secID)
 					}else{
@@ -379,6 +386,7 @@ function expandMenuElement(_eElem){
 	_eElem.setAttribute('aria-expanded', "true");
 }
 
+//****REFACTOR - do I need to sort this so it expands at sub-levels */
 function expandorCollapseCurrent(listElem){
 	try{
 		//if the link comes from navigation then open and close need not include the parent... 	

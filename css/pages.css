@@ -1,7 +1,7 @@
 /*if you take this away then the four lines for the drop-down call reduce in width */
 *{
 	 box-sizing: content-box;
-	font-family: Helvetica, Sans-Serif;
+	 font-family: 'Lato', sans-serif;
 }
 
 body, td {
@@ -118,6 +118,8 @@ html, body {
 	text-align: left;
 	outline: none;
 	font-size: 15px;
+	border-radius: 10px;
+    box-shadow: -7px -7px 20px -8px rgba(0, 0, 0, 0.2), 7px 7px 20px -15px rgba(0, 0, 0, 0.2);
 }
 #section_title{
 	padding-left:12em;
@@ -138,15 +140,46 @@ html, body {
 .section58{
 	background-color: #bd1e51;	
 }
+/*for collapsable div most importantly max-height and overflow: hidden*/
 .col_content {
-padding: 0px 0px 0px 10px;
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.2s ease-out;
-  background-color: #f1f1f1;
-width:100%;
-line-height: 160%;
+	padding: 0px 0px 0px 10px;
+  	max-height: 0;
+  	overflow: hidden;
+  	transition: max-height 0.2s ease-out;
+  	background-color: #f1f1f1;
+	width:100%;
+	line-height: 160%;
+	border-radius: 10px;
 }
+/*question*/
+.col_content blockquote p{
+
+}
+.col_content blockquote > p:first-child:after {
+	content: '\002B';
+	font-weight: bold;
+	float: right;
+	margin-right:45px;
+  }  
+.col_content blockquote > p:nth-child(1){
+	font-weight: bold;
+	background: gainsboro;
+    border-radius: 10px;
+	padding: 0.2em 0em 0.2em 0.5em;
+}
+/*this is overriding the visibleP class 
+can't do display: block because two collapsable divs don't work together
+*/
+.col_content blockquote > p:nth-child(1){
+	visibility: visible;
+}
+.col_content blockquote div{
+	visibility: hidden;
+}
+blockquote p.visibleP, blockquote div.visibleP{
+	visibility: visible;
+}
+
 .col_content p:first-child {
   /*  margin-top: 10px; */
 }
@@ -157,10 +190,10 @@ line-height: 160%;
     margin-top: 10px;
 }
 .col_content img{
-		min-width: 100%;
-		height: auto;
-		margin-top: 20px;
-		max-width: 100%;
+	min-width: 100%;
+	height: auto;
+	margin-top: 20px;
+	max-width: 100%;
 }
 
 .content p, .content table{
